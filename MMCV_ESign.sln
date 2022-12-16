@@ -1,0 +1,50 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32901.215
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMCV_ESign", "MMCV_ESign\MMCV_ESign.csproj", "{BC7A7E6B-8C29-4ED7-B912-9A86F1D352C8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMCV_Common", "MMCV_Common\MMCV_Common.csproj", "{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMCV_DAL", "MMCV_DAL\MMCV_DAL.csproj", "{913F6A9B-B91B-45B3-87A7-6FC6ABFA778E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMCV_BLL", "MMCV_BLL\MMCV_BLL.csproj", "{E5038A9B-EDBA-4E99-BC7D-708F209B7565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MMCV_Model", "MMCV_Model\MMCV_Model.csproj", "{D4E7472C-9522-48C9-919A-119660476169}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BC7A7E6B-8C29-4ED7-B912-9A86F1D352C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BC7A7E6B-8C29-4ED7-B912-9A86F1D352C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BC7A7E6B-8C29-4ED7-B912-9A86F1D352C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BC7A7E6B-8C29-4ED7-B912-9A86F1D352C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}.Release|Any CPU.Build.0 = Release|Any CPU
+		{913F6A9B-B91B-45B3-87A7-6FC6ABFA778E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{913F6A9B-B91B-45B3-87A7-6FC6ABFA778E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{913F6A9B-B91B-45B3-87A7-6FC6ABFA778E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{913F6A9B-B91B-45B3-87A7-6FC6ABFA778E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5038A9B-EDBA-4E99-BC7D-708F209B7565}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5038A9B-EDBA-4E99-BC7D-708F209B7565}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5038A9B-EDBA-4E99-BC7D-708F209B7565}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5038A9B-EDBA-4E99-BC7D-708F209B7565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4E7472C-9522-48C9-919A-119660476169}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4E7472C-9522-48C9-919A-119660476169}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4E7472C-9522-48C9-919A-119660476169}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4E7472C-9522-48C9-919A-119660476169}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {747B6AFE-C078-43DE-AFBA-8B69E8D97A09}
+		VisualSVNWorkingCopyRoot = .
+	EndGlobalSection
+EndGlobal

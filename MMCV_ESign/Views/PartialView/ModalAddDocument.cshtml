@@ -1,0 +1,751 @@
+﻿<style>
+    #viewer {
+        height: 78vh;
+    }
+
+    .drop {
+        border: 3px dashed #DADFE3;
+        background: white;
+        border-radius: 3px;
+        cursor: pointer;
+        height: 135px;
+    }
+
+    .modal-full {
+        min-width: 100% !important;
+        min-height: calc(100vh-60px) !important;
+        margin: 0px;
+        height: 100%;
+    }
+
+    #modalAddDocument .modal-body {
+        overflow-y: auto;
+    }
+
+    .modal-full > .modal-content {
+        height: 100%;
+    }
+
+        .modal-full > .modal-content > .modal-header {
+            border-bottom: 2px solid #28a745;
+        }
+
+    .drop input {
+        position: relative;
+        top: -130px;
+        width: 100%;
+        cursor: pointer;
+        background: red;
+        opacity: 0;
+        margin: auto;
+        min-height: 135px;
+    }
+
+    .timeline-badge-success {
+        color: #fff;
+        width: 50px;
+        height: 50px;
+        line-height: 50px;
+        font-size: 1.8em;
+        text-align: center;
+        background-color: #33b837;
+        z-index: 100;
+        border-top-right-radius: 50%;
+        /*border-top-left-radius: 50%;*/
+        border-bottom-right-radius: 50%;
+        /*border-bottom-left-radius: 50%;*/
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .timeline:before {
+        left: 0%;
+        content: none;
+    }
+
+    .timeline > li > .timeline-panel:before {
+        content: " ";
+    }
+
+    .timeline > li > .timeline-badge {
+        left: 25px;
+    }
+
+    .timeline li {
+        padding-right: 0px !important;
+    }
+
+    .item-file {
+        background: #FFFFFF 0% 0% no-repeat padding-box;
+        border: 1px solid #DADFE3;
+        border-radius: 3px;
+    }
+
+    .action-file {
+        cursor: pointer;
+    }
+</style>
+
+@{ 
+    var currentUser = @MMCV_Model.User.UserBO.Current.CurrentUser(); 
+}
+<div class="p-0 modal fade" id="modalAddDocument" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
+    <div class="modal-dialog modal-full" role="document">
+        <div class="modal-content">
+            @*<div class="modal-header">
+            <h5 class="modal-title">Sign document process</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>*@
+            <div class="modal-header">
+                <i class="fa fa-edit modal-header-icon"></i>
+                <h3 class="modal-title" style="font-size: 1.3rem">
+                    &nbsp;&nbsp;SIGN DOCUMENT PROCESS
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="modal-body">
+                <div>
+
+                </div>
+
+                @*Step 1*@
+                <div class="container pl-0 pr-0 step-detail step-1">
+                    <div class="card p-3">
+                        <h4 class="card-title text-success">Upload file need to sign</h4>
+                    </div>
+                    <div class="mb-2">
+                        <strong>Title</strong>
+                        <input type="text" class="form-control w-100" id="txtDocumentTitle" autofocus />
+                    </div>
+                    <div class="mb-2">
+                        <strong>Document Type</strong>
+                        <select class="form-control w-50" id="txtDocumentType">
+                        </select>
+                    </div>
+                    <div class="text-center drop">
+                        <div>
+                            <span class="text-success" style="font-size: 30px"><i class="fa fa-file-pdf"></i></span>
+                            <div></div>
+                            <button class="btn btn-success">Click here to browser</button>
+                            <div class="p-2">
+                                <span class="text-danger">*</span>
+                                Supported formats: .pdf, .jpg, .jpeg, .png
+                            </div>
+                        </div>
+                        <input id="document-upload-file" type="file" multiple="" accept="image/*, .pdf" onchange="uploadDocumentFile()" autocomplete="off">
+                    </div>
+                    <div class="mt-2 uploaded-file">
+
+                    </div>
+                </div>
+
+                @*Step 2*@
+                <div class="container pl-0 pr-0 step-detail step-2" style="display: none">
+                    <div class="card p-3 mb-0">
+                        <h4 class="card-title text-success">Add receiver email need to sign</h4>
+                    </div>
+                    <ul class="timeline">
+                        <li class="card p-2">
+                            <div class="d-flex">
+                                <div class="timeline-badge-success"><i class="flaticon-mailbox"></i></div>
+                                <div class="pl-2">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">Sender - <span class="text-success">@currentUser.Fullname</span> </h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <p>@currentUser.DepartmentName - @currentUser.Email</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                        <li class="card p-2">
+                            <div class="d-flex">
+                                @*<div class="timeline-badge-warning"><i class="flaticon-envelope"></i></div>*@
+                                <div class="w-100">
+                                    <div class="timeline-heading">
+                                        <h4 class="timeline-title">Receipts</h4>
+                                    </div>
+                                    <div class="timeline-body">
+                                        <div class="receipt-email">
+                                            <div class="form-group pl-0 col-md-12 col-sm-12 email-index-1">
+                                                <label for="password">Email</label>
+                                                <div class="d-flex">
+                                                    <input type="number" id="email-input-index-1" class="form-control w-25 receipt-email-index" value="1" min="0" placeholder="sign order" />
+                                                    <input type="email" id="email-input-1" class="form-control w-100 ml-1 receipt-email-item" placeholder="Email">
+                                                    <input type="text" id="email-input-fullname-1" class="form-control ml-1 receipt-email-fullname" placeholder="Name"> &nbsp;
+                                                    <button class="btn btn-danger" onclick="deleteMoreEmail(1)">Delete</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-success" onclick="addMoreEmail()"><i class="fa fa-plus"></i>&nbsp Add more email</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                @*Step 3*@
+                <div class="step-detail step-3" style="display: none">
+                    <div class="pl-2 pr-2">
+                        <div class="row">
+                            <div class="col-md-3 pl-1 pr-1">
+                                <div class="card">
+                                    <div class="card-body p-2">
+                                        <div class="col-md-12 m-0 p-0 pl-1">
+                                            <div class="general-info">
+                                                <lable class=""><strong>General information</strong></lable>
+                                                <hr />
+                                                <div>
+                                                    <strong>Issuer</strong>: <span id="txtIssuer">@currentUser.Username</span>
+                                                </div>
+                                                <div>
+                                                    <strong>Document Type</strong>: <span id="txtDocumentTypeDisplay"></span>
+                                                </div>
+                                                <div>
+                                                    <strong>Title</strong>: <span id="txtDocumentTitleDisplay"></span>
+                                                </div>
+                                                <div>
+                                                    <strong>Document Name</strong>: <span id="txtDocumentLinkDisplay"></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="card">
+                                    <div class="card-body p-2">
+                                        <div class="col-md-12 m-0 p-0 pl-1">
+                                            <lable class=""><strong>List order sign via email</strong></lable>
+                                            <hr />
+                                            <button class="btn btn-primary btn-sm w-100" onclick="addSignature()"><i class="fa fa-sign"></i> &nbsp; Sign here</button>
+                                            <div class="mt-3 list-receiver-email">
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-7 pl-1 pr-1">
+                                <div class="card m-0">
+                                    <div class="card-body p-1">
+                                        <div id="viewer"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-2 pl-1 pr-1">
+                                <div class="card m-0">
+                                    <div class="card-body p-2">
+                                        <div class="col-md-12 m-0 p-0">
+                                            @*<button class="btn btn-success w-100" id="btn_send_file"> <i class="fa fa-save"></i>&nbsp; Save and send</button>*@
+                                            <button class="btn btn-success w-100" onclick="saveAndSend()" id="btn_send_file"> <i class="fa fa-save"></i>&nbsp; Save and send</button>
+                                            <hr />
+                                            <button class="btn btn-light w-100" onclick="saveAsDraft()"> <i class="fa fa-ban text-danger"></i>&nbsp; Save as draft</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary btn-sm btnPrevious" onclick="movePreviousStep()"><i class="la flaticon-left-arrow"></i> Previous</button>
+                <button type="button" class="btn btn-primary btn-sm btnNext" onclick="moveNextStep()">Next <i class="la flaticon-right-arrow"></i></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../Scripts/lib/webviewer.min.js"></script>
+<script src="../Scripts/old-browser-checker.js"></script>
+<script src="../Scripts/global.js"></script>
+<script src="../Scripts/modernizr.custom.min.js"></script>
+
+<script>
+    /*
+     Variables
+     */
+    var enumDocumentStatus = {
+        Initital: 0,
+        Completed: 1,
+        Decline: 2,
+        Cancel: 3,
+        Draft: 4
+    } 
+
+    var listFile = [];
+    var uploadedFileObject = null;
+    var listEmail = [];
+
+    $(document).ready(function () {
+        getDocumentTypes();
+    })
+
+    function getDocumentTypes() {
+        let action = '/Common/GetDocumentTypes';
+        GetDataAjax(action, function (response) {
+            if (response.rs) {
+                let data = response.data;
+                bindDocumentTypeDropdown($("#txtDocumentType"), data);
+            }
+            else {
+                toastr.error(response.msg, "Thất bại");
+            }
+        });
+    }
+
+    function bindDocumentTypeDropdown(selector, data) {
+        let html = "";
+        for (var i = 0; i < data.length; i++) {
+            let ele = data[i];
+            html += `
+                        <option value="${ele.DocumentTypeID}">${ele.DocumentTypeName}</option>
+                    `;
+        }
+        selector.html('').append(html);
+    }
+
+    function uploadDocumentFile() {
+        if (window.FormData !== undefined) {
+            var fileUpload = $("#document-upload-file").get(0);
+            var files = fileUpload.files;
+            var fileData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                fileData.append("file" + i, files[i]);
+            }
+            LoadingShow();
+            $.ajax({
+                url: '/DocumentManagement/UploadDocumentFile',
+                method: 'POST',
+                contentType: false,
+                processData: false,
+                data: fileData,
+                success: function (result) {
+                    LoadingHide();
+                    if (result.rs) {
+                        let fileUploadResult = result.data;
+                        uploadedFileObject = fileUploadResult;
+
+                        let html = '';
+                        let ele = fileUploadResult;
+                        html = `
+                                <div class="d-flex p-2 mb-1 item-file">
+                                    <div class="icon_file align-self-center text-danger" style="font-size: 45px">
+                                        <i class="fa fa-file-pdf"></i>
+                                    </div>
+                                    <div class="flex-grow-1 d-flex align-items-center w-100 pl-3">
+                                        <div>
+                                            <strong>${ele.fileName}</strong>
+                                            <br />
+                                            <span>${ele.fileSize} Kb</span>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center action-file">
+                                        <div class="dropdown">
+                                            <span class="fa fa-ellipsis-v" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></span>
+                                            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="will-change: transform;">
+                                                <a class="dropdown-item" onclick="renameFile({'fileName': '${ele.fileName}', 'fileSize': '${ele.fileSize}', 'fileLink': '${ele.fileLink}'})">Rename file</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            `;
+
+                        $(".uploaded-file").html("").append(html);
+                        listFile.push({ fileName: ele.fileName, fileSize: ele.fileSize, fileLink: ele.fileLink });
+                    }
+                    else {
+                        toastr.error(result.msg);
+                    }
+                },
+                error: function (err) {
+                    LoadingHide();
+                    toastr.error(err.statusText);
+                }
+            });
+        } else {
+            toastr.error("FormData is not supported.");
+        }
+    }
+
+    function deleteFile(file) {
+        console.log(file);
+        console.log(listFile);
+    }
+
+    function renameFile(file) {
+        console.log(file);
+    }
+
+    //$('#modalAddDocument').on('show.bs.modal', function (e) {
+    //    //$('#document-upload-file').trigger('click');
+    //    //$(this).find('[autofocus]').focus();
+    //    setTimeout(() => {
+    //        $("#txtDocumentTitle").focus();
+    //    }, 500)
+    //})
+    $('.modal').on('shown.bs.modal', function () {
+        $(this).find('[autofocus]').focus();
+    });
+
+    var emailIndex = 1;
+    function addMoreEmail() {
+        emailIndex++;
+        let emailPanel = ` <div class="form-group pl-0 col-md-12 col-sm-12 email-index-${emailIndex}">
+                                    <label for="password">Email</label>
+                                    <div class="d-flex">
+                                        <input type="number" id="email-input-index-${emailIndex}" class="form-control w-25 receipt-email-index" value="${emailIndex}" min="0" placeholder="sign order" />
+                                        <input type="email" id="email-input-${emailIndex}" class="form-control ml-1 receipt-email-item" placeholder="Email">
+                                        <input type="text" id="email-input-fullname-${emailIndex}" class="form-control ml-1 receipt-email-fullname" placeholder="Name">&nbsp;
+                                        <button class="btn btn-danger" onclick="deleteMoreEmail(${emailIndex})">Delete</button>
+                                    </div>
+                                </div>`;
+
+        $(".receipt-email").append(emailPanel);
+        $(`#email-input-${emailIndex}`).focus();
+    }
+
+    function deleteMoreEmail(index) {
+        emailIndex--;
+        $(`.email-index-${index}`).remove();
+
+    }
+
+    function validateStep1() {
+        // validate title
+        let title = $("#txtDocumentTitle");
+        if (!CheckNullOrEmpty(title, "Title can not be null or empty"))
+            return false;
+
+        // validate file
+        let file = uploadedFileObject;
+        if (file == null) {
+            toastr.error("Chose a file, please", "Warning");
+            return false;
+        }
+        return true;
+    }
+
+    function validateStep2() {
+        listEmail = [];
+        // validate email
+        let returnData = true;
+        $(".receipt-email-item").each((index, ele) => {
+            let emailVal = $(ele).val();
+            let signIndex = $($(".receipt-email-index")[index]).val();
+            let nameVal = $($(".receipt-email-fullname")[index]).val();
+            let listEmailVal = emailVal.split(/[\,\;]/gm);
+            let isCorrectFormat = true;
+            for (var i = 0; i < listEmailVal.length; i++) {
+                let eleVal = listEmailVal[i];
+                if (!validation.isEmailAddress(eleVal)) {
+                    isCorrectFormat = false;
+                }
+            }
+            if (!isCorrectFormat) {
+                $(ele).focus();
+                toastr.error("Email format is not correct", "Warning"); 
+                returnData = false;
+            }
+            else {
+                listEmail.push({ index: signIndex, value: emailVal, name: nameVal });
+            }
+
+        });
+        if ($(".receipt-email-item").length <= 0) {
+            toastr.error("You must fill an email at least", "Warning");
+            addMoreEmail();
+            returnData = false;
+        }
+        return returnData;
+    }
+
+    function displayEmailList(data) {
+        let html = '';
+        data.forEach((ele, index) => {
+            html += `
+                    <div class='card badge badge-danger sign-email'>${index + 1}. ${ele.value}</div>
+                `;
+        });
+        $(".list-receiver-email").html("").append(html);
+    }
+
+    function displayGeneralInformation() {
+        $("#txtDocumentTypeDisplay").text($("#txtDocumentType").val());
+        $("#txtDocumentLinkDisplay").text($("#document-upload-file").val().split("\\")[$("#document-upload-file").val().split("\\").length - 1]);
+        $("#txtDocumentTitleDisplay").text($("#txtDocumentTitle").val());
+    }
+
+    var step = 1;
+    function moveNextStep() {
+        // before increase value
+        if (step == 1) {
+            if (!validateStep1()) {
+                return;
+            }
+        }
+        if (step == 2) {
+            if (!validateStep2()) {
+                return;
+            }
+        }
+
+        step++;
+        step = step >= 3 ? 3 : step;
+        $(".step-detail").css("display", "none");
+        $(`.step-${step}`).css("display", "block");
+
+        // after increase value
+        if (step == 2) {
+            $(".receipt-email-item")[0].focus();
+        }
+        if (step == 3) {
+            displayGeneralInformation();
+            displayEmailList(listEmail);
+        }
+    }
+
+    function movePreviousStep() {
+        step--;
+        step = step <= 0 ? 1 : step;
+        $(".step-detail").css("display", "none");
+        $(`.step-${step}`).css("display", "block");
+
+        if (step == 1) {
+            $("#txtDocumentTitle").focus();
+        }
+        if (step == 2) {
+            $(".receipt-email-item")[0].focus();
+        }
+    }
+
+    function saveAsDraft() {
+        let action = baseUrl + 'AddDocument';
+        var datasend = JSON.stringify({
+
+        });
+        LoadingShow();
+        PostDataAjax(action, datasend, function (response) {
+            LoadingHide();
+            if (response.rs) {
+                getDocuments();
+                toastr.success(response.msg, "Thành công");
+            }
+            else {
+                toastr.error(response.msg, "Thất bại");
+            }
+        });
+    }
+
+    /*
+     editor view
+     */
+    $(document).ready(function () {
+        $('iframe').on('load', function () {
+            setTimeout(() => {
+                $("iframe").contents().find("head").append("<script src='/Scripts/libs/bootstrap-toastr/toastr.min.js'><//script>");
+                //$("iframe").contents().find("head").append("<script src='/Content/assets/js/core/jquery.3.2.1.min.js'><//script>");
+                $("iframe").contents().find(".divider").css("display", "none");
+                $("iframe").contents().find(".HeaderToolsContainer").css("display", "none");
+                $("iframe").contents().find("[data-element=signatureToolGroupButton]").css("display", "none");
+                $("iframe").contents().find("[data-element=fileAttachmentToolGroupButton]").css("display", "none");
+                $("iframe").contents().find("[data-element=stampToolGroupButton]").css("display", "none");
+                $("iframe").contents().find("[data-element=calloutToolGroupButton]").css("display", "none");
+
+                $("iframe").contents().find("[data-element=searchButton]").css("display", "none");
+                $("iframe").contents().find("[data-element=toggleNotesButton]").css("display", "none");
+            }, 100)
+        });
+    });
+
+    $(".custom-file-input").on("change", function () {
+        var fileName = $(this).val().split("\\").pop();
+        $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+    });
+
+    const input = document.getElementById('document-upload-file');
+    const btnSendFile = document.getElementById('btn_send_file');
+    var addSignature;
+    var saveAndSend;
+    var saveAsDraft;
+
+    WebViewer(
+        {
+            path: '/Scripts/lib',
+            initialDoc: '/demo.pdf',
+            fullAPI: true,
+            licenseKey: 'demo:1667445182590:7aa901030300000000f73678c1221225f6f5554299b3db41d149ec37f2'
+        },
+        document.getElementById('viewer')
+    ).then(instance => {
+        //samplesSetup(instance);
+        //var FitMode = instance.UI.FitMode;
+        //instance.UI.setFitMode(FitMode.FitWidth);
+        const { setHeaderItems, enableElements, disableElements, enableFeatures, disableFeatures, setTheme, Feature } = instance.UI;
+
+        disableElements(['toolbarGroup-Insert']);
+        disableElements(['toolbarGroup-Edit']);
+        disableElements(['toolbarGroup-View']);
+        disableElements(['toolbarGroup-Annotate']);
+        disableElements(['toolbarGroup-Shapes']);
+        disableElements(['toolbarGroup-Measure']);
+        disableElements(['toolbarGroup-FillAndSign']);
+        disableElements(['toolbarGroup-Forms']);
+        disableElements(['leftPanel', 'leftPanelButton']);
+
+
+        const currentUsername = '@currentUser.Username';
+        const currentUserDept = '@currentUser.DepartmentID';
+        const { documentViewer, annotationManager, Annotations } = instance.Core;
+        // set current user for anntonation manager to avoid an user can modified other user's annotation
+        annotationManager.setCurrentUser("@currentUser.Email");
+
+        const tool = documentViewer.getTool('AnnotationCreateRubberStamp');
+        const customStamps = [
+            { title: currentUsername, subtitle: `[${currentUserDept}]`, author: "@currentUser.Email" },
+        ]
+        tool.setStandardStamps([]);
+        tool.setCustomStamps(customStamps)
+
+        addSignature = function() {
+            // vẽ sẵn chữ ký tại một điểm
+            const annot = new Annotations.StampAnnotation({
+                PageNumber: documentViewer.getCurrentPage(),
+                X: 100,
+                Y: 100,
+                Width: 200,
+                Height: 100,
+                Author: "@currentUser.Email"
+            });
+            annot.setImageData("@currentUser.DefaultSignature.Base64Signature");
+
+            annotationManager.addAnnotation(annot);
+            annotationManager.redrawAnnotation(annot);
+        }
+
+        function choseNewFile() {
+            // Get the file from the input
+            const file = input.files[0];
+            instance.UI.loadDocument(file, { filename: file.name });
+            instance.UI.setZoomLevel('100%');
+        }
+        input.addEventListener('change', choseNewFile);
+
+        function addDocument(status) {
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    LoadingHide();
+                    let result = JSON.parse(this.responseText);
+                    if (result.rs) {
+                        toastr.success(result.msg, "Success");
+                        setTimeout(() => {
+                            window.location.href = "/DocumentManagement/DocumentManagement";
+                        }, 1000)
+                    }
+                    else {
+                        toastr.error(result.msg, "Warning");
+                    }
+                }
+            };
+            req.open("POST", '/DocumentManagement/AddDocument', true);
+            req.setRequestHeader("Content-type", "application/json");
+
+            let listDocSign = [];
+            listEmail.forEach((ele, index) => {
+                listDocSign.push({
+                    Email: ele.value,
+                    SignIndex: ele.index,
+                    Fullname: ele.name
+                });
+            })
+            let data = {
+                Title: $("#txtDocumentTitle").val(),
+                DocumentTypeID: $("#txtDocumentType").val(),
+                Link: input.files[0].name,
+                Issuer: '@currentUser.Email',
+                CreatedBy: '@currentUser.Username',
+                Status: status,
+                DocumentSigns: listDocSign
+            };
+            LoadingShow();
+            req.send(JSON.stringify(data));
+        }
+
+        saveAndSend = async function () {
+            LoadingShow();
+            const doc = documentViewer.getDocument();
+            const xfdfString = await annotationManager.exportAnnotations();
+            const data = await doc.getFileData({
+                // saves the document with annotations in it
+                xfdfString
+            });
+            const arr = new Uint8Array(data);
+            const blob = new Blob([arr], { type: 'application/pdf' });
+
+            // save file and signature
+            const savePdf = new FormData();
+            savePdf.append('mydoc.pdf', blob, input.files[0].name);
+            // depending on the server, 'FormData' might not be required and can just send the Blob directly
+
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    if (result.rs) {
+                        // send add document request
+                        addDocument(enumDocumentStatus.Initital);
+                    }
+                    else {
+                        toastr.error(result.msg, "Warning");
+                    }
+                }
+            };
+            req.open("POST", '/DocumentManagement/SaveFile', true);
+            req.send(savePdf);
+        }
+
+        saveAsDraft = async function () {
+            LoadingShow();
+            const doc = documentViewer.getDocument();
+            const xfdfString = await annotationManager.exportAnnotations();
+            const data = await doc.getFileData({
+                // saves the document with annotations in it
+                xfdfString
+            });
+            const arr = new Uint8Array(data);
+            const blob = new Blob([arr], { type: 'application/pdf' });
+
+            // save file and signature
+            const savePdf = new FormData();
+            savePdf.append('mydoc.pdf', blob, input.files[0].name);
+            // depending on the server, 'FormData' might not be required and can just send the Blob directly
+
+            const req = new XMLHttpRequest();
+            req.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    let result = JSON.parse(this.responseText);
+                    if (result.rs) {
+                        // send add document request
+                        addDocument(enumDocumentStatus.Draft);
+                    }
+                    else {
+                        toastr.error(result.msg, "Warning");
+                    }
+                }
+            };
+            req.open("POST", '/DocumentManagement/SaveFile', true);
+            req.send(savePdf);
+        }
+
+    });
+
+</script>

@@ -1,0 +1,189 @@
+﻿@model MMCV_Model.Document.DocumentBO
+@{ 
+    ViewBag.Title = "DetailView";
+    var isIssuer = MMCV_Model.User.UserBO.Current.CurrentUser().Email == Model.Issuer ? true : false;
+    var hideIfNotIssuer = isIssuer ? " " : "d-none";
+
+    var docStatus = Model.Status;
+    var nameOfStatus = "";
+    var initial = "<span class='badge badge-primary'>Initial</span>";
+    var completed = "<span class='badge badge-success'>Completed</span>";
+    var decline = "<span class='badge badge-warning'>Decline</span>";
+    var draft = "<span class='badge badge-default'>Draft</span>";
+    var cancel = "<span class='badge badge-danger'>Cancel</span>";
+
+    nameOfStatus = docStatus == 0 ? initial : (docStatus == 1 ? completed : (docStatus == 2 ? decline : (docStatus == 3 ? cancel : draft)));
+}
+
+@section styles{
+    <style>
+        .sign-flow-table {
+            height: 365px;
+            overflow: auto;
+            border: 1px solid #dddddd;
+        }
+
+        .sign-flow-table tr, .sign-flow-table th, .sign-flow-table td {
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .sticky-thead {
+            position: sticky;
+            background: whitesmoke;
+            top: 0;
+            z-index: 10;
+        }
+    </style>
+}
+
+<div class="p-3">
+    <button class="btn btn-success btn-sm" onclick="backPrePage()"><i class="la flaticon-left-arrow"></i>&nbsp;Back</button>
+    <div class="mt-3">
+        <div class="card card-stats card-round">
+            <div class="card-body ">
+                <label><strong>General Information</strong></label>
+                <hr />
+                <div class="row">
+                    <div class="col-md-6 col-sm-12">
+                        <strong>Title</strong>: @Model.Title <br />
+                        <strong>Issuer</strong>: @Model.Issuer <br />
+                        <strong>Reference code</strong>: @Model.ReferenceCode <br />
+                    </div>
+                    <div class="col-md-6 col-sm-12">
+                        <strong>Status</strong>: @Html.Raw(nameOfStatus) <br />
+                        <strong>Issued Date</strong>: @Model.CreatedDate <br />
+                        <strong>Note</strong>: @Model.Note <br />
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card card-stats card-round mb-0">
+            <div class="card-body ">
+                <div class="d-flex justify-content-between">
+                    <div class="">
+                        <label><strong>Signing Order Information</strong></label>
+                    </div>
+                    <div class="">
+                        <button class="btn btn-light btn-border" title="Download document" onclick="downloadDocument('@Model.DocumentID')"><i class="fa fa-download text-success"></i>&nbsp; Download</button>
+                        @if (isIssuer)
+                        {
+                            if (Model.Status == (int)MMCV_Common.Helper.EnumDocumentStatus.Draft)
+                            {
+                                <button class="btn btn-light btn-border @hideIfNotIssuer" onclick="issueAndSendMail(@Model.DocumentID)" title="Issue and send mail to signer"><i class="fa fa-paper-plane text-success"></i>&nbsp; Issue and Send mail</button>
+                            }
+                            else
+                            {
+                                <button class="btn btn-light btn-border @hideIfNotIssuer" onclick="sendMailToSigner(@Model.DocumentID)" title="Send mail to signer"><i class="fa fa-paper-plane text-success"></i>&nbsp; Send mail</button>
+                            }
+                        }
+                    </div>
+                </div>
+                <div class="mt-2 sign-flow-table">
+                    <table class="table table-bordered">
+                        <thead class="sticky-thead">
+                            <tr>
+                                <td><strong>STT</strong></td>
+                                <td><strong>Email</strong></td>
+                                <td><strong>Status</strong></td>
+                                <td><strong>Note</strong></td>
+                                <td><strong>Sign Date</strong></td>
+                                <td><strong>Signature</strong></td>
+                            </tr>
+                        </thead>
+                        <tbody id="signature-table-body">
+                            @foreach (var item in Model.DocumentSigns)
+                            {
+                                var nameOfStatusSign = "";
+                                var signed = "<span class='badge badge-primary'>Signed</span>";
+                                var declined = "<span class='badge badge-danger'>Declined</span>";
+                                var initialSign = "<span class='badge badge-ligth'>No action</span>";
+                                nameOfStatusSign = item.Status == (int)MMCV_Common.Helper.EnumDocumentSign.Initital ? initialSign : (item.Status == (int)MMCV_Common.Helper.EnumDocumentSign.Signed ? signed : declined);
+
+                                <tr>
+                                    <td>@(item.SignIndex)</td>
+                                    <td>@item.Email</td>
+                                    <td>@Html.Raw(nameOfStatusSign)</td>
+                                    <td>@item.Note</td>
+                                    <td>@(item.SignDate.ToString("yyyy/MM/dd hh:mm:ss") != "0001/01/01 12:00:00" ? item.SignDate.ToString("yyyy/MM/dd hh:mm:ss") : "")</td>
+                                    <td>@(item.UserSignatureID == 0 ? "" : item.UserSignatureID.ToString())</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+    <script>
+
+        /*
+         * Variables
+         * */
+        var baseUrl = "/DocumentManagement/";
+
+        /*
+         * Methods
+         */
+        function backPrePage() {
+            window.location.href = baseUrl + "DocumentManagement";
+        }
+
+        function issueAndSendMail(docId) {
+            let action = baseUrl + 'IssueAndSendMail';
+            var datasend = {
+                DocumentID: docId
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    toastr.success(response.msg, "Thành công");
+                }
+                else {
+                    toastr.error(response.msg, "Thất bại");
+                }
+            });
+        }
+
+        function sendMailToSigner(docId) {
+            let action = baseUrl + 'SendMail';
+            var datasend = {
+                DocumentID: docId
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    toastr.success(response.msg, "Thành công");
+                }
+                else {
+                    toastr.error(response.msg, "Thất bại");
+                }
+            });
+        }
+
+        function downloadDocument(docId) {
+            var action = baseUrl + 'Download';
+            var datasend = {
+                DocumentID: docId
+            };
+            $.fileDownload(action, {
+                httpMethod: "POST",
+                data: datasend,
+                prepareCallback: function () {
+                    LoadingShow();
+                },
+                successCallback: function () {
+                    LoadingHide();
+                }
+            });
+        }
+
+    </script>
+
+}

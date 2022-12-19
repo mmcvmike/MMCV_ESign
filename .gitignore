@@ -2,4 +2,4 @@
 /.vs
 /bin/*
 /obj/*
-/obj/Debug/
+/obj/Debug/*

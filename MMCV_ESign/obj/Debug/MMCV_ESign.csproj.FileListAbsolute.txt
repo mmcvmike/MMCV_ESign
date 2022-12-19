@@ -103,4 +103,3 @@ D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\obj\Debug\MMCV_ESign.cspro
 D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\obj\Debug\MMCV_ESign.csproj.CopyComplete
 D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\obj\Debug\MMCV_ESign.dll
 D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\obj\Debug\MMCV_ESign.pdb
-D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\bin\BouncyCastle.Crypto.dll

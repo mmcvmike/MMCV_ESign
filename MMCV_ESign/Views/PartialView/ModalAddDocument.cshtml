@@ -223,7 +223,8 @@
                                         <div class="col-md-12 m-0 p-0 pl-1">
                                             <lable class=""><strong>List order sign via email</strong></lable>
                                             <hr />
-                                            <button class="btn btn-primary btn-sm w-100" onclick="addSignature()"><i class="fa fa-sign"></i> &nbsp; Sign here</button>
+                                            <button class="btn btn-primary btn-sm w-100 mb-2" onclick="addSignature()" title="place your signature into document"><i class="fa fa-sign"></i> &nbsp; Sign signature here</button>
+                                            <button class="btn btn-secondary btn-sm w-100" onclick="addStamp()" title="place your stamp into document"><i class="fa fa-stamp"></i> &nbsp; Sign stamp here</button>
                                             <div class="mt-3 list-receiver-email">
 
                                             </div>
@@ -279,7 +280,7 @@
         Decline: 2,
         Cancel: 3,
         Draft: 4
-    } 
+    }
 
     var listFile = [];
     var uploadedFileObject = null;
@@ -452,7 +453,7 @@
             }
             if (!isCorrectFormat) {
                 $(ele).focus();
-                toastr.error("Email format is not correct", "Warning"); 
+                toastr.error("Email format is not correct", "Warning");
                 returnData = false;
             }
             else {
@@ -574,6 +575,7 @@
     const input = document.getElementById('document-upload-file');
     const btnSendFile = document.getElementById('btn_send_file');
     var addSignature;
+    var addStamp;
     var saveAndSend;
     var saveAsDraft;
 
@@ -626,6 +628,23 @@
                 Author: "@currentUser.Email"
             });
             annot.setImageData("@currentUser.DefaultSignature.Base64Signature");
+
+            annotationManager.addAnnotation(annot);
+            annotationManager.redrawAnnotation(annot);
+        }
+
+
+        addStamp = function() {
+            // vẽ sẵn dấu tại một điểm
+            const annot = new Annotations.StampAnnotation({
+                PageNumber: documentViewer.getCurrentPage(),
+                X: 300,
+                Y: 100,
+                Width: 200,
+                Height: 200,
+                Author: "@currentUser.Email"
+            });
+            annot.setImageData("@currentUser.StampBase64");
 
             annotationManager.addAnnotation(annot);
             annotationManager.redrawAnnotation(annot);

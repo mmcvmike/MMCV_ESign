@@ -159,6 +159,21 @@ namespace MMCV_BLL.User
             }
         }
 
+        public bool UpdateUserStamp(UserBO us)
+        {
+            try
+            {
+                UserDAO userDAO = new UserDAO();
+                return userDAO.UpdateUserStamp(us);
+            }
+            catch (Exception objEx)
+            {
+                this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(objEx, "");
+                objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, objEx, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                return false;
+            }
+        }
+
         public UserBO GetUserById(int userId)
         {
             try

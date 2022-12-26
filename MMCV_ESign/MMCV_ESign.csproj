@@ -393,6 +393,9 @@
     <Content Include="Scripts\libs\Datatables\dataTables.bootstrap4.min.js" />
     <Content Include="Scripts\libs\Datatables\dataTables.bootstrap4.min.css" />
     <Content Include="Scripts\libs\Datatables\jquery.dataTables.min.js" />
+    <Content Include="Scripts\libs\jstree\bootstrap-glyphicons.css" />
+    <Content Include="Scripts\libs\jstree\jstree.min.js" />
+    <Content Include="Scripts\libs\jstree\jstree.min.css" />
     <Content Include="Scripts\libs\sweetalert2.min.js" />
     <Content Include="Scripts\lib\core\21.chunk.js" />
     <Content Include="Scripts\lib\core\AndroidContentPartRetriever.chunk.js" />

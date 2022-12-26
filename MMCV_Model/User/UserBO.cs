@@ -46,6 +46,7 @@ namespace MMCV_Model.User
         public UserSignatureBO DefaultSignature { get; set; }
         public string DepartmentName { get; set; }
         public string PositionName { get; set; }
+        public string StampBase64 { get; set; }
     }
 
     public class UserSignatureBO

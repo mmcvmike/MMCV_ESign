@@ -233,6 +233,30 @@ LEFT JOIN Position p ON p.PositionID = u.PositionID";
             }
         }
 
+        public bool UpdateUserStamp(UserBO us)
+        {
+            IData objIData = this.CreateIData();
+            try
+            {
+                string query = $"UPDATE [User] " +
+                    $"SET StampBase64 = '{us.StampBase64}'" +
+                    $"WHERE UserID = {us.UserID}";
+                BeginTransactionIfAny(objIData);
+                objIData.ExecUpdate(query);
+                CommitTransactionIfAny(objIData);
+                return true;
+            }
+            catch (Exception objEx)
+            {
+                RollBackTransactionIfAny(objIData);
+                throw objEx;
+            }
+            finally
+            {
+                this.DisconnectIData(objIData);
+            }
+        }
+
         public UserBO GetUserById(int userId)
         {
             IData objIData = this.CreateIData();

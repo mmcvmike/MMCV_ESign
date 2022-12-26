@@ -16,6 +16,15 @@
     <div class="card card-stats card-round mb-0">
         <div class="pt-3 pb-2">
             <button class="btn btn-success btn-sm ml-3" data-toggle="modal" data-target="#addUserModal"><i class="fa fa-plus"></i>&nbsp; Add user</button>
+            <div class="btn-group">
+                <button class="btn btn-o btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Excel operation &nbsp; <i class="la flaticon-down-arrow"></i>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#"><i class="fa fa-download"></i>&nbsp; Import from excel</a>
+                    <a class="dropdown-item" href="#"><i class="fa fa-file-excel"></i>&nbsp; Export to excel</a>
+                </div>
+            </div>
             <div class="mt-2">
                 <table id="userDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
                     <thead class="">
@@ -48,41 +57,55 @@
             </div>
             <div class="" style="background-color: #28a745; height: 2px"></div>
             <div class="modal-body">
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Username <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtAUsername" autocomplete="off" autofocus />
-                    </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Fullname <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtAFullname" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Email <span class="text-danger">*</span></strong>
-                        <input type="email" class="form-control" id="txtAEmail" autocomplete="off" />
-                    </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Employee ID <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtAEmployeeID" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Department</strong>
-                        <div class="">
-                            <select id="txtADept" class="form-control ddr-department">
-                               
-                            </select>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#user-information" role="tab" aria-controls="" aria-selected="true"><strong>User information</strong></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#roles" role="tab" aria-controls="" aria-selected="false"><strong>Roles</strong></a>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active" id="user-information" role="tabpanel" aria-labelledby="">
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Username <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtAUsername" autocomplete="off" autofocus />
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Fullname <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtAFullname" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Email <span class="text-danger">*</span></strong>
+                                <input type="email" class="form-control" id="txtAEmail" autocomplete="off" />
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Employee ID <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtAEmployeeID" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Department</strong>
+                                <div class="">
+                                    <select id="txtADept" class="form-control ddr-department">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Position</strong>
+                                <div class="">
+                                    <select id="txtAPosition" class="form-control ddr-position">
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Position</strong>
-                        <div class="">
-                            <select id="txtAPosition" class="form-control ddr-position">
-                               
-                            </select>
+                    <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="">
+                        <div class="tree-container">
                         </div>
                     </div>
                 </div>
@@ -152,7 +175,7 @@
 </div>
 
 @section scripts{
-
+    <script src="~/Scripts/libs/jstree/jstree.min.js"></script>
     <script>
 
         /*
@@ -212,8 +235,8 @@
                         data: 'Action',
                         render: function (data, type, row) {
                             let html = `
-                                <a href='javascript:void(0)' onclick='openEditUserModal(${row.UserID})' class='btn btn-light btn-sm'><i class='fa fa-edit text-primary'></i>&nbsp; Detail</a>
-                            `;
+                                            <a href='javascript:void(0)' onclick='openEditUserModal(${row.UserID})' class='btn btn-light btn-sm'><i class='fa fa-edit text-primary'></i>&nbsp; Detail</a>
+                                        `;
                             return html;
                         },
                     },
@@ -358,8 +381,8 @@
             for (var i = 0; i < data.length; i++) {
                 let ele = data[i];
                 html += `
-                    <option value="${ele.DepartmentID}">${ele.DepartmentName}</option>
-                `;
+                                <option value="${ele.DepartmentID}">${ele.DepartmentName}</option>
+                            `;
             }
 
             ddr.html('').append(html);
@@ -371,8 +394,8 @@
             for (var i = 0; i < data.length; i++) {
                 let ele = data[i];
                 html += `
-                    <option value="${ele.PositionID}">${ele.PositionName}</option>
-                `;
+                                <option value="${ele.PositionID}">${ele.PositionName}</option>
+                            `;
             }
 
             ddr.html('').append(html);
@@ -406,5 +429,205 @@
 
     </script>
 
+    <script>
+        let data = [
+            {
+                "id": "0",
+                "text": "node-0",
+                "children": [
+                    {
+                        "id": "0-0",
+                        "text": "node-0-0",
+                        "children": [
+                            {
+                                "id": "0-0-0",
+                                "text": "node-0-0-0"
+                            },
+                            {
+                                "id": "0-0-1",
+                                "text": "node-0-0-1"
+                            },
+                            {
+                                "id": "0-0-2",
+                                "text": "node-0-0-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "0-1",
+                        "text": "node-0-1",
+                        "children": [
+                            {
+                                "id": "0-1-0",
+                                "text": "node-0-1-0"
+                            },
+                            {
+                                "id": "0-1-1",
+                                "text": "node-0-1-1"
+                            },
+                            {
+                                "id": "0-1-2",
+                                "text": "node-0-1-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "0-2",
+                        "text": "node-0-2",
+                        "children": [
+                            {
+                                "id": "0-2-0",
+                                "text": "node-0-2-0"
+                            },
+                            {
+                                "id": "0-2-1",
+                                "text": "node-0-2-1"
+                            },
+                            {
+                                "id": "0-2-2",
+                                "text": "node-0-2-2"
+                            }
+                        ]
+                    }
+                ]
+            },
+
+            {
+                "id": "1",
+                "text": "node-1",
+                "children": [
+                    {
+                        "id": "1-0",
+                        "text": "node-1-0",
+                        "children": [
+                            {
+                                "id": "1-0-0",
+                                "text": "node-1-0-0"
+                            },
+                            {
+                                "id": "1-0-1",
+                                "text": "node-1-0-1"
+                            },
+                            {
+                                "id": "1-0-2",
+                                "text": "node-1-0-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "1-1-1",
+                        "text": "node-1-1",
+                        "children": [
+                            {
+                                "id": "1-1-0",
+                                "text": "node-1-1-0"
+                            },
+                            {
+                                "id": "1-1-1",
+                                "text": "node-1-1-1"
+                            },
+                            {
+                                "id": "1-1-2",
+                                "text": "node-1-1-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "1-2",
+                        "text": "node-1-2",
+                        "children": [
+                            {
+                                "id": "1-2-0",
+                                "text": "node-1-2-0"
+                            },
+                            {
+                                "id": "1-2-1",
+                                "text": "node-1-2-1"
+                            },
+                            {
+                                "id": "1-2-2",
+                                "text": "node-1-2-2"
+                            }
+                        ]
+                    }
+                ]
+            },
+
+            {
+                "id": "2",
+                "text": "node-2",
+                "children": [
+                    {
+                        "id": "2-0",
+                        "text": "node-2-0",
+                        "children": [
+                            {
+                                "id": "2-0-0",
+                                "text": "node-2-0-0"
+                            },
+                            {
+                                "id": "2-0-1",
+                                "text": "node-2-0-1"
+                            },
+                            {
+                                "id": "2-0-2",
+                                "text": "node-2-0-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "2-1",
+                        "text": "node-2-1",
+                        "children": [
+                            {
+                                "id": "2-1-0",
+                                "text": "node-2-1-0"
+                            },
+                            {
+                                "id": "2-1-1",
+                                "text": "node-2-1-1"
+                            },
+                            {
+                                "id": "2-1-2",
+                                "text": "node-2-1-2"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "2-2",
+                        "text": "node-2-2",
+                        "children": [
+                            {
+                                "id": "2-2-0",
+                                "text": "node-2-2-0"
+                            },
+                            {
+                                "id": "2-2-1",
+                                "text": "node-2-2-1"
+                            },
+                            {
+                                "id": "2-2-2",
+                                "text": "node-2-2-2"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+
+        let tree = new Tree('.tree-container', {
+            data: [{ id: '-1', text: 'Roles', children: data }],
+            closeDepth: 3,
+            loaded: function () {
+                this.values = ['0-0-0', '0-1-1'];
+                console.log(this.selectedNodes);
+                console.log(this.values);
+                this.disables = ['0-0-0', '0-0-1', '0-0-2']
+            },
+            onChange: function () {
+                console.log(this.values);
+            }
+        })
+    </script>
 }
 

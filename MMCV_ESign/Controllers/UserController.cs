@@ -238,6 +238,25 @@ namespace MMCV_ESign.Controllers
             }
         }
 
+        public ActionResult UpdateUserStamp(UserBO us)
+        {
+            try
+            {
+                UserBLL userBLL = new UserBLL();
+                var isUpdateSuccess = userBLL.UpdateUserStamp(us);
+                if (!isUpdateSuccess)
+                {
+                    return Json(new { rs = false, msg = "Error update user's stamp" });
+                }
+                return Json(new { rs = true, msg = "Update user's stamp successfully" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "UserController");
+                return Json(new { rs = false, msg = "Error update user's stamp" });
+            }
+        }
+
         public ActionResult GetUserById(int userId)
         {
             try

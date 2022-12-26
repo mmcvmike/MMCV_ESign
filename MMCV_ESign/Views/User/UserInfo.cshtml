@@ -67,7 +67,7 @@
                 <div class="card-body ">
                     <label><strong>Signature Information</strong></label>
                     <hr />
-                    <div class="col-md-12 p-0 ">                      
+                    <div class="col-md-12 p-0 ">
                         <div class="col-md-12 col-sm-12 p-0">
                             <div class="row">
                                 <div class="col-md-12">
@@ -89,6 +89,7 @@
                                 <div class="col-md-12">
                                     <button class="btn btn-success btn-sm" id="sig-submitBtn" onclick="addSignature()">Submit Signature</button>
                                     <button class="btn btn-light btn-sm" id="sig-clearBtn" onclick="clearSignature()">Clear Signature</button>
+                                    <button class="btn btn-primary btn-sm" onclick="updateUserStamp()">Update Stamp</button>
                                 </div>
                             </div>
                         </div>
@@ -98,12 +99,12 @@
                                     <tr>
                                         <td>ID</td>
                                         <td>Signature</td>
+                                        <td>Stamp</td>
                                         <td>Default</td>
                                         <td></td>
                                     </tr>
                                 </thead>
                                 <tbody id="signature-table-body">
-
                                 </tbody>
                             </table>
                         </div>
@@ -271,6 +272,9 @@
                             <img src='${data.Base64Signature}' width='100px' height='40x' />
                         </td>
                         <td>
+                            <img src='@currentUser.StampBase64' width='100px' height='40x' />
+                        </td>
+                        <td>
                             <div class="form-check">
                               <input class="form-check-input rd-default-sig" onchange="setDefaultSignature(${data.UserSignatureID})" type="radio" name="sig-default-radio" ${data.IsDefault == 1 ? "checked" : ""} data-val="${data.UserSignatureID}" id="sig-radio-${data.UserSignatureID}">
                               <label class="form-check-label" for="sig-radio-${data.UserSignatureID}">
@@ -373,6 +377,26 @@
                 img.src = event.target.result;
             }
             reader.readAsDataURL(e.target.files[0]);
+        }
+
+        function updateUserStamp() {
+            var dataUrl = canvas.toDataURL();
+
+            let action = baseUrl + 'UpdateUserStamp';
+            var datasend = {
+                UserID: @currentUser.UserID,
+                StampBase64: dataUrl
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    toastr.success(response.msg, "Success");
+                }
+                else {
+                    toastr.error(response.msg, "Warning");
+                }
+            });
         }
 
     </script>

@@ -33,11 +33,17 @@ namespace MMCV_DAL.User
             IData objIData = this.CreateIData();
             try
             {
-                string query = $@"SELECT u.*, d.DepartmentName, p.PositionName 
-FROM [User] u
-LEFT JOIN Department d ON d.DepartmentID = u.DepartmentID
-LEFT JOIN Position p ON p.PositionID = u.PositionID
-WHERE u.[Username] = '{user.Username}' AND u.[Password] = '{user.Password}'";
+                string query = $@"SELECT u.*, d.DepartmentName, p.PositionName, r.RoleName
+                    FROM [User] u
+                    LEFT JOIN Department d ON d.DepartmentID = u.DepartmentID
+                    LEFT JOIN Position p ON p.PositionID = u.PositionID
+                    LEFT JOIN Role r ON r.RoleID = u.RoleID
+                    WHERE u.[Username] = '{user.Username}' AND u.[Password] = '{user.Password}'";
+
+                //string query = $@"SELECT u.*, d.DepartmentName, p.PositionName, r.RoleName
+                //    FROM [User] u, Department d, Position p, Role r
+                //    WHERE u.[Username] = '{user.Username}' AND u.[Password] = '{user.Password}'";
+
                 BeginTransactionIfAny(objIData);
                 var reader = objIData.ExecQueryToDataReader(query);
                 var list = ConvertToListObject<UserBO>(reader);
@@ -188,8 +194,8 @@ LEFT JOIN Position p ON p.PositionID = u.PositionID";
             IData objIData = this.CreateIData();
             try
             {
-                string query = $"INSERT INTO [User](Username, Password, Fullname, Email, EmployeeID, DepartmentID, PositionID) " +
-                    $"VALUES ('{us.Username}', '123456', N'{us.Fullname}', '{us.Email}', '{us.EmployeeID}', {us.DepartmentID}, {us.PositionID})" +
+                string query = $"INSERT INTO [User](Username, Password, Fullname, Email, EmployeeID, DepartmentID, PositionID, RoleID) " +
+                    $"VALUES ('{us.Username}', '123456', N'{us.Fullname}', '{us.Email}', '{us.EmployeeID}', {us.DepartmentID}, {us.PositionID}, {us.RoleID})" +
                     $";DECLARE @Id INT = SCOPE_IDENTITY(); SELECT * FROM [User] WHERE UserID = @Id";
                 BeginTransactionIfAny(objIData);
                 var reader = objIData.ExecQueryToDataReader(query);

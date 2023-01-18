@@ -64,6 +64,9 @@
                     <li class="nav-item">
                         <a class="nav-link" data-toggle="tab" href="#roles" role="tab" aria-controls="" aria-selected="false"><strong>Roles</strong></a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#permission" role="tab" aria-controls="" aria-selected="false"><strong>Permission</strong></a>
+                    </li>
                 </ul>
                 <div class="tab-content pt-2">
                     <div class="tab-pane fade show active" id="user-information" role="tabpanel" aria-labelledby="">
@@ -105,6 +108,18 @@
                         </div>
                     </div>
                     <div class="tab-pane fade" id="roles" role="tabpanel" aria-labelledby="">
+                        <div class="d-flex">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input ckbRole" name="ckbRole" id="ckbAdmin" value="1">
+                                <label class="custom-control-label" for="ckbAdmin">Admin</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input ckbRole" name="ckbRole" checked id="ckbUser" value="2">
+                                <label class="custom-control-label" for="ckbUser">User</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="permission" role="tabpanel" aria-labelledby="">
                         <div class="tree-container">
                         </div>
                     </div>
@@ -128,41 +143,65 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
             </div>
             <div class="" style="background-color: #28a745; height: 2px"></div>
-            <div class="modal-body">
-                <input type="hidden" id="txtUUserID" value="" />
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Username <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtUUsername" autocomplete="off" disabled />
-                    </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Fullname <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtUFullname" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Email <span class="text-danger">*</span></strong>
-                        <input type="email" class="form-control" id="txtUEmail" autocomplete="off" />
-                    </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Employee ID <span class="text-danger">*</span></strong>
-                        <input type="text" class="form-control" id="txtUEmployeeID" autocomplete="off" />
-                    </div>
-                </div>
-                <div class="form-row col-md-12 p-0 m-0 mb-3">
-                    <div class="col-md-6 col-sm-12 pl-0 pr-1">
-                        <strong>Department</strong>
-                        <div class="">
-                            <select id="txtUDept" class="form-control ddr-department">
-                            </select>
+            <div class="modal-body modal-scrollable">
+                <ul class="nav nav-tabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#user-information-update" role="tab" aria-controls="" aria-selected="true"><strong>User information</strong></a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#roles-update" role="tab" aria-controls="" aria-selected="false"><strong>Roles</strong></a>
+                    </li>
+                </ul>
+                <div class="tab-content pt-2">
+                    <div class="tab-pane fade show active" id="user-information-update" role="tabpanel" aria-labelledby="">
+                        <input type="hidden" id="txtUUserID" value="" />
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Username <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtUUsername" autocomplete="off" disabled />
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Fullname <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtUFullname" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Email <span class="text-danger">*</span></strong>
+                                <input type="email" class="form-control" id="txtUEmail" autocomplete="off" />
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Employee ID <span class="text-danger">*</span></strong>
+                                <input type="text" class="form-control" id="txtUEmployeeID" autocomplete="off" />
+                            </div>
+                        </div>
+                        <div class="form-row col-md-12 p-0 m-0 mb-3">
+                            <div class="col-md-6 col-sm-12 pl-0 pr-1">
+                                <strong>Department</strong>
+                                <div class="">
+                                    <select id="txtUDept" class="form-control ddr-department">
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-12 pl-1 pr-0">
+                                <strong>Position</strong>
+                                <div class="">
+                                    <select id="txtUPosition" class="form-control ddr-position">
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-6 col-sm-12 pl-1 pr-0">
-                        <strong>Position</strong>
-                        <div class="">
-                            <select id="txtUPosition" class="form-control ddr-position">
-                            </select>
+                    <div class="tab-pane fade" id="roles-update" role="tabpanel" aria-labelledby="">
+                        <div class="d-flex">
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input ckbRole-update" name="ckbRole-update" id="ckbAdmin-update" value="1">
+                                <label class="custom-control-label" for="ckbAdmin-update">Admin</label>
+                            </div>
+                            <div class="custom-control custom-checkbox">
+                                <input type="checkbox" class="custom-control-input ckbRole-update" name="ckbRole-update" id="ckbUser-update" value="2">
+                                <label class="custom-control-label" for="ckbUser-update">User</label>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -182,6 +221,14 @@
          * Variables
          * */
         var baseUrl = "/User/";
+        const User_Role = [
+            {
+                id: 1, value: "Admin"
+            },
+            {
+                id: 2, value: "User"
+            }
+        ];
 
         /*
          * Methods
@@ -262,6 +309,7 @@
             let email = $("#txtAEmail");
             let dept = $("#txtADept");
             let position = $("#txtAPosition");
+            let role = $('input[name=ckbRole]:checked').val();
 
             if (!CheckNullOrEmpty(username, "Username can not be empty or null"))
                 return false;
@@ -270,7 +318,7 @@
             if (!CheckNullOrEmpty(email, "Email can not be empty or null"))
                 return false;
             if (!validation.isEmailAddress(email.val())) {
-                toastr.errpr("Email is wrong format");
+                toastr.error("Email is wrong format");
                 return false;
             }
             if (!CheckNullOrEmpty(employeeId, "EmployeeID can not be empty or null"))
@@ -283,7 +331,8 @@
                 Email: email.val(),
                 EmployeeID: employeeId.val(),
                 DepartmentID: dept.val(),
-                PositionID: position.val()
+                PositionID: position.val(),
+                RoleID: role
             };
             LoadingShow();
             PostDataAjax(action, datasend, function (response) {
@@ -306,6 +355,7 @@
             let email = $("#txtUEmail");
             let dept = $("#txtUDept");
             let position = $("#txtUPosition");
+            let role = $('input[name=ckbRole-update]:checked').val();
 
             if (!CheckNullOrEmpty(fullname, "Fullname can not be empty or null"))
                 return false;
@@ -325,7 +375,8 @@
                 Email: email.val(),
                 EmployeeID: employeeId.val(),
                 DepartmentID: dept.val(),
-                PositionID: position.val()
+                PositionID: position.val(),
+                RoleID: role
             };
             LoadingShow();
             PostDataAjax(action, datasend, function (response) {
@@ -420,6 +471,15 @@
                     $("#txtUFullname").val(user.Fullname);
                     $("#txtUDept").val(user.DepartmentID);
                     $("#txtUPosition").val(user.PositionID);
+
+                    $('.ckbRole-update').each((index, ele) => {
+                        if (ele.value == user.RoleID) {
+                            $(ele).prop('checked', true); 
+                        }
+                        else {
+                            $(ele).prop('checked', false); 
+                        }
+                    })
                 }
                 else {
                     toastr.error(response.msg, "Warning");
@@ -628,6 +688,33 @@
                 console.log(this.values);
             }
         })
+
+        $(".ckbRole").change(function () {
+            //Getting status before unchecking all
+            var status = $(this).prop("checked");
+
+            $(".ckbRole").prop('checked', false);
+            $(this).prop('checked', true);
+
+            //false means checkbox was checked and became unchecked on change event, so let it stay unchecked
+            if (status === false) {
+                $(this).prop('checked', false);
+            }
+        });
+
+        $(".ckbRole-update").change(function () {
+            //Getting status before unchecking all
+            var status = $(this).prop("checked");
+
+            $(".ckbRole-update").prop('checked', false);
+            $(this).prop('checked', true);
+
+            //false means checkbox was checked and became unchecked on change event, so let it stay unchecked
+            if (status === false) {
+                $(this).prop('checked', false);
+            }
+        });
+
     </script>
 }
 

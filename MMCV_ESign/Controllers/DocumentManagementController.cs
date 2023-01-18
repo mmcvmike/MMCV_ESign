@@ -26,7 +26,6 @@ namespace MMCV_ESign.Controllers
         // GET: DocumentManagement
         private string CDN_Source_File = ConfigurationManager.AppSettings["CDN_Source_File"];
         private string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
-        private UserBO currentUser = UserBO.Current.CurrentUser();
 
         public ActionResult DocumentManagement()
         {

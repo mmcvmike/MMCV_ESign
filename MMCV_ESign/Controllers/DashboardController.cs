@@ -9,9 +9,8 @@ using System.Web.Mvc;
 
 namespace MMCV_ESign.Controllers
 {
-    public class DashboardController : Controller
+    public class DashboardController : BaseController
     {
-        private UserBO currentUser = UserBO.Current.CurrentUser();
         // GET: Dashboard
         public ActionResult Dashboard()
         {

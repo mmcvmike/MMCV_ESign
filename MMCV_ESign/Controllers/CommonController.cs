@@ -75,5 +75,26 @@ namespace MMCV_ESign.Controllers
                 return Json(new { rs = false, msg = "Error get position" });
             }
         }
+
+        public ActionResult GetMenu()
+        {
+            try
+            {
+                if (CacheHelper.Get(CacheKeyHelper.Menu_CacheKey) == null)
+                {
+                    CommonBLL cBLL = new CommonBLL();
+                    var temp = cBLL.GetMenu();
+                    CacheHelper.Set(CacheKeyHelper.Menu_CacheKey, temp);
+                }
+                List<MenuBO> listMenu = (List<MenuBO>)CacheHelper.Get(CacheKeyHelper.Menu_CacheKey);
+
+                return Json(new { rs = true, msg = "", data = listMenu }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "Common");
+                return Json(new { rs = false, msg = "Error get menu" });
+            }
+        }
     }
 }

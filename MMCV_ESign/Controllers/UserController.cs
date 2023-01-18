@@ -1,23 +1,18 @@
-﻿using MMCV_BLL.Document;
-using MMCV_BLL.User;
+﻿using MMCV_BLL.User;
 using MMCV_Common;
-using MMCV_Model.Document;
 using MMCV_Model.User;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
-using System.Web;
 using System.Web.Mvc;
 
 namespace MMCV_ESign.Controllers
 {
-    public class UserController : Controller
+    public class UserController : BaseController
     {
         // GET: Account
         private string sessionUser = ConfigurationManager.AppSettings["SessionUser"];
-        private UserBO currentUser = UserBO.Current.CurrentUser();
         
         [HttpGet]
         public ActionResult Login()
@@ -172,6 +167,10 @@ namespace MMCV_ESign.Controllers
 
         public ActionResult UserManagement()
         {
+            if (currentUser.RoleName != "Admin")
+            {
+                return View("Error", new { Message = "You do not have permission to access this page!" });
+            }
             return View();
         }
 

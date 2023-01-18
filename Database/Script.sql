@@ -58,6 +58,7 @@ create table [User](
 	EmployeeID varchar(15),
 	DepartmentID int,
 	PositionID int,
+	[RoleID] int,
 	StampBase64 text,
 	Active int default(1), -- 1: Active, 0: Inactive
 )
@@ -96,11 +97,11 @@ create table UserPermission(
 
 go
 
-create table UserRole(
-	ID int identity primary key,
-	UserID int,
-	RoleID int
-)
+--create table UserRole(
+--	ID int identity primary key,
+--	UserID int,
+--	RoleID int
+--)
 
 go
 
@@ -109,6 +110,7 @@ create table Menu(
 	MenuName nvarchar(50),
 	MenuParent int,
 	MenuIndex int,
+	[Url] nvarchar(100),
 	Active int default(1), -- 1: Active, 0: Inactive
 )
 
@@ -117,6 +119,14 @@ go
 create table UserMenu(
 	ID int identity primary key,
 	UserID int,
+	MenuID int
+)
+
+go
+
+create table RoleMenu(
+	ID int identity primary key,
+	RoleID int,
 	MenuID int
 )
 
@@ -142,9 +152,9 @@ create table Department(
 go
 
 create table Position(
-	PositionID int identity primary key,
+	PositionID INT IDENTITY PRIMARY KEY,
 	PositionName nvarchar(100) not null,
-	Active int default(1), -- 1: Active, 0: Inactive
+	Active INT DEFAULT(1), -- 1: Active, 0: Inactive
 )
 
 go
@@ -173,7 +183,7 @@ AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
-	SELECT d.*, ds.[Status] as SignerStatus
+	SELECT d.*, ds.[Status] AS SignerStatus
 	FROM Document d
 	JOIN DocumentSign ds ON ds.DocumentID = d.DocumentID
 	WHERE ds.Email = @Signer
@@ -230,36 +240,36 @@ END
 go
 
 CREATE PROCEDURE USP_Dashboard_Count
-	@Email nvarchar(50)
+	@Email NVARCHAR(50)
 AS
 BEGIN
 	-- SET NOCOUNT ON added to prevent extra result sets from
 	-- interfering with SELECT statements.
 	SET NOCOUNT ON;
 
-    declare @meSign int = 0;
-	declare @sent int = 0;
-	declare @completed int = 0;
+    DECLARE @meSign INT = 0;
+	DECLARE @sent INT = 0;
+	DECLARE @completed INT = 0;
 
-	SELECT @meSign = count(1)
+	SELECT @meSign = COUNT(1)
 	FROM Document d
 	JOIN DocumentSign ds ON ds.DocumentID = d.DocumentID
 	WHERE ds.Email = @Email
 	AND d.[Status] IN (0, 1);
 
-	SELECT @sent = count(1)
+	SELECT @sent = COUNT(1)
 	FROM Document d
 	WHERE d.Issuer = @Email
 	AND d.[Status] != 4;
 
-	SELECT @completed = count(1)
+	SELECT @completed = COUNT(1)
 	FROM Document d
 	JOIN DocumentSign ds ON ds.DocumentID = d.DocumentID
 	WHERE ds.Email = @Email
 	AND d.[Status] = 1 
 	AND ds.[Status] = 1;
 
-	SELECT @meSign as MeSign, @sent as Sent, @completed as Completed;
+	SELECT @meSign AS MeSign, @sent AS [Sent], @completed AS Completed;
 
 END
 
@@ -279,8 +289,8 @@ values ('Other', 'Other');
 
 go
 
-insert into [Role](RoleName) values ('Admin');
-insert into [Role](RoleName) values ('User');
+insert into [Role](RoleName) values ('Admin'); -- RoleId= 1
+insert into [Role](RoleName) values ('User');-- RoleId= 2
 
 go
 
@@ -289,15 +299,27 @@ insert into Permission(PermissionName) values ('');
 
 go
 
-insert into Menu(MenuName, MenuIndex) values ('Dashboard', 1);
-insert into Menu(MenuName, MenuIndex) values ('Document Management', 2);
-insert into Menu(MenuName, MenuIndex) values ('Account Information', 3);
-insert into Menu(MenuName, MenuIndex) values ('User Management', 4);
+insert into Menu(MenuName, MenuIndex, [Url]) values ('Dashboard', 1, '/Dashboard/Dashboard');
+insert into Menu(MenuName, MenuIndex, [Url]) values ('Document Management', 2, '/DocumentManagement/DocumentManagement');
+insert into Menu(MenuName, MenuIndex, [Url]) values ('Account Information', 3, '/User/UserInfo');
+insert into Menu(MenuName, MenuIndex, [Url]) values ('User Management', 4, '/User/UserManagement');
 
 go
 
-insert into UserMenu (MenuID, UserID) values (1, 1);
-insert into UserMenu (MenuID, UserID) values (1, 2);
-insert into UserMenu (MenuID, UserID) values (1, 3);
-insert into UserMenu (MenuID, UserID) values (1, 4);
+insert into UserMenu (UserID, MenuID) values (1, 1);
+insert into UserMenu (UserID, MenuID) values (1, 2);
+insert into UserMenu (UserID, MenuID) values (1, 3);
+insert into UserMenu (UserID, MenuID) values (1, 4);
 
+go
+
+insert into RoleMenu (RoleID, MenuID) values (1, 1);
+insert into RoleMenu (RoleID, MenuID) values (1, 2);
+insert into RoleMenu (RoleID, MenuID) values (1, 3);
+insert into RoleMenu (RoleID, MenuID) values (1, 4);
+
+insert into RoleMenu (RoleID, MenuID) values (2, 1);
+insert into RoleMenu (RoleID, MenuID) values (2, 2);
+insert into RoleMenu (RoleID, MenuID) values (2, 3);
+
+go

@@ -38,6 +38,7 @@ namespace MMCV_Model.User
         public string Email { get; set; }
         public int DepartmentID { get; set; }
         public int PositionID { get; set; }
+        public int RoleID { get; set; }
         public string EmployeeID { get; set; }
         public string Password { get; set; }
         public int Active { get; set; }
@@ -46,6 +47,7 @@ namespace MMCV_Model.User
         public UserSignatureBO DefaultSignature { get; set; }
         public string DepartmentName { get; set; }
         public string PositionName { get; set; }
+        public string RoleName { get; set; }
         public string StampBase64 { get; set; }
     }
 

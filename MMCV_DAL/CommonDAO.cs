@@ -70,6 +70,30 @@ namespace MMCV_DAL
             }
         }
 
+        public List<MenuBO> GetMenu()
+        {
+            IData objIData = this.CreateIData();
+            try
+            {
+                string query = "SELECT * FROM Menu";
+                BeginTransactionIfAny(objIData);
+                var reader = objIData.ExecQueryToDataReader(query);
+                var list = ConvertToListObject<MenuBO>(reader);
+                reader.Close();
+                CommitTransactionIfAny(objIData);
+                return list;
+            }
+            catch (Exception objEx)
+            {
+                RollBackTransactionIfAny(objIData);
+                throw objEx;
+            }
+            finally
+            {
+                this.DisconnectIData(objIData);
+            }
+        }
+
         #endregion
     }
 }

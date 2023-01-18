@@ -76,7 +76,11 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <input type="file" id="imageLoader" name="imageLoader" accept="image/*" />
+                                <div class="custom-file w-50">
+                                    <input type="file" class="custom-file-input" id="imageLoader" accept="image/*">
+                                    <label class="custom-file-label" for="imageLoader" data-browse="Select upload image">Select upload image</label>
+                                </div>
+                                @*<input type="file" id="imageLoader" name="imageLoader" accept="image/*" />*@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">

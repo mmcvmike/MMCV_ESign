@@ -61,6 +61,21 @@ namespace MMCV_BLL
             }
         }
 
+        public List<MenuBO> GetMenu()
+        {
+            try
+            {
+                CommonDAO cDAO = new CommonDAO();
+                return cDAO.GetMenu();
+            }
+            catch (Exception objEx)
+            {
+                this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(objEx, "");
+                objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, objEx, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                return null;
+            }
+        }
+
         #endregion
     }
 }

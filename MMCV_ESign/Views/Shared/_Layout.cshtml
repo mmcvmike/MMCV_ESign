@@ -1,5 +1,9 @@
-﻿@{ 
+﻿@using MMCV_Model.Common;
+@using MMCV_Common.Helper;
+@{ 
     var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
+    var menu = (List<MenuBO>)CacheHelper.Get(CacheKeyHelper.Menu_CacheKey);
+    var isAdmin = currentUser.RoleName != "Admin" ? "d-none" : "";
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -316,6 +320,7 @@
                         </div>
                     </div>
                     <ul class="menu nav">
+
                         <li class="nav-item">
                             <a href="/Dashboard/Dashboard">
                                 <i class="fas fa-home"></i>
@@ -334,7 +339,7 @@
                                 <p>Account Information</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item @isAdmin">
                             <a href="/User/UserManagement">
                                 <i class="fas fa-users"></i>
                                 <p>User Management</p>

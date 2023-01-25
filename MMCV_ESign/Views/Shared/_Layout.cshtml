@@ -186,6 +186,61 @@
             font-size: 20px;
             color: #33b837;
         }
+
+        /*alert dialog*/
+        #modalContainer {
+            background-color: rgba(0, 0, 0, 0.3);
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0px;
+            left: 0px;
+            z-index: 10000;
+        }
+
+        #alertBox {
+            position: relative;
+            width: 400px;
+            min-height: 100px;
+            margin-top: 50px;
+            background-color: #fff;
+            -webkit-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
+            -moz-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
+            box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
+        }
+
+        #modalContainer > #alertBox {
+            position: fixed;
+        }
+
+        #alertBox h1 {
+            margin: 0;
+            font: 16px verdana,arial;
+            background-color: #2CA01C;
+            color: #FFF;
+            text-shadow: none;
+            padding: 10px 10px;
+        }
+
+        #alertBox p {
+            font: 16px verdana,arial;
+            min-height: 50px;
+            padding: 5px 10px;
+            padding-top: 15px;
+        }
+
+        #alertBox #closeBtnAlert {
+            margin: 0 auto;
+            display: block;
+            width: 100px;
+            margin-bottom: 15px;
+        }
+
+        #cancelBtnAlert {
+            margin-right: 15px;
+        }
+
+        /*end alert*/
     </style>
 </head>
 <body>
@@ -373,6 +428,12 @@
     <script>
 
         $(document).ready(function () {
+            elapseMenu();
+            checkSession();
+            setInterval(checkSession, 40 * 1000);
+        })
+
+        function elapseMenu() {
             // Get current page URL
             var url = window.location.href;
             // remove # from URL
@@ -406,7 +467,105 @@
                     }
                 }
             });
-        })
+        }
+
+        function checkSession() {
+            let action = '/Base/CheckSession';
+            var datasend = {
+                
+            };
+
+            PostDataAjax(action, datasend, function (response) {
+                if (response.rs) {
+                     
+                }
+                else {
+                     
+                }
+            });
+        }
+
+        //Customize alert
+        var ALERT_TITLE = 'NOTIFICATION';
+        var ALERT_BUTTON_TEXT = 'Yes';
+        var CONFIRM_OK_BUTTON_TEXT = 'OK';
+        var CONFIRM_CC_BUTTON_TEXT = 'Cancel';
+        var removeCustomAlert = function () {
+            document.getElementsByTagName('body')[0].removeChild(document.getElementById('modalContainer'));
+        }
+        if (document.getElementById) {
+            window.alert = function (txt) {
+                createCustomAlert(txt, null);
+            }
+            window.confirm = function (txt, title, button1, button2, callback) {
+                createCustomAlert(txt, title, button1, button2, callback);
+            }
+        }
+
+        function createCustomAlert(txt, title, button1, button2, callback) {
+            if (!title)
+                title = ALERT_TITLE;
+            if (!button1)
+                button1 = CONFIRM_CC_BUTTON_TEXT;
+            if (!button2)
+                button2 = CONFIRM_OK_BUTTON_TEXT;
+            var d = document;
+
+            if (d.getElementById('modalContainer')) return;
+
+            var mObj = d.getElementsByTagName('body')[0].appendChild(d.createElement('div'));
+            mObj.id = 'modalContainer';
+            mObj.style.height = d.documentElement.scrollHeight + 'px';
+
+            var alertObj = mObj.appendChild(d.createElement('div'));
+            alertObj.id = 'alertBox';
+            if (d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + 'px';
+            //alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + 'px';
+            alertObj.style.left = 'calc(45% - 100px)';
+            alertObj.style.visiblity = 'visible';
+
+            var h1 = alertObj.appendChild(d.createElement('h1'));
+            h1.appendChild(d.createTextNode(title));
+
+            var msg = alertObj.appendChild(d.createElement('p'));
+            //msg.appendChild(d.createTextNode(txt));
+            var find = '\n';
+            var re = new RegExp(find, 'g');
+
+            //txt = txt.replace(/(?:\\n)/g, '<br>');
+
+            msg.innerHTML = txt;
+
+
+
+            if (callback) {
+                var div = alertObj.appendChild(d.createElement('div'));
+                div.className = 'btnGroup';
+
+                var btn2 = div.appendChild(d.createElement('button'));
+                btn2.id = 'cancelBtnAlert';
+                btn2.className = 'btn btn-light';
+                btn2.appendChild(d.createTextNode(button1));
+                btn2.href = '#';
+                btn2.onclick = function () { removeCustomAlert(); callback(false); return false; }
+
+                var btn = div.appendChild(d.createElement('button'));
+                //btn.id = 'closeBtnAlert';
+                btn.className = 'btn btn-success';
+                btn.appendChild(d.createTextNode(button2));
+                btn.href = '#';
+                btn.onclick = function () { removeCustomAlert(); callback(true); return false; }
+            } else {
+                var btn = alertObj.appendChild(d.createElement('button'));
+                btn.id = 'closeBtnAlert';
+                btn.className = 'btn btn-success';
+                btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
+                btn.href = '#';
+                btn.onclick = function () { removeCustomAlert(); return false; }
+            }
+
+            alertObj.style.display = 'block';
+        }
 
     </script>
 

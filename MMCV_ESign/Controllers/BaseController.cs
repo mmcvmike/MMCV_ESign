@@ -19,6 +19,11 @@ namespace MMCV_ESign.Controllers
             GetMenu();
         }
 
+        public ActionResult CheckSession()
+        {
+            return Json(new { rs = true, msg = "session alive" }, JsonRequestBehavior.AllowGet );
+        }
+
         private void GetMenu()
         {
             try

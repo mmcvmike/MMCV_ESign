@@ -221,7 +221,7 @@ LEFT JOIN Position p ON p.PositionID = u.PositionID";
             try
             {
                 string query = $"UPDATE [User] " +
-                    $"SET Email = '{us.Email}', Fullname = N'{us.Fullname}', EmployeeID = '{us.EmployeeID}', DepartmentID = {us.DepartmentID}, PositionID = {us.PositionID} " +
+                    $"SET Email = '{us.Email}', Fullname = N'{us.Fullname}', EmployeeID = '{us.EmployeeID}', DepartmentID = {us.DepartmentID}, PositionID = {us.PositionID}, RoleID = {us.RoleID} " +
                     $"WHERE UserID = {us.UserID}";
                 BeginTransactionIfAny(objIData);
                 objIData.ExecUpdate(query);

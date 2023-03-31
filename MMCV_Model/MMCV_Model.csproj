@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Common\DepartmentBO.cs" />
     <Compile Include="Common\EmailBO.cs" />
+    <Compile Include="Common\MenuBO.cs" />
     <Compile Include="Common\PositionBO.cs" />
     <Compile Include="DocumentSign\DocumentSignBO.cs" />
     <Compile Include="DocumentType\DocumentTypeBO.cs" />

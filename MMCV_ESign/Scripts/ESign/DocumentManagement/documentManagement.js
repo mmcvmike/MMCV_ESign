@@ -389,7 +389,7 @@ function quickView(id) {
             let base64 = data.Base64File;
 
             $("#quickViewModal").modal("show");
-            $("#qvFrame").attr("src", mimeType + base64);
+            $("#qvFrame").attr("src", mimeType + base64);   
             let iframe = $('iframe');
             if (iframe.length) {
                 $(iframe).on('load', function () {

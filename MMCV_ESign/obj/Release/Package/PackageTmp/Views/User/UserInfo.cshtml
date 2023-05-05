@@ -6,7 +6,7 @@
     <style>
         #sig-canvas {
             border: 2px dotted #CCCCCC;
-            border-radius: 15px;
+            border-radius: 5px;
             cursor: crosshair;
             height: 160px;
             max-width: 618px;
@@ -76,7 +76,12 @@
                                 </div>
                             </div>
                             <div class="mb-2">
-                                <input type="file" id="imageLoader" name="imageLoader" accept="image/*" />
+                                <div class="custom-file w-50">
+                                    <input type="file" class="custom-file-input" id="imageLoader" accept="image/*">
+                                    <label class="custom-file-label" for="imageLoader" data-browse="Select upload image">Upload image as signature or stamp</label>
+                                </div>
+                                <button class="btn btn-primary btn-sm mt-3" onclick="updateUserStamp()">Update Stamp</button>
+                                @*<input type="file" id="imageLoader" name="imageLoader" accept="image/*" />*@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
@@ -89,7 +94,6 @@
                                 <div class="col-md-12">
                                     <button class="btn btn-success btn-sm" id="sig-submitBtn" onclick="addSignature()">Submit Signature</button>
                                     <button class="btn btn-light btn-sm" id="sig-clearBtn" onclick="clearSignature()">Clear Signature</button>
-                                    <button class="btn btn-primary btn-sm" onclick="updateUserStamp()">Update Stamp</button>
                                 </div>
                             </div>
                         </div>
@@ -253,6 +257,7 @@
                 if (response.rs) {
                     let data = response.data;
                     listSignatures = data;
+                    $("#signature-table-body").html('');
                     listSignatures.forEach((ele, index) => {
                         appendSignature(ele);
                     })
@@ -263,6 +268,7 @@
             });
         }
 
+        var userStamp = '@currentUser.StampBase64';
         function appendSignature(data) {
             let signatureTable = $("#signature-table-body");
             let html = `
@@ -272,7 +278,7 @@
                             <img src='${data.Base64Signature}' width='100px' height='40x' />
                         </td>
                         <td>
-                            <img src='@currentUser.StampBase64' width='100px' height='40x' />
+                            <img src='${userStamp}' width='100px' height='40x' />
                         </td>
                         <td>
                             <div class="form-check">
@@ -392,6 +398,8 @@
                 LoadingHide();
                 if (response.rs) {
                     toastr.success(response.msg, "Success");
+                    userStamp = dataUrl;
+                    getSignatures();
                 }
                 else {
                     toastr.error(response.msg, "Warning");

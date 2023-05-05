@@ -24,6 +24,11 @@
             line-height: 25px;
         }
 
+         .dataTable > thead > tr > th[class*="sort"]:before,
+        .dataTable > thead > tr > th[class*="sort"]:after {
+            /*content: "" !important;*/
+        }
+
     </style>
 }
 
@@ -66,7 +71,7 @@
         <div class="tab-pane fade" id="sent" role="tabpanel" aria-labelledby="sent-tab">
             <div class="card">
                 <div class="card-body p-0 pt-2 pb-2">
-                    <table id="sentDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
+                    <table id="sentDocumentDT" class="table table-bordered table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
                                 <th>ID</th>

@@ -1,13 +1,8 @@
-﻿using MMCV_Model.Document;
-using MMCV_Model.DocumentSign;
-using MMCV_Model.DocumentType;
-using MMCV_Model.User;
+﻿using MMCV_Model.User;
 using SAB.Library.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMCV_DAL.User
 {

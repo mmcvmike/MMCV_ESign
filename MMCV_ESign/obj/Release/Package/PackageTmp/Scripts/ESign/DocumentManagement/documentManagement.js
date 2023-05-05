@@ -125,9 +125,9 @@ function getNameOfSignerStatus(data) {
     let declined = "<span class='badge badge-danger'>Declined</span>";
     let initialSign = "<span class='badge badge-ligth'>No action</span>";
 
-    nameOfStatus = data == 0 ? initialSign : (data == 1 ? signed : declined);
+    nameOfStatusSign = data == 0 ? initialSign : (data == 1 ? signed : declined);
 
-    return nameOfStatus;
+    return nameOfStatusSign;
 }
 
 function bindMeSignDocumentDataTable(data) {
@@ -137,12 +137,10 @@ function bindMeSignDocumentDataTable(data) {
         "pageLength": 10,
         "data": data,
         "filter": true, // this is for disable filter (search box)
-        "orderMulti": false, // for disable multiple column at once
-        "sort": false,
         "columns": [
-            { "data": "DocumentID", "name": "DocumentID", "autoWidth": false },
-            { "data": "ReferenceCode", "name": "ReferenceCode", "autoWidth": false },
-            { "data": "Title", "name": "Title", "autoWidth": false },
+            { "data": "DocumentID", "autoWidth": false },
+            { "data": "ReferenceCode", "autoWidth": false },
+            { "data": "Title", "autoWidth": false },
             {
                 data: 'Status',
                 render: function (data, type, row) {                  
@@ -162,7 +160,7 @@ function bindMeSignDocumentDataTable(data) {
                 },
             },
             {
-                data: 'Action',
+                data: null,
                 render: function (data, type, row) {
                     let html = `
                                 <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
@@ -183,24 +181,28 @@ function bindMeSignDocumentDataTable(data) {
                 'next': '<span class="la flaticon-right-arrow"></span>'
             },
         },
-        scrollX: true,
+        "scrollY": "530px",
+        "scrollX": true,
+        //"fixedColumns": {
+        //    left: 1,
+        //},
     });
 }
 
 function bindSentDocumentDataTable(data) {
     $("#sentDocumentDT").DataTable({
-        "dom": '<"top"i>rt<"bottom"flp><"clear">',
+        /*"dom": '<"top"i>rt<"bottom"flp><"clear">',*/
         "destroy": true,
         "lengthChange": false,
         "pageLength": 10,
         "data": data,
         "filter": false, // this is for disable filter (search box)
         "orderMulti": false, // for disable multiple column at once
-        "sort": false,
+        "sort": true,
         "columns": [
-            { "data": "DocumentID", "name": "DocumentID", "autoWidth": false },
-            { "data": "ReferenceCode", "name": "ReferenceCode", "autoWidth": false },
-            { "data": "Title", "name": "Title", "autoWidth": false },
+            { "data": "DocumentID", "autoWidth": false },
+            { "data": "ReferenceCode", "autoWidth": false },
+            { "data": "Title", "autoWidth": false },
             {
                 data: 'Status',
                 render: function (data, type, row) {
@@ -214,7 +216,7 @@ function bindSentDocumentDataTable(data) {
                 },
             },
             {
-                data: 'Action',
+                data: null,
                 render: function (data, type, row) {
                     let html = `
                                 <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
@@ -235,7 +237,11 @@ function bindSentDocumentDataTable(data) {
                 'next': '<span class="la flaticon-right-arrow"></span>'
             },
         },
-        scrollX: true,
+        "scrollY": "530px",
+        "scrollX": true,
+        //"fixedColumns": {
+        //    left: 1,
+        //},
     });
 }
 
@@ -249,9 +255,9 @@ function bindDraftDocumentDataTable(data) {
         "orderMulti": false, // for disable multiple column at once
         "sort": false,
         "columns": [
-            { "data": "DocumentID", "name": "DocumentID", "autoWidth": false },
-            { "data": "ReferenceCode", "name": "ReferenceCode", "autoWidth": false },
-            { "data": "Title", "name": "Title", "autoWidth": false },
+            { "data": "DocumentID", "autoWidth": false },
+            { "data": "ReferenceCode", "autoWidth": false },
+            { "data": "Title", "autoWidth": false },
             {
                 data: 'Status',
                 render: function (data, type, row) {
@@ -265,7 +271,7 @@ function bindDraftDocumentDataTable(data) {
                 },
             },
             {
-                data: 'Action',
+                data: null,
                 render: function (data, type, row) {
                     let html = `
                                 <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
@@ -286,7 +292,11 @@ function bindDraftDocumentDataTable(data) {
                 'next': '<span class="la flaticon-right-arrow"></span>'
             },
         },
-        scrollX: true,
+        "scrollY": "530px",
+        "scrollX": true,
+        //"fixedColumns": {
+        //    left: 1,
+        //},
     });
 }
 
@@ -300,9 +310,9 @@ function bindCancelDocumentDataTable(data) {
         "orderMulti": false, // for disable multiple column at once
         "sort": false,
         "columns": [
-            { "data": "DocumentID", "name": "DocumentID", "autoWidth": false },
-            { "data": "ReferenceCode", "name": "ReferenceCode", "autoWidth": false },
-            { "data": "Title", "name": "Title", "autoWidth": false },
+            { "data": "DocumentID", "autoWidth": false },
+            { "data": "ReferenceCode", "autoWidth": false },
+            { "data": "Title", "autoWidth": false },
             {
                 data: 'Status',
                 render: function (data, type, row) {
@@ -316,7 +326,7 @@ function bindCancelDocumentDataTable(data) {
                 },
             },
             {
-                data: 'Action',
+                data: null,
                 render: function (data, type, row) {
                     let html = `
                                 <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
@@ -336,7 +346,11 @@ function bindCancelDocumentDataTable(data) {
                 'next': '<span class="la flaticon-right-arrow"></span>'
             },
         },
-        scrollX: true,
+        "scrollY": "530px",
+        "scrollX": true,
+        //"fixedColumns": {
+        //    left: 1,
+        //},
     });
 }
 
@@ -389,7 +403,7 @@ function quickView(id) {
             let base64 = data.Base64File;
 
             $("#quickViewModal").modal("show");
-            $("#qvFrame").attr("src", mimeType + base64);
+            $("#qvFrame").attr("src", mimeType + base64);   
             let iframe = $('iframe');
             if (iframe.length) {
                 $(iframe).on('load', function () {

@@ -247,6 +247,7 @@ namespace MMCV_ESign.Controllers
                 {
                     return Json(new { rs = false, msg = "Error update user's stamp" });
                 }
+                currentUser.StampBase64 = us.StampBase64;
                 return Json(new { rs = true, msg = "Update user's stamp successfully" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)

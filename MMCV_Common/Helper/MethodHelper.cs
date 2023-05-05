@@ -171,42 +171,99 @@ namespace MMCV_Common
             return objResultMessageBO;
         }
 
-        public List<T> DataReaderMapToList<T>(IDataReader dr)
+        //public List<T> DataReaderMapToList<T>(IDataReader dr)
+        //{
+        //    try
+        //    {
+        //        List<T> list = new List<T>();
+        //        T obj = default(T);
+        //        while (dr.Read())
+        //        {
+        //            obj = Activator.CreateInstance<T>();
+        //            foreach (PropertyInfo prop in obj.GetType().GetProperties())
+        //            {
+        //                if (prop.CanWrite)
+        //                {
+        //                    try
+        //                    {
+        //                        if (!object.Equals(dr[prop.Name], DBNull.Value))
+        //                        {
+        //                            //prop.PropertyType.Name == typeof(DateTime).Name
+        //                            prop.SetValue(obj, dr[prop.Name], null);
+        //                        }
+        //                    }
+        //                    catch (Exception)
+        //                    {
+        //                        prop.SetValue(obj, null, null);
+        //                    }
+        //                }
+        //            }
+        //            list.Add(obj);
+        //        }
+        //        return list;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        Console.WriteLine(ex.Message);
+        //        return null;
+        //    }
+        //}
+
+        public List<T> DataReaderMapToList<T>(IDataReader reader)
         {
+            List<T> lstObj = new List<T>();
             try
             {
-                List<T> list = new List<T>();
-                T obj = default(T);
-                while (dr.Read())
+                while (reader.Read())
                 {
-                    obj = Activator.CreateInstance<T>();
-                    foreach (PropertyInfo prop in obj.GetType().GetProperties())
+                    Exception objError = null;
+                    dynamic obj = Activator.CreateInstance(lstObj.GetType().GetGenericArguments()[0]);
+                    for (int i = 0; i < reader.FieldCount; i++)
                     {
-                        if (prop.CanWrite)
+                        if (!Convert.IsDBNull(reader[i]))
                         {
-                            try
+                            dynamic type = obj.GetType().GetProperty(reader.GetName(i));
+
+                            if (type != null)
                             {
-                                if (!object.Equals(dr[prop.Name], DBNull.Value))
+                                //DLL Npgsql mới phân biệt giữa timespan với datetime nên phải trick
+                                if (reader[i].GetType().Name == typeof(TimeSpan).Name
+                                    && (type.PropertyType.Name == typeof(DateTime).Name
+                                    || (type.PropertyType.Name == typeof(Nullable<>).Name
+                                        && type.PropertyType.GenericTypeArguments[0].Name == typeof(DateTime).Name))
+                                    )
                                 {
-                                    //prop.PropertyType.Name == typeof(DateTime).Name
-                                    prop.SetValue(obj, dr[prop.Name], null);
+                                    TimeSpan time = (TimeSpan)reader[i];
+                                    type.SetValue(obj, new DateTime() + time, null);
+
                                 }
-                            }
-                            catch (Exception)
-                            {
-                                prop.SetValue(obj, null, null);
+                                else
+                                {
+                                    try
+                                    {
+                                        type.SetValue(obj, reader[i], null);
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        LogHelper.Instance.WriteLog(ex.Message, "Convert value: " + reader[i] + " to " + type.ToString() + " Class " + obj.ToString(), MethodBase.GetCurrentMethod().Name, "ConvertToObject");
+                                        objError = ex;
+                                    }
+                                }
                             }
                         }
                     }
-                    list.Add(obj);
+
+                    if (objError != null)
+                        throw objError;
+
+                    lstObj.Add(obj);
                 }
-                return list;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return null;
             }
+            return lstObj;
         }
 
         public void ConvertToObject(IDataReader reader, dynamic lstObj)
@@ -221,7 +278,7 @@ namespace MMCV_Common
                     {
                         if (!Convert.IsDBNull(reader[i]))
                         {
-                            dynamic type = obj.GetType().GetProperty(reader.GetName(i).ToUpper());
+                            dynamic type = obj.GetType().GetProperty(reader.GetName(i));
 
                             if (type != null)
                             {

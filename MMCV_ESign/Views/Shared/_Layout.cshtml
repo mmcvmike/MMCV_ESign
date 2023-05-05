@@ -1,6 +1,6 @@
 ﻿@using MMCV_Model.Common;
 @using MMCV_Common.Helper;
-@{ 
+@{
     var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
     var menu = (List<MenuBO>)CacheHelper.Get(CacheKeyHelper.Menu_CacheKey);
     var isAdmin = currentUser.RoleName != "Admin" ? "d-none" : "";
@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="../Content/assets/css/bootstrap.min.css">
     <link href="~/Scripts/libs/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../Content/assets/css/azzara.min.css">
+    <link href="~/Scripts/libs/Datatables/fixed.column.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../Content/assets/css/demo.css">
     @RenderSection("styles", required: false)
 
@@ -58,9 +59,33 @@
     <!-- Azzara JS -->
     <script src="../Content/assets/js/ready.min.js"></script>
     <!-- Common -->
+    <script src="~/Scripts/libs/Datatables/fixed.column.min.js"></script>
+    <script src="~/Scripts/libs/Datatables/pagination.input.js"></script>
+
     <script src="~/Scripts/ESign/common.js"></script>
 
     <style>
+        /* width */
+        ::-webkit-scrollbar {
+            width: 10px;
+            height: 10px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #c1bdbd;
+        }
+
+            /* Handle on hover */
+            ::-webkit-scrollbar-thumb:hover {
+                background: #555;
+            }
+
         .main-header[data-background-color=purple] {
             background: #35cd3a !important;
         }
@@ -126,12 +151,12 @@
             margin-top: 2px;
         }
 
-        .dropdown-item:hover {
-            border: 1px dashed lightgrey;
-            background: lightgrey;
-        }
+            .dropdown-item:hover {
+                border: 1px dashed lightgrey;
+                background: lightgrey;
+            }
 
-        .dataTable > thead > tr > th[class*="sort"]:before,
+        /*.dataTable > thead > tr > th[class*="sort"]:before,
         .dataTable > thead > tr > th[class*="sort"]:after {
             content: "" !important;
         }
@@ -139,7 +164,7 @@
         .dataTable > thead > tr > th[class="sorting"]:before,
         .dataTable > thead > tr > th[class="sorting"]:after {
             line-height: 0px;
-        }
+        }*/
 
         .modal-80 {
             width: 75%;
@@ -263,7 +288,7 @@
                 </button>
                 <button class="topbar-toggler more"><i class="fa fa-bars"></i></button>
                 <div class="navbar-minimize">
-                    <button class="btn btn-minimize btn-rounded">
+                    <button class="btn btn-minimize">
                         <i class="fa fa-bars"></i>
                     </button>
                 </div>
@@ -275,59 +300,59 @@
                     <button class="btn btn-outline-primary bg-white" data-toggle="modal" data-target="#modalAddDocument"><i class="fa fa-plus"></i></button>
                 </div>
                 @*<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
-                    <li class="nav-item dropdown hidden-caret">
-                        <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fa fa-bell"></i>
-                            <span class="notification">3</span>
-                        </a>
-                        <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
-                            <li>
-                                <div class="dropdown-title">You have 3 new notification</div>
-                            </li>
-                            <li>
-                                <div class="notif-center">
-                                    <a href="#">
-                                        <div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                New user registered
-                                            </span>
-                                            <span class="time">5 minutes ago</span>
-                                        </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                Rahmad commented on Admin
-                                            </span>
-                                            <span class="time">12 minutes ago</span>
-                                        </div>
-                                    </a>
-                                    <a href="#">
-                                        <div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
-                                        <div class="notif-content">
-                                            <span class="block">
-                                                Farrah liked Admin
-                                            </span>
-                                            <span class="time">17 minutes ago</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>
-                            <li>
-                                <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>*@
+                        <li class="nav-item dropdown hidden-caret">
+                            <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="fa fa-bell"></i>
+                                <span class="notification">3</span>
+                            </a>
+                            <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
+                                <li>
+                                    <div class="dropdown-title">You have 3 new notification</div>
+                                </li>
+                                <li>
+                                    <div class="notif-center">
+                                        <a href="#">
+                                            <div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
+                                            <div class="notif-content">
+                                                <span class="block">
+                                                    New user registered
+                                                </span>
+                                                <span class="time">5 minutes ago</span>
+                                            </div>
+                                        </a>
+                                        <a href="#">
+                                            <div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
+                                            <div class="notif-content">
+                                                <span class="block">
+                                                    Rahmad commented on Admin
+                                                </span>
+                                                <span class="time">12 minutes ago</span>
+                                            </div>
+                                        </a>
+                                        <a href="#">
+                                            <div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
+                                            <div class="notif-content">
+                                                <span class="block">
+                                                    Farrah liked Admin
+                                                </span>
+                                                <span class="time">17 minutes ago</span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                </li>
+                                <li>
+                                    <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>*@
 
                 <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                     <li class="">
                         <div class="btn-group btn-group-page-header ml-auto">
                             @*<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-user"></i>
-                            </a>*@
+                                    <i class="fa fa-user"></i>
+                                </a>*@
                             <button class="btn btn-light btn-round dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-user-cog"></i>
                             </button>
@@ -364,14 +389,14 @@
                             <div class="clearfix"></div>
 
                             @*<div class="collapse in" id="collapseExample">
-                                <ul class="nav">
-                                    <li>
-                                        <a href="#settings">
-                                            <span class="link-collapse">Settings</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>*@
+                                    <ul class="nav">
+                                        <li>
+                                            <a href="#settings">
+                                                <span class="link-collapse">Settings</span>
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>*@
                         </div>
                     </div>
                     <ul class="menu nav">
@@ -401,11 +426,11 @@
                             </a>
                         </li>
                         @*<li class="nav-item">
-                            <a href="/Template/TemplateManagement">
-                                <i class="fas fa-list-alt"></i>
-                                <p>Template Management</p>
-                            </a>
-                        </li>*@
+                                <a href="/Template/TemplateManagement">
+                                    <i class="fas fa-list-alt"></i>
+                                    <p>Template Management</p>
+                                </a>
+                            </li>*@
                     </ul>
                 </div>
             </div>
@@ -473,15 +498,15 @@
         function checkSession() {
             let action = '/Base/CheckSession';
             var datasend = {
-                
+
             };
 
             PostDataAjax(action, datasend, function (response) {
                 if (response.rs) {
-                     
+
                 }
                 else {
-                     
+
                 }
             });
         }
@@ -572,50 +597,50 @@
 
     <script>
 
-        //$(document).on('mousemove', function (e) {
-        //    var xMouse = e.pageX;
-        //    var yMouse = e.pageY;
-        //    if (Math.random() < 0.1) {
-        //        setTimeout(function () {
-        //            var l = document.createElement("DIV");
-        //            var size = (Math.floor(Math.random() * (30 - 10)) + 10);
-        //            l.style.width = size + "px";
-        //            l.style.height = size + "px";
-        //            l.style.backgroundImage = "url(https://phimbom.net/images/hoaroi.png)";
-        //            var bg_pos = (Math.floor(Math.random() * 4));
-        //            l.style.backgroundPosition = "0px -" + (size * bg_pos) + "px";
-        //            l.style.backgroundSize = size + "px " + 4 * size + "px"
-        //            l.style.position = "absolute";
-        //            l.style.left = (xMouse) + "px";
-        //            l.style.top = (yMouse + 10) + "px";
-        //            l.style.zIndex = 9999;
-        //            l.style.display = 'none';
-        //            document.body.appendChild(l);
-        //            jQuery(l).fadeIn(100);
-        //            var stop = false;
-        //            var hoaroi = function () {
-        //                if (!stop) {
-        //                    setTimeout(function () {
-        //                        window.requestAnimationFrame(hoaroi);
-        //                    }, 20);
-        //                    l.style.top = (parseInt(jQuery(l).css('top'), 10) + 1) + "px";
-        //                    if ((parseInt(jQuery(l).css('top'), 10)) % 10 == 0) {
-        //                        if (Math.random() < 0.5) {
-        //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) + 1) + "px";
-        //                        } else {
-        //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) - 1) + "px";
-        //                        }
-        //                    }
-        //                }
-        //            }
-        //            window.requestAnimationFrame(hoaroi);
-        //            jQuery(l).fadeOut((Math.floor(Math.random() * (2500 - 1000)) + 1000), function () {
-        //                jQuery(l).remove();
-        //                stop = true;
-        //            });
-        //        }, 0);
-        //    }
-        //});
+                    //$(document).on('mousemove', function (e) {
+                    //    var xMouse = e.pageX;
+                    //    var yMouse = e.pageY;
+                    //    if (Math.random() < 0.1) {
+                    //        setTimeout(function () {
+                    //            var l = document.createElement("DIV");
+                    //            var size = (Math.floor(Math.random() * (30 - 10)) + 10);
+                    //            l.style.width = size + "px";
+                    //            l.style.height = size + "px";
+                    //            l.style.backgroundImage = "url(https://phimbom.net/images/hoaroi.png)";
+                    //            var bg_pos = (Math.floor(Math.random() * 4));
+                    //            l.style.backgroundPosition = "0px -" + (size * bg_pos) + "px";
+                    //            l.style.backgroundSize = size + "px " + 4 * size + "px"
+                    //            l.style.position = "absolute";
+                    //            l.style.left = (xMouse) + "px";
+                    //            l.style.top = (yMouse + 10) + "px";
+                    //            l.style.zIndex = 9999;
+                    //            l.style.display = 'none';
+                    //            document.body.appendChild(l);
+                    //            jQuery(l).fadeIn(100);
+                    //            var stop = false;
+                    //            var hoaroi = function () {
+                    //                if (!stop) {
+                    //                    setTimeout(function () {
+                    //                        window.requestAnimationFrame(hoaroi);
+                    //                    }, 20);
+                    //                    l.style.top = (parseInt(jQuery(l).css('top'), 10) + 1) + "px";
+                    //                    if ((parseInt(jQuery(l).css('top'), 10)) % 10 == 0) {
+                    //                        if (Math.random() < 0.5) {
+                    //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) + 1) + "px";
+                    //                        } else {
+                    //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) - 1) + "px";
+                    //                        }
+                    //                    }
+                    //                }
+                    //            }
+                    //            window.requestAnimationFrame(hoaroi);
+                    //            jQuery(l).fadeOut((Math.floor(Math.random() * (2500 - 1000)) + 1000), function () {
+                    //                jQuery(l).remove();
+                    //                stop = true;
+                    //            });
+                    //        }, 0);
+                    //    }
+                    //});
 
     </script>
 

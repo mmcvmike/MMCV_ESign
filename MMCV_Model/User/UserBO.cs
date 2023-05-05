@@ -49,6 +49,13 @@ namespace MMCV_Model.User
         public string PositionName { get; set; }
         public string RoleName { get; set; }
         public string StampBase64 { get; set; }
+        public bool IsAdmin
+        {
+            get
+            {
+                return RoleName == "Admin" ? true : false;
+            }
+        }
     }
 
     public class UserSignatureBO

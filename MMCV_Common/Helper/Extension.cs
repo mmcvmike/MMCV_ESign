@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MMCV_Common.Helper
 {
@@ -65,6 +64,30 @@ namespace MMCV_Common.Helper
                     yield return element;
                 }
             }
+        }
+
+        public static IEnumerable<List<T>> SplitList<T>(this List<T> source, int nSize = 30)
+        {
+            for (int i = 0; i < source.Count; i += nSize)
+            {
+                yield return source.GetRange(i, Math.Min(nSize, source.Count - i));
+            }
+        }
+
+        /// <summary>
+        /// TuyenNV: Just apply where search when field condition is not null or not empty
+        /// Ex: source.WhereIf(str != null, x => x.Field == str)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="source"></param>
+        /// <param name="condition"></param>
+        /// <param name="predicate"></param>
+        /// <returns></returns>
+        public static IQueryable<T> WhereIf<T>(this IQueryable<T> source, bool condition, Expression<Func<T, bool>> predicate)
+        {
+            return condition
+                ? source.Where(predicate)
+                : source;
         }
     }
 }

@@ -5,7 +5,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
 <Project>
   <PropertyGroup>
     <_PublishTargetUrl>D:\NguyenVanTuyen\Working\ESign\MMCV_ESign\MMCV_ESign\bin\app.publish\</_PublishTargetUrl>
-    <History>True|2023-01-05T09:40:00.2594947Z;True|2022-12-15T11:30:10.7915862+07:00;True|2022-12-01T16:06:25.6879784+07:00;True|2022-12-01T13:53:28.6090258+07:00;True|2022-11-29T13:54:29.9576299+07:00;True|2022-11-23T08:30:32.3189899+07:00;True|2022-11-09T08:55:43.1788801+07:00;True|2022-11-08T13:49:54.9068016+07:00;True|2022-10-31T16:01:51.2243341+07:00;False|2022-10-28T15:35:52.2082928+07:00;</History>
+    <History>True|2023-04-11T04:32:34.6306186Z;True|2023-01-05T16:40:00.2594947+07:00;True|2022-12-15T11:30:10.7915862+07:00;True|2022-12-01T16:06:25.6879784+07:00;True|2022-12-01T13:53:28.6090258+07:00;True|2022-11-29T13:54:29.9576299+07:00;True|2022-11-23T08:30:32.3189899+07:00;True|2022-11-09T08:55:43.1788801+07:00;True|2022-11-08T13:49:54.9068016+07:00;True|2022-10-31T16:01:51.2243341+07:00;False|2022-10-28T15:35:52.2082928+07:00;</History>
     <LastFailureDetails />
   </PropertyGroup>
   <ItemGroup>
@@ -34,34 +34,34 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>07/25/2012 11:48:56</publishTime>
     </File>
     <File Include="bin/MMCV_BLL.dll">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:30</publishTime>
     </File>
     <File Include="bin/MMCV_BLL.pdb">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:30</publishTime>
     </File>
     <File Include="bin/MMCV_Common.dll">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MMCV_Common.pdb">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MMCV_DAL.dll">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MMCV_DAL.pdb">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MMCV_ESign.dll">
-      <publishTime>01/05/2023 16:39:56</publishTime>
+      <publishTime>04/11/2023 11:32:30</publishTime>
     </File>
     <File Include="bin/MMCV_ESign.pdb">
-      <publishTime>01/05/2023 16:39:56</publishTime>
+      <publishTime>04/11/2023 11:32:30</publishTime>
     </File>
     <File Include="bin/MMCV_Model.dll">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MMCV_Model.pdb">
-      <publishTime>01/05/2023 16:39:55</publishTime>
+      <publishTime>04/11/2023 11:32:29</publishTime>
     </File>
     <File Include="bin/MySql.Data.dll">
       <publishTime>07/15/2022 15:19:26</publishTime>
@@ -544,7 +544,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>05/22/2019 13:53:47</publishTime>
     </File>
     <File Include="Content/assets/css/azzara.min.css">
-      <publishTime>10/26/2022 11:31:20</publishTime>
+      <publishTime>04/06/2023 14:49:26</publishTime>
     </File>
     <File Include="Content/assets/css/azzara.min.css.map">
       <publishTime>05/22/2019 13:53:47</publishTime>
@@ -982,7 +982,7 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>12/01/2022 08:10:59</publishTime>
     </File>
     <File Include="Scripts/ESign/DocumentManagement/documentManagement.js">
-      <publishTime>12/15/2022 10:31:54</publishTime>
+      <publishTime>04/07/2023 10:30:45</publishTime>
     </File>
     <File Include="Scripts/FileSaver.min.js">
       <publishTime>10/20/2022 03:03:14</publishTime>
@@ -1755,8 +1755,17 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
     <File Include="Scripts/libs/Datatables/dataTables.bootstrap4.min.js">
       <publishTime>10/21/2022 15:58:48</publishTime>
     </File>
+    <File Include="Scripts/libs/Datatables/fixed.column.min.css">
+      <publishTime>04/04/2023 14:04:50</publishTime>
+    </File>
+    <File Include="Scripts/libs/Datatables/fixed.column.min.js">
+      <publishTime>04/04/2023 13:52:57</publishTime>
+    </File>
     <File Include="Scripts/libs/Datatables/jquery.dataTables.min.js">
       <publishTime>10/21/2022 15:58:28</publishTime>
+    </File>
+    <File Include="Scripts/libs/Datatables/pagination.input.js">
+      <publishTime>02/14/2023 09:00:13</publishTime>
     </File>
     <File Include="Scripts/libs/jquery.fileDownload.js">
       <publishTime>11/21/2022 10:28:46</publishTime>
@@ -1792,10 +1801,10 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>11/21/2022 09:55:25</publishTime>
     </File>
     <File Include="Views/DocumentManagement/DetailView.cshtml">
-      <publishTime>12/15/2022 11:29:33</publishTime>
+      <publishTime>02/21/2023 13:40:32</publishTime>
     </File>
     <File Include="Views/DocumentManagement/DocumentManagement.cshtml">
-      <publishTime>12/15/2022 09:48:49</publishTime>
+      <publishTime>04/06/2023 13:45:02</publishTime>
     </File>
     <File Include="Views/Home/Dashboard.cshtml">
       <publishTime>10/25/2022 14:57:00</publishTime>
@@ -1804,34 +1813,37 @@ https://go.microsoft.com/fwlink/?LinkID=208121.
       <publishTime>10/24/2022 08:12:47</publishTime>
     </File>
     <File Include="Views/Home/PdfPage.cshtml">
-      <publishTime>12/21/2022 09:43:54</publishTime>
+      <publishTime>04/11/2023 09:55:30</publishTime>
     </File>
     <File Include="Views/PartialView/ModalAddDocument.cshtml">
-      <publishTime>12/21/2022 09:43:31</publishTime>
+      <publishTime>01/31/2023 08:17:51</publishTime>
     </File>
     <File Include="Views/Shared/Error.cshtml">
-      <publishTime>01/05/2023 16:30:24</publishTime>
+      <publishTime>01/10/2023 16:55:23</publishTime>
     </File>
     <File Include="Views/Shared/_Layout.cshtml">
-      <publishTime>01/04/2023 09:56:37</publishTime>
+      <publishTime>04/11/2023 10:23:21</publishTime>
     </File>
     <File Include="Views/User/Login.cshtml">
       <publishTime>12/12/2022 16:17:26</publishTime>
     </File>
     <File Include="Views/User/UserInfo.cshtml">
-      <publishTime>12/21/2022 09:24:55</publishTime>
+      <publishTime>04/11/2023 09:54:57</publishTime>
     </File>
     <File Include="Views/User/UserManagement.cshtml">
-      <publishTime>01/04/2023 11:50:04</publishTime>
+      <publishTime>04/07/2023 10:28:35</publishTime>
     </File>
     <File Include="Views/Web.config">
       <publishTime>10/25/2022 15:52:28</publishTime>
+    </File>
+    <File Include="Views/_ViewImports.cshtml">
+      <publishTime>04/07/2023 11:39:50</publishTime>
     </File>
     <File Include="Views/_ViewStart.cshtml">
       <publishTime>09/10/2022 14:45:21</publishTime>
     </File>
     <File Include="Web.config">
-      <publishTime>12/01/2022 13:53:22</publishTime>
+      <publishTime>04/11/2023 11:32:31</publishTime>
     </File>
   </ItemGroup>
 </Project>

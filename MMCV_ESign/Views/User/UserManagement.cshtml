@@ -26,7 +26,7 @@
                 </div>
             </div>
             <div class="mt-2">
-                <table id="userDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
+                <table id="userDT" class="table table-bordered table-striped table-hover" style="width:100%">
                     <thead class="">
                         <tr>
                             <td><strong>No</strong></td>
@@ -265,11 +265,8 @@
             $("#userDT").DataTable({
                 "destroy": true,
                 "lengthChange": false,
-                "pageLength": 8,
+                "pageLength": 10,
                 "data": data,
-                "filter": true, // this is for disable filter (search box)
-                "orderMulti": false, // for disable multiple column at once
-                "sort": false,
                 "columns": [
                     { "data": "UserID", "name": "UserID", "autoWidth": false },
                     { "data": "Username", "name": "Username", "autoWidth": false },
@@ -279,7 +276,7 @@
                     { "data": "DepartmentName", "name": "DepartmentName", "autoWidth": false },
                     { "data": "PositionName", "name": "PositionName", "autoWidth": false },
                     {
-                        data: 'Action',
+                        data: null,
                         render: function (data, type, row) {
                             let html = `
                                             <a href='javascript:void(0)' onclick='openEditUserModal(${row.UserID})' class='btn btn-light btn-sm'><i class='fa fa-edit text-primary'></i>&nbsp; Detail</a>
@@ -298,7 +295,12 @@
                         'next': '<span class="la flaticon-right-arrow"></span>'
                     },
                 },
+                "scrollY": "530px",
                 scrollX: true,
+                scrollCollapse: true,
+                //fixedColumns: {
+                //    right: 1
+                //}
             });
         }
 

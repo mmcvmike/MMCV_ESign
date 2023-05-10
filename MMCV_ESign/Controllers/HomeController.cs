@@ -145,7 +145,7 @@ namespace MMCV_ESign.Controllers
                         var nextSignerEmail = docSign.Where(x => x.SignIndex == (currentDocSign.SignIndex + 1)).FirstOrDefault();
                         var body = $"Dear {nextSignerEmail.Email}," +
                                     $"<br>" +
-                                    $"You have a document need to sign. Reference code: {doc.ReferenceCode}" + 
+                                    $"You have a document need to sign. Reference code: {doc.ReferenceCode}" +
                                     $"<br>Please access <a href='{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={nextSignerEmail.Email}&signIndex={nextSignerEmail.SignIndex}'>this link</a> to sign document";
                         var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
                         //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", nextSignerEmail.Email, "", body);

@@ -475,3 +475,7 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
+/MMCV_ESign/Data
+/MMCV_ESign/bin
+/MMCV_BLL/bin
+/MMCV_BLL/obj

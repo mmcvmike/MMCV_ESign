@@ -216,7 +216,7 @@ namespace MMCV_DAL.Document
             try
             {
                 string query = $"INSERT INTO Document(DocumentName, Issuer, IssuerEmpId, ReferenceCode, Title, DocumentTypeID, Link, CreatedBy, CreatedDate, Status) " +
-                    $"VALUES ('{doc.DocumentName}', '{doc.Issuer}', '{doc.IssuerEmpId}', '{doc.ReferenceCode}', '{doc.Title}', {doc.DocumentTypeID}, '{doc.Link}', '{doc.CreatedBy}', '{doc.CreatedDate.ToString("yyyy/MM/dd hh:mm:ss")}', {doc.Status}); " +
+                    $"VALUES ('{doc.DocumentName}', N'{doc.Issuer}', '{doc.IssuerEmpId}', '{doc.ReferenceCode}', N'{doc.Title}', {doc.DocumentTypeID}, N'{doc.Link}', N'{doc.CreatedBy}', '{doc.CreatedDate.ToString("yyyy/MM/dd hh:mm:ss")}', {doc.Status}); " +
                     $"SELECT SCOPE_IDENTITY()";
                 BeginTransactionIfAny(objIData);
                 objIData.CreateNewSqlText(query);

@@ -37,6 +37,11 @@
             margin-right: 5px;
         }
 
+        .btnUpdateUserStamp {
+            margin-top: 10px;
+            height: 37px;
+        }
+
     </style>
 }
 
@@ -80,7 +85,7 @@
                                     <input type="file" class="custom-file-input" id="imageLoader" accept="image/*">
                                     <label class="custom-file-label" for="imageLoader" data-browse="Select upload image">Upload image as signature or stamp</label>
                                 </div>
-                                <button class="btn btn-primary btn-sm mt-3" onclick="updateUserStamp()">Update Stamp</button>
+                                <button class="btn btn-primary btn-sm btnUpdateUserStamp" onclick="updateUserStamp()">Update Stamp</button>
                                 @*<input type="file" id="imageLoader" name="imageLoader" accept="image/*" />*@
                             </div>
                             <div class="row">
@@ -275,10 +280,10 @@
                     <tr id="tr-${data.UserSignatureID}">
                         <td>${data.UserSignatureID}</td>
                         <td>
-                            <img src='${data.Base64Signature}' width='100px' height='40x' />
+                            <img src='${data.Base64Signature}' width='100px' height='40px' />
                         </td>
                         <td>
-                            <img src='${userStamp}' width='100px' height='40x' />
+                            <img src='${userStamp}' width='50px' height='50px' />
                         </td>
                         <td>
                             <div class="form-check">
@@ -387,6 +392,11 @@
 
         function updateUserStamp() {
             var dataUrl = canvas.toDataURL();
+            var blankImageSize = 2938;
+            if (dataUrl.length == blankImageSize) {
+                toastr.error("Stamp can not be a blank image" , "Warning");
+                return false;
+            }
 
             let action = baseUrl + 'UpdateUserStamp';
             var datasend = {

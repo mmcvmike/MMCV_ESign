@@ -179,6 +179,7 @@ namespace MMCV_Common.Helper
 			return result;
 		}
 
+
 		private static string TrimQuote(this string s)
 		{
 			string result;

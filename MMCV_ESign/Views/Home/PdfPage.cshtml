@@ -354,15 +354,15 @@
                     xfdfString
                 });
                 const arr = new Uint8Array(data);
-                const blob = new Blob([arr], { type: 'application/pdf' });
+                const blob = new Blob([arr], { type: 'application/pdf; charset=utf-8' });
 
                 // save file and signature
-                const saveFile = new FormData();
-                saveFile.append('@currentDoc.Link', blob, '@currentDoc.Link');
+                const frmData = new FormData();
+                frmData.append('@currentDoc.Link', blob, '@currentDoc.Link');
+                frmData.append("docId", '@currentDoc.DocumentID');
 
                 const req = new XMLHttpRequest();
                 req.open("POST", '/Home/SaveFileAndSignature', true);
-                req.setRequestHeader("Content-type", "application/pdf; charset=utf-8");
                 req.onload = function (oEvent) {
                     LoadingHide();
                     let response = JSON.parse(oEvent.target.responseText);
@@ -374,7 +374,7 @@
                     }
                 };
 
-                req.send(saveFile);
+                req.send(frmData);
             }
             btnSendFile.addEventListener("click", saveFile);
 

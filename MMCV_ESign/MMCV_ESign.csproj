@@ -606,6 +606,8 @@
     <Content Include="Scripts\modernizr-2.8.3.js" />
     <Content Include="Scripts\modernizr.custom.min.js" />
     <Content Include="Scripts\old-browser-checker.js" />
+    <Content Include="Template\Email\CompleteDocument.html" />
+    <Content Include="Template\Email\DeclineDocument.html" />
     <Content Include="Template\Email\SignDocument.html" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">

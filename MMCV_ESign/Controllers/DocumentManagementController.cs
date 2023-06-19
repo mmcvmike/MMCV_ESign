@@ -391,13 +391,27 @@ namespace MMCV_ESign.Controllers
             var firstEmail = listEmail.Where(x => x.Status == (int)EnumDocumentSign.Initital).OrderBy(x => x.SignIndex).FirstOrDefault();
             if (firstEmail != null)
             {
-                var body = $"Dear {firstEmail.Email}," +
-                            "<br >" +
-                            $"<br >You have a document need to sign. Reference code: {firstEmail.DocumentReferenceCode}" +
-                            $"<br >Please access <a href='{baseUrl}/Home/PdfPage?docId={firstEmail.DocumentID}&email={firstEmail.Email}&signIndex={firstEmail.SignIndex}'>this link</a> to sign document";
+                //var body = $"Dear {firstEmail.Email}," +
+                //            "<br >" +
+                //            $"<br >You have a document need to sign. Reference code: {firstEmail.DocumentReferenceCode}" +
+                //            $"<br >Please access <a href='{baseUrl}/Home/PdfPage?docId={firstEmail.DocumentID}&email={firstEmail.Email}&signIndex={firstEmail.SignIndex}'>this link</a> to sign document";
+                //Task.Run(() =>
+                //{
+                //    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", firstEmail.Email, "", body);
+                //});
+
+                var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                var body = EmailSender.ReadEmailTemplate(templatePath);
                 Task.Run(() =>
                 {
-                    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", firstEmail.Email, "", body);
+                    EmailBO emailBO = new EmailBO()
+                    {
+                        MailTo = firstEmail.Email,
+                        Subject = "Document Sign",
+                        Content = body,
+                        CC = ""
+                    };
+                    EmailSender.DocumentSendMail(firstEmail, emailBO);
                 });
             }
         }

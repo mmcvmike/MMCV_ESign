@@ -161,6 +161,7 @@ namespace MMCV_ESign.Controllers
             }
         }
 
+        [ValidateInput(false)]
         public ActionResult SaveFileAndSignature()
         {
             try
@@ -177,12 +178,17 @@ namespace MMCV_ESign.Controllers
                             Directory.CreateDirectory(path);
                         }
 
+                        var docId = Request.Form["docId"];
+                        DocumentBLL docBLL = new DocumentBLL();
+                        var doc = docBLL.GetDocumentById(int.Parse(docId));
+                        string fileName = doc.Link;
+
                         foreach (string key in Request.Files)
                         {
                             HttpPostedFileBase postedFile = Request.Files[key];
-                            postedFile.SaveAs(path + fileContent.FileName);
+                            postedFile.SaveAs(path + fileName);
 
-                            if (fileContent.FileName.Contains(".pdf"))
+                            if (fileName.Contains(".pdf"))
                             {
                                 //new Thread(() =>
                                 //{
@@ -194,8 +200,8 @@ namespace MMCV_ESign.Controllers
 
                                 var task = Task.Run(() =>
                                 {
-                                    var inputFilePath = path + fileContent.FileName;
-                                    var outputFilePath = path + "_removed_" + fileContent.FileName;
+                                    var inputFilePath = path + fileName;
+                                    var outputFilePath = path + "_removed_" + fileName;
                                     PdfHelper.RemoveXObject(inputFilePath, outputFilePath);
                                 });
 
@@ -204,7 +210,7 @@ namespace MMCV_ESign.Controllers
                                 //PdfHelper.RemoveXObject(inputFilePath, outputFilePath);
                             }
 
-                            if (fileContent.FileName.Contains(".docx") || fileContent.FileName.Contains(".doc"))
+                            if (fileName.Contains(".docx") || fileName.Contains(".doc"))
                             {
 
                             }

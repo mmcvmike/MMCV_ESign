@@ -2708,7 +2708,7 @@ label {
 
 .form-control {
     font-size: 13px;
-    border-color: #ebedf2;
+    /*border-color: #ebedf2;*/
     padding: 0.6rem 1rem;
 }
 

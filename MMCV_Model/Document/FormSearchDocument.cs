@@ -7,6 +7,8 @@
         public int DocumentType { get; set; }
         public string Issuer { get; set; }
         public string Signer { get; set; }
+        public string Title { get; set; }
+        public string ReferenceCode { get; set; }
     }
 
     public class FormSearchDashboard

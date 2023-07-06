@@ -146,7 +146,7 @@
             <div class="modal-body pt-0">
                 <div class="mb-2">
                     <strong>Reason</strong>
-                    <input type="text" class="form-control w-100" id="txtDocumentNote" autofocus="">
+                    <textarea class="form-control w-100" id="txtDocumentNote" autofocus=""> </textarea>
                 </div>
             </div>
             <div class="modal-footer pt-2 pb-2">
@@ -329,7 +329,7 @@
                     }
                 };
                 req.open("POST", '/Home/UpdateDocumentAfterSigning', true);
-                req.setRequestHeader("Content-type", "application/json");
+                req.setRequestHeader("Content-type", "application/json; charset=utf-8");
 
                 LoadingShow();
                 let data = {
@@ -354,20 +354,27 @@
                     xfdfString
                 });
                 const arr = new Uint8Array(data);
-                const blob = new Blob([arr], { type: 'application/pdf' });
+                const blob = new Blob([arr], { type: 'application/pdf; charset=utf-8' });
 
                 // save file and signature
-                const saveFile = new FormData();
-                saveFile.append('@currentDoc.Link', blob, '@currentDoc.Link');
+                const frmData = new FormData();
+                frmData.append('@currentDoc.Link', blob, '@currentDoc.Link');
+                frmData.append("docId", '@currentDoc.DocumentID');
 
                 const req = new XMLHttpRequest();
                 req.open("POST", '/Home/SaveFileAndSignature', true);
                 req.onload = function (oEvent) {
                     LoadingHide();
-                    updateDocumentAfterSigning();
+                    let response = JSON.parse(oEvent.target.responseText);
+                    if (response.rs) {
+                        updateDocumentAfterSigning();
+                    }
+                    else {
+                        toastr.error(response.msg, "Error");
+                    }
                 };
 
-                req.send(saveFile);
+                req.send(frmData);
             }
             btnSendFile.addEventListener("click", saveFile);
 

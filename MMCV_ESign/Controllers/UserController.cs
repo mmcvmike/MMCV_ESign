@@ -272,5 +272,24 @@ namespace MMCV_ESign.Controllers
                 return Json(new { rs = false, msg = "Error get user by id" });
             }
         }
+
+        public ActionResult UnActiveUser(int userId)
+        {
+            try
+            {
+                UserBLL userBLL = new UserBLL();
+                var isUpdateSuccess = userBLL.UnActiveUser(userId);
+                if (!isUpdateSuccess)
+                {
+                    return Json(new { rs = false, msg = "Error update user active" });
+                }
+                return Json(new { rs = true, msg = "Update user successfully" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "UserController");
+                return Json(new { rs = false, msg = "Error update user active" });
+            }
+        }
     }
 }

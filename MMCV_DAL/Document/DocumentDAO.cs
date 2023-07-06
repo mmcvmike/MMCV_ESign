@@ -216,7 +216,7 @@ namespace MMCV_DAL.Document
             try
             {
                 string query = $"INSERT INTO Document(DocumentName, Issuer, IssuerEmpId, ReferenceCode, Title, DocumentTypeID, Link, CreatedBy, CreatedDate, Status) " +
-                    $"VALUES ('{doc.DocumentName}', N'{doc.Issuer}', '{doc.IssuerEmpId}', '{doc.ReferenceCode}', N'{doc.Title}', {doc.DocumentTypeID}, N'{doc.Link}', N'{doc.CreatedBy}', '{doc.CreatedDate.ToString("yyyy/MM/dd hh:mm:ss")}', {doc.Status}); " +
+                    $"VALUES (N'{doc.DocumentName}', N'{doc.Issuer}', '{doc.IssuerEmpId}', '{doc.ReferenceCode}', N'{doc.Title}', {doc.DocumentTypeID}, N'{doc.Link}', N'{doc.CreatedBy}', '{doc.CreatedDate.ToString("yyyy/MM/dd hh:mm:ss")}', {doc.Status}); " +
                     $"SELECT SCOPE_IDENTITY()";
                 BeginTransactionIfAny(objIData);
                 objIData.CreateNewSqlText(query);
@@ -242,7 +242,7 @@ namespace MMCV_DAL.Document
             try
             {
                 string query = $"UPDATE Document" +
-                    $" SET Status = {doc.Status}, Note = '{doc.Note}'" +
+                    $" SET Status = {doc.Status}, Note = N'{doc.Note}'" +
                     $" WHERE DocumentID = {doc.DocumentID}";
                 BeginTransactionIfAny(objIData);
                 objIData.CreateNewSqlText(query);

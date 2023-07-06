@@ -174,6 +174,21 @@ namespace MMCV_BLL.User
             }
         }
 
+        public bool UnActiveUser(int userId)
+        {
+            try
+            {
+                UserDAO userDAO = new UserDAO();
+                return userDAO.UnActiveUser(userId);
+            }
+            catch (Exception objEx)
+            {
+                this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(objEx, "");
+                objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, objEx, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                return false;
+            }
+        }
+
         public UserBO GetUserById(int userId)
         {
             try

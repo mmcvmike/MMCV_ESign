@@ -65,6 +65,15 @@
     <script src="~/Scripts/ESign/common.js"></script>
 
     <style>
+        body{
+            color: black;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0px;
+        }
+
         /* width */
         ::-webkit-scrollbar {
             width: 10px;
@@ -126,7 +135,7 @@
         }
 
         .card {
-            box-shadow: 0 0px 3px 0px #9d9ba9 !important;
+            /*box-shadow: 0 0px 3px 0px #9d9ba9 !important;*/
             margin-bottom: 15px;
         }
 
@@ -353,7 +362,7 @@
                             @*<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-user"></i>
                                 </a>*@
-                            <button class="btn btn-light btn-round dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-user-cog"></i>
                             </button>
                             <div class="dropdown-menu">
@@ -503,10 +512,10 @@
 
             PostDataAjax(action, datasend, function (response) {
                 if (response.rs) {
-
+                    console.log("check connection");
                 }
                 else {
-
+                    console.log("disconnect");
                 }
             });
         }

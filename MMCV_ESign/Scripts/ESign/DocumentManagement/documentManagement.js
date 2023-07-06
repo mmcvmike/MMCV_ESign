@@ -196,7 +196,7 @@ function bindSentDocumentDataTable(data) {
         "lengthChange": false,
         "pageLength": 10,
         "data": data,
-        "filter": false, // this is for disable filter (search box)
+        "filter": true, // this is for disable filter (search box)
         "orderMulti": false, // for disable multiple column at once
         "sort": true,
         "columns": [

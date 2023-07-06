@@ -31,12 +31,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="EntityFramework, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.dll</HintPath>
+    </Reference>
+    <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="SAB.Library.Core">
       <HintPath>..\..\..\..\SampleCode\Invoice-main\SPA_Invoice\SPA_Invoice\bin\SAB.Library.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -50,6 +58,66 @@
     <Compile Include="Common\EmailBO.cs" />
     <Compile Include="Common\MenuBO.cs" />
     <Compile Include="Common\PositionBO.cs" />
+    <Compile Include="DB68\Department.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\Document.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\DocumentSign.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\DocumentType.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\EntitiesDB68_ESign.Context.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntitiesDB68_ESign.Context.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\EntitiesDB68_ESign.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\EntitiesDB68_ESign.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>EntitiesDB68_ESign.edmx</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\Menu.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\Permission.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\Position.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\Role.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\RoleMenu.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\RolePermission.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\User.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\UserMenu.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\UserPermission.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\UserRole.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\UserSignature.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
     <Compile Include="DocumentSign\DocumentSignBO.cs" />
     <Compile Include="DocumentType\DocumentTypeBO.cs" />
     <Compile Include="Document\DocumentBO.cs" />
@@ -62,6 +130,34 @@
       <Project>{9E56AC78-7CF1-45B5-8E53-FBBD6B07C660}</Project>
       <Name>MMCV_Common</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EntityDeploy Include="DB68\EntitiesDB68_ESign.edmx">
+      <Generator>EntityModelCodeGenerator</Generator>
+      <LastGenOutput>EntitiesDB68_ESign.Designer.cs</LastGenOutput>
+    </EntityDeploy>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.Config" />
+    <None Include="DB68\EntitiesDB68_ESign.edmx.diagram">
+      <DependentUpon>EntitiesDB68_ESign.edmx</DependentUpon>
+    </None>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="DB68\EntitiesDB68_ESign.Context.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>EntitiesDB68_ESign.Context.cs</LastGenOutput>
+      <DependentUpon>EntitiesDB68_ESign.edmx</DependentUpon>
+    </Content>
+    <Content Include="DB68\EntitiesDB68_ESign.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <DependentUpon>EntitiesDB68_ESign.edmx</DependentUpon>
+      <LastGenOutput>EntitiesDB68_ESign.cs</LastGenOutput>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

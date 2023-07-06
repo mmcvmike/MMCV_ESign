@@ -19,52 +19,18 @@
     <link href="~/Scripts/libs/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../Content/assets/css/azzara.min.css">
     <link href="~/Scripts/libs/Datatables/fixed.column.min.css" rel="stylesheet" />
+    <link href="~/Scripts/libs/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="../Content/assets/css/demo.css">
-    @RenderSection("styles", required: false)
-
-    <!-- Fonts and icons -->
-    <script src="../Content/assets/js/plugin/webfont/webfont.min.js"></script>
-    <script>
-        WebFont.load({
-            google: { "families": ["Open+Sans:300,400,600,700"] },
-            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['../Content/assets/css/fonts.css'] },
-            active: function () {
-                sessionStorage.fonts = true;
-            }
-        });
-    </script>
-    <!--   Core JS Files   -->
-    <script src="../Content/assets/js/core/jquery.3.2.1.min.js"></script>
-    <script src="../Content/assets/js/core/popper.min.js"></script>
-    <script src="../Content/assets/js/core/bootstrap.min.js"></script>
-    <!-- jQuery UI -->
-    <script src="../Content/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
-    <script src="../Content/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
-    <!-- jQuery Scrollbar -->
-    <script src="../Content/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
-    <!-- Moment JS -->
-    <script src="../Content/assets/js/plugin/moment/moment.min.js"></script>
-    <!-- Chart JS -->
-    <script src="../Content/assets/js/plugin/chart.js/chart.min.js"></script>
-    <!-- Sweetalert JS -->
-    <script src="~/Scripts/libs/sweetalert2.min.js"></script>
-    <!-- file Download JS -->
-    <script src="~/Scripts/libs/jquery.fileDownload.js"></script>
-    <!-- Datatables -->
-    <script src="../Content/assets/js/plugin/datatables/datatables.min.js"></script>
-    <!-- Bootstrap Toggle -->
-    <script src="../Content/assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
-    <!-- Bootstrap toastr -->
-    <script src="~/Scripts/libs/bootstrap-toastr/toastr.min.js"></script>
-    <!-- Azzara JS -->
-    <script src="../Content/assets/js/ready.min.js"></script>
-    <!-- Common -->
-    <script src="~/Scripts/libs/Datatables/fixed.column.min.js"></script>
-    <script src="~/Scripts/libs/Datatables/pagination.input.js"></script>
-
-    <script src="~/Scripts/ESign/common.js"></script>
-
     <style>
+        body {
+            color: black;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0px;
+        }
+
         /* width */
         ::-webkit-scrollbar {
             width: 10px;
@@ -126,7 +92,7 @@
         }
 
         .card {
-            box-shadow: 0 0px 3px 0px #9d9ba9 !important;
+            /*box-shadow: 0 0px 3px 0px #9d9ba9 !important;*/
             margin-bottom: 15px;
         }
 
@@ -267,6 +233,39 @@
 
         /*end alert*/
     </style>
+
+    @RenderSection("styles", required: false)
+
+    <!-- Fonts and icons -->
+    <script src="../Content/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: { "families": ["Open+Sans:300,400,600,700"] },
+            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['../Content/assets/css/fonts.css'] },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+    <script src="../Content/assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="../Content/assets/js/core/popper.min.js"></script>
+    <script src="../Content/assets/js/core/bootstrap.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../Content/assets/js/plugin/moment/moment.min.js"></script>
+    <script src="../Content/assets/js/plugin/chart.js/chart.min.js"></script>
+    <script src="~/Scripts/libs/jquery.fileDownload.js"></script>
+    <script src="../Content/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="../Content/assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+    <script src="~/Scripts/libs/bootstrap-toastr/toastr.min.js"></script>
+    <script src="../Content/assets/js/ready.min.js"></script>
+    <!-- Common -->
+    <script src="~/Scripts/libs/Datatables/fixed.column.min.js"></script>
+    <script src="~/Scripts/libs/Datatables/pagination.input.js"></script>
+    <script src="~/Scripts/libs/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="~/Scripts/ESign/common.js"></script>
+
 </head>
 <body>
     <div class="w-100 wrapper">
@@ -353,7 +352,7 @@
                             @*<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-user"></i>
                                 </a>*@
-                            <button class="btn btn-light btn-round dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <i class="fa fa-user-cog"></i>
                             </button>
                             <div class="dropdown-menu">
@@ -503,144 +502,13 @@
 
             PostDataAjax(action, datasend, function (response) {
                 if (response.rs) {
-
+                    console.log("check connection");
                 }
                 else {
-
+                    console.log("disconnect");
                 }
             });
         }
-
-        //Customize alert
-        var ALERT_TITLE = 'NOTIFICATION';
-        var ALERT_BUTTON_TEXT = 'Yes';
-        var CONFIRM_OK_BUTTON_TEXT = 'OK';
-        var CONFIRM_CC_BUTTON_TEXT = 'Cancel';
-        var removeCustomAlert = function () {
-            document.getElementsByTagName('body')[0].removeChild(document.getElementById('modalContainer'));
-        }
-        if (document.getElementById) {
-            window.alert = function (txt) {
-                createCustomAlert(txt, null);
-            }
-            window.confirm = function (txt, title, button1, button2, callback) {
-                createCustomAlert(txt, title, button1, button2, callback);
-            }
-        }
-
-        function createCustomAlert(txt, title, button1, button2, callback) {
-            if (!title)
-                title = ALERT_TITLE;
-            if (!button1)
-                button1 = CONFIRM_CC_BUTTON_TEXT;
-            if (!button2)
-                button2 = CONFIRM_OK_BUTTON_TEXT;
-            var d = document;
-
-            if (d.getElementById('modalContainer')) return;
-
-            var mObj = d.getElementsByTagName('body')[0].appendChild(d.createElement('div'));
-            mObj.id = 'modalContainer';
-            mObj.style.height = d.documentElement.scrollHeight + 'px';
-
-            var alertObj = mObj.appendChild(d.createElement('div'));
-            alertObj.id = 'alertBox';
-            if (d.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + 'px';
-            //alertObj.style.left = (d.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + 'px';
-            alertObj.style.left = 'calc(45% - 100px)';
-            alertObj.style.visiblity = 'visible';
-
-            var h1 = alertObj.appendChild(d.createElement('h1'));
-            h1.appendChild(d.createTextNode(title));
-
-            var msg = alertObj.appendChild(d.createElement('p'));
-            //msg.appendChild(d.createTextNode(txt));
-            var find = '\n';
-            var re = new RegExp(find, 'g');
-
-            //txt = txt.replace(/(?:\\n)/g, '<br>');
-
-            msg.innerHTML = txt;
-
-
-
-            if (callback) {
-                var div = alertObj.appendChild(d.createElement('div'));
-                div.className = 'btnGroup';
-
-                var btn2 = div.appendChild(d.createElement('button'));
-                btn2.id = 'cancelBtnAlert';
-                btn2.className = 'btn btn-light';
-                btn2.appendChild(d.createTextNode(button1));
-                btn2.href = '#';
-                btn2.onclick = function () { removeCustomAlert(); callback(false); return false; }
-
-                var btn = div.appendChild(d.createElement('button'));
-                //btn.id = 'closeBtnAlert';
-                btn.className = 'btn btn-success';
-                btn.appendChild(d.createTextNode(button2));
-                btn.href = '#';
-                btn.onclick = function () { removeCustomAlert(); callback(true); return false; }
-            } else {
-                var btn = alertObj.appendChild(d.createElement('button'));
-                btn.id = 'closeBtnAlert';
-                btn.className = 'btn btn-success';
-                btn.appendChild(d.createTextNode(ALERT_BUTTON_TEXT));
-                btn.href = '#';
-                btn.onclick = function () { removeCustomAlert(); return false; }
-            }
-
-            alertObj.style.display = 'block';
-        }
-
-    </script>
-
-    <script>
-
-                    //$(document).on('mousemove', function (e) {
-                    //    var xMouse = e.pageX;
-                    //    var yMouse = e.pageY;
-                    //    if (Math.random() < 0.1) {
-                    //        setTimeout(function () {
-                    //            var l = document.createElement("DIV");
-                    //            var size = (Math.floor(Math.random() * (30 - 10)) + 10);
-                    //            l.style.width = size + "px";
-                    //            l.style.height = size + "px";
-                    //            l.style.backgroundImage = "url(https://phimbom.net/images/hoaroi.png)";
-                    //            var bg_pos = (Math.floor(Math.random() * 4));
-                    //            l.style.backgroundPosition = "0px -" + (size * bg_pos) + "px";
-                    //            l.style.backgroundSize = size + "px " + 4 * size + "px"
-                    //            l.style.position = "absolute";
-                    //            l.style.left = (xMouse) + "px";
-                    //            l.style.top = (yMouse + 10) + "px";
-                    //            l.style.zIndex = 9999;
-                    //            l.style.display = 'none';
-                    //            document.body.appendChild(l);
-                    //            jQuery(l).fadeIn(100);
-                    //            var stop = false;
-                    //            var hoaroi = function () {
-                    //                if (!stop) {
-                    //                    setTimeout(function () {
-                    //                        window.requestAnimationFrame(hoaroi);
-                    //                    }, 20);
-                    //                    l.style.top = (parseInt(jQuery(l).css('top'), 10) + 1) + "px";
-                    //                    if ((parseInt(jQuery(l).css('top'), 10)) % 10 == 0) {
-                    //                        if (Math.random() < 0.5) {
-                    //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) + 1) + "px";
-                    //                        } else {
-                    //                            l.style.left = (parseInt(jQuery(l).css('left'), 10) - 1) + "px";
-                    //                        }
-                    //                    }
-                    //                }
-                    //            }
-                    //            window.requestAnimationFrame(hoaroi);
-                    //            jQuery(l).fadeOut((Math.floor(Math.random() * (2500 - 1000)) + 1000), function () {
-                    //                jQuery(l).remove();
-                    //                stop = true;
-                    //            });
-                    //        }, 0);
-                    //    }
-                    //});
 
     </script>
 

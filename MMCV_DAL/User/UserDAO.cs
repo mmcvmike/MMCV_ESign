@@ -164,7 +164,8 @@ namespace MMCV_DAL.User
                 string query = @"SELECT u.*, d.DepartmentName, p.PositionName 
 FROM [User] u
 LEFT JOIN Department d ON d.DepartmentID = u.DepartmentID
-LEFT JOIN Position p ON p.PositionID = u.PositionID";
+LEFT JOIN Position p ON p.PositionID = u.PositionID
+WHERE u.Active = 1";
                 BeginTransactionIfAny(objIData);
                 var reader = objIData.ExecQueryToDataReader(query);
                 var list = ConvertToListObject<UserBO>(reader);
@@ -242,6 +243,30 @@ LEFT JOIN Position p ON p.PositionID = u.PositionID";
                 string query = $"UPDATE [User] " +
                     $"SET StampBase64 = '{us.StampBase64}'" +
                     $"WHERE UserID = {us.UserID}";
+                BeginTransactionIfAny(objIData);
+                objIData.ExecUpdate(query);
+                CommitTransactionIfAny(objIData);
+                return true;
+            }
+            catch (Exception objEx)
+            {
+                RollBackTransactionIfAny(objIData);
+                throw objEx;
+            }
+            finally
+            {
+                this.DisconnectIData(objIData);
+            }
+        }
+
+        public bool UnActiveUser(int userId)
+        {
+            IData objIData = this.CreateIData();
+            try
+            {
+                string query = $"UPDATE [User] " +
+                    $"SET Active = 0" +
+                    $"WHERE UserID = {userId}";
                 BeginTransactionIfAny(objIData);
                 objIData.ExecUpdate(query);
                 CommitTransactionIfAny(objIData);

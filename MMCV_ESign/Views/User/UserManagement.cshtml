@@ -207,6 +207,7 @@
                 </div>
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                 <button type="button" class="btn btn-success" onclick="updateUser()">Submit</button>
             </div>
         </div>
@@ -280,6 +281,7 @@
                         render: function (data, type, row) {
                             let html = `
                                             <a href='javascript:void(0)' onclick='openEditUserModal(${row.UserID})' class='btn btn-light btn-sm'><i class='fa fa-edit text-primary'></i>&nbsp; Detail</a>
+                                            <a href='javascript:void(0)' onclick='unActiveUser(${row.UserID})' class='btn btn-light btn-sm'><i class='fa fa-trash text-danger'></i>&nbsp; Del</a>
                                         `;
                             return html;
                         },
@@ -485,6 +487,37 @@
                 }
                 else {
                     toastr.error(response.msg, "Warning");
+                }
+            });
+        }
+
+        function unActiveUser(id) {
+            $.confirm({
+                title: 'Confirm!',
+                content: 'You really want to submit!',
+                buttons: {
+                    confirm: {
+                        btnClass: 'btn btn-success',
+                        action: function () {
+                            let action = baseUrl + 'UnActiveUser';
+                            let datasend = {
+                                userId: id
+                            };
+                            LoadingShow();
+                            PostDataAjax(action, datasend, function (response) {
+                                LoadingHide();
+                                if (response.rs) {
+                                    getUsers();
+                                }
+                                else {
+                                    toastr.error(response.msg, "Warning");
+                                }
+                            });
+                        },
+                    },
+                    cancel: function () {
+
+                    },
                 }
             });
         }

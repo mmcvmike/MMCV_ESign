@@ -57,7 +57,7 @@ namespace MMCV_BLL.Email
 
                 body += $@"<br><br><br>{delimiter}
     <br><a href='{baseUrl}'>MMCV E-Sign</a>
-    <br><strong>MMCV IT Application Center</strong>";
+    <br><strong>MMCV IT Innovation Center</strong>";
 
                 var message = new MailMessage();
 

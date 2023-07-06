@@ -163,7 +163,8 @@ namespace MMCV_ESign.Controllers
                         ele.Sender = doc.Issuer;
                         ele.Title = doc.Title;
 
-                        var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                        //var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                        var templatePath = Server.MapPath("~/Template/Email/SignDocument.html");
                         var body = EmailSender.ReadEmailTemplate(templatePath);
                         Task.Run(() =>
                         {
@@ -400,7 +401,7 @@ namespace MMCV_ESign.Controllers
                 //    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", firstEmail.Email, "", body);
                 //});
 
-                var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                var templatePath = HttpContext.Server.MapPath("~/Template/Email/SignDocument.html");
                 var body = EmailSender.ReadEmailTemplate(templatePath);
                 Task.Run(() =>
                 {

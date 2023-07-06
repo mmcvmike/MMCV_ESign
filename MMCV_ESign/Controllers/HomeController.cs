@@ -15,6 +15,7 @@ using MMCV_Common.Helper;
 using System.Threading.Tasks;
 using MMCV_Model.DocumentSign;
 using System.Collections.Generic;
+using MMCV_BLL.Email;
 
 namespace MMCV_ESign.Controllers
 {
@@ -126,15 +127,13 @@ namespace MMCV_ESign.Controllers
                     currentDocSign.Status = (int)EnumDocumentSign.Signed;
                     docSignBLL.UpdateStatusDocumentSign(currentDocSign);
 
-                    var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/CompleteDocument.html");
-                    var body = EmailSender.ReadEmailTemplate(templatePath);
-
-                    if (currentDocSign.SignIndex + 1 >= docSign.Count())
+                    if (currentDocSign.SignIndex >= docSign.Count())
                     {
                         // update status of document to complete
                         doc.Status = (int)EnumDocumentStatus.Completed;
                         docBLL.UpdateStatusDocument(doc);
-
+                        var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/CompleteDocument.html");
+                        var body = EmailSender.ReadEmailTemplate(templatePath);
                         // send mail to the issuer that document has completed signing flow
                         var body_new = $"Dear {doc.Issuer}," +
                                    $"<br>" +
@@ -142,7 +141,6 @@ namespace MMCV_ESign.Controllers
 
                         body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
                         body = body.Replace("$SENDER_NAME$", doc.Issuer);
-                        body = body.Replace("Start Signing", " Detail ");
                         body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
                         //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
@@ -150,12 +148,20 @@ namespace MMCV_ESign.Controllers
                     }
                     else
                     {
+                        var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                        var body = EmailSender.ReadEmailTemplate(templatePath);
+
                         // send mail to the next signer
                         var nextSignerEmail = docSign.Where(x => x.SignIndex == (currentDocSign.SignIndex + 1)).FirstOrDefault();
                         var body_new = $"Dear {nextSignerEmail.Email}," +
                                     $"<br>" +
+                                    $"<br>" +
                                     $"You have a document need to sign. Reference code: {doc.ReferenceCode}" +
                                     $"<br>Please access <a href='{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={nextSignerEmail.Email}&signIndex={nextSignerEmail.SignIndex}'>this link</a> to sign document";
+                     
+                        body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
+                        body = body.Replace("$SENDER_NAME$", doc.Issuer);
+                        body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
                         //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
                         var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", nextSignerEmail.Email, "", body);

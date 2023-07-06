@@ -1,6 +1,8 @@
 ﻿
 @{
     ViewBag.Title = "DocumentManagement";
+    var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
+    var isAdmin = currentUser != null ? (currentUser.IsAdmin) ? "" : "d-none" : "d-none";
 }
 @section styles{
     <style>
@@ -24,11 +26,10 @@
             line-height: 25px;
         }
 
-         .dataTable > thead > tr > th[class*="sort"]:before,
+        .dataTable > thead > tr > th[class*="sort"]:before,
         .dataTable > thead > tr > th[class*="sort"]:after {
             /*content: "" !important;*/
         }
-
     </style>
 }
 
@@ -131,9 +132,9 @@
     <div class="modal-80">
         <div class="modal-content">
             @*<div class="modal-header">
-                <h4 class="modal-title">Quick view document</h4>
-                <button type="button" class="text-danger close" data-dismiss="modal">&times;</button>
-            </div>*@
+                    <h4 class="modal-title">Quick view document</h4>
+                    <button type="button" class="text-danger close" data-dismiss="modal">&times;</button>
+                </div>*@
             <div class="modal-header">
                 <i class="fa fa-eye-dropper modal-header-icon"></i>
                 <h3 class="modal-title" style="font-size: 1.3rem">

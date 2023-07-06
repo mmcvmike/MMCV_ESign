@@ -162,9 +162,12 @@ function bindMeSignDocumentDataTable(data) {
             {
                 data: null,
                 render: function (data, type, row) {
+                    //if (data.s) {
+
+                    //}
                     let html = `
                                 <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
-                                <a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>
+                                <a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm isAdmin'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>
                                 <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;Quick view</a>
                             `;
                     return html;

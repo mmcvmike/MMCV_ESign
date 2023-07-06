@@ -39,13 +39,11 @@
       <HintPath>..\packages\Microsoft.Office.Interop.Word.15.0.4797.1004\lib\net20\Microsoft.Office.Interop.Word.dll</HintPath>
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </Reference>
-    <Reference Include="SAB.Library.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\SampleCode\Invoice-main\SPA_Invoice\SPA_Invoice\bin\SAB.Library.Core.dll</HintPath>
+    <Reference Include="SAB.Library.Core">
+      <HintPath>..\MMCV_DLL\SAB.Library.Core.dll</HintPath>
     </Reference>
-    <Reference Include="SAB.Library.Data, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\SampleCode\Invoice-main\SPA_Invoice\SPA_Invoice\bin\SAB.Library.Data.dll</HintPath>
+    <Reference Include="SAB.Library.Data">
+      <HintPath>..\MMCV_DLL\SAB.Library.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

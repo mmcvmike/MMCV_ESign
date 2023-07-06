@@ -38,7 +38,7 @@
       <HintPath>..\packages\EntityFramework.6.2.0\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
     <Reference Include="SAB.Library.Core">
-      <HintPath>..\..\..\..\SampleCode\Invoice-main\SPA_Invoice\SPA_Invoice\bin\SAB.Library.Core.dll</HintPath>
+      <HintPath>..\MMCV_DLL\SAB.Library.Core.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

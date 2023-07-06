@@ -32,10 +32,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="SAB.Library.Core">
-      <HintPath>..\MMCV_ESign\bin\SAB.Library.Core.dll</HintPath>
+      <HintPath>..\MMCV_DLL\SAB.Library.Core.dll</HintPath>
     </Reference>
     <Reference Include="SAB.Library.Data">
-      <HintPath>..\..\..\..\SampleCode\Invoice-main\DLLs\SAB.Library.Data.dll</HintPath>
+      <HintPath>..\MMCV_DLL\SAB.Library.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

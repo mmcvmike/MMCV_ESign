@@ -89,9 +89,9 @@ namespace MMCV_DAL.Document
                 BeginTransactionIfAny(objIData);
                 objIData.CreateNewStoredProcedure("[USP_Documents_Get_MeSign]");
                 objIData.AddParameter("@Signer", formSearch.Signer);
-                objIData.AddParameter("@Status", formSearch.Status);
-                objIData.AddParameter("@Title", formSearch.Status);
-                objIData.AddParameter("@ReferenceCode", formSearch.Status);
+                objIData.AddParameter("@Status", string.IsNullOrEmpty(formSearch.Status) ? "" : formSearch.Status);
+                objIData.AddParameter("@Title", string.IsNullOrEmpty(formSearch.Title) ? "" : formSearch.Title);
+                objIData.AddParameter("@ReferenceCode", string.IsNullOrEmpty(formSearch.ReferenceCode) ? "" : formSearch.ReferenceCode);
 
                 var reader = objIData.ExecStoreToDataReader();
                 var list = ConvertToListObject<DocumentBO>(reader);

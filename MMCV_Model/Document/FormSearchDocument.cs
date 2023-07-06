@@ -3,7 +3,7 @@
     public class FormSearchDocument
     {
         public int DocumentID { get; set; }
-        public int Status { get; set; }
+        public string Status { get; set; }
         public int DocumentType { get; set; }
         public string Issuer { get; set; }
         public string Signer { get; set; }

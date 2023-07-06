@@ -68,9 +68,6 @@ namespace MMCV_ESign.Controllers
                 //var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
 
                 frmSearch.Signer = currentUser.Email;
-                frmSearch.Status = (int)EnumDocumentSign.Initital;
-
-
                 var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
 
                 // Filter document which the previous signer has not signed yet

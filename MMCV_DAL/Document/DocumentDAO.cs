@@ -90,6 +90,8 @@ namespace MMCV_DAL.Document
                 objIData.CreateNewStoredProcedure("[USP_Documents_Get_MeSign]");
                 objIData.AddParameter("@Signer", formSearch.Signer);
                 objIData.AddParameter("@Status", formSearch.Status);
+                objIData.AddParameter("@Title", formSearch.Status);
+                objIData.AddParameter("@ReferenceCode", formSearch.Status);
 
                 var reader = objIData.ExecStoreToDataReader();
                 var list = ConvertToListObject<DocumentBO>(reader);

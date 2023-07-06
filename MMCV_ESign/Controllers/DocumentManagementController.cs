@@ -4,6 +4,7 @@ using MMCV_BLL.Email;
 using MMCV_Common;
 using MMCV_Common.Helper;
 using MMCV_Model.Common;
+using MMCV_Model.DB68;
 using MMCV_Model.Document;
 using MMCV_Model.DocumentSign;
 using MMCV_Model.User;
@@ -54,16 +55,21 @@ namespace MMCV_ESign.Controllers
             }
         }
 
-        public ActionResult GetMeSignDocuments()
+        public ActionResult GetMeSignDocuments(FormSearchDocument frmSearch)
         {
             try
             {
                 DocumentBLL docBLL = new DocumentBLL();
-                FormSearchDocument frmSearch = new FormSearchDocument()
-                {
-                    Signer = currentUser.Email,
-                    Status = (int)EnumDocumentSign.Initital
-                };
+                //FormSearchDocument frmSearch = new FormSearchDocument()
+                //{
+                //    Signer = currentUser.Email,
+                //    Status = (int)EnumDocumentSign.Initital
+                //};
+                //var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
+
+                frmSearch.Signer = currentUser.Email;
+                frmSearch.Status = (int)EnumDocumentSign.Initital;
+
 
                 var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
 

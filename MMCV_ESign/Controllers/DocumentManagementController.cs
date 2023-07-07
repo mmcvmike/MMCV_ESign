@@ -133,6 +133,7 @@ namespace MMCV_ESign.Controllers
                                     .Where(x => (x.t1.Issuer == currentUser.Email && x.t1.Status != 3 && x.t1.Status != 4))
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Title), x => x.t1.Title.Contains(frmSearch.Title))
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t1.Status.ToString() == frmSearch.Status)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.SignStatus), x => x.t2.Status.ToString() == frmSearch.SignStatus)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
                                     .Select(x => new
                                     {

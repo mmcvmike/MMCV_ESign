@@ -9,6 +9,7 @@
         public string Signer { get; set; }
         public string Title { get; set; }
         public string ReferenceCode { get; set; }
+        public string SignStatus { get; set; }
     }
 
     public class FormSearchDashboard

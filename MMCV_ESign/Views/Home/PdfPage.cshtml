@@ -30,8 +30,8 @@
     </style>
 }
 
-<div class="pt-3 pl-4 pr-4 pdf-page">
-    <div class="row pl-1 mb-3">
+<div class="pt-1 pl-3 pr-3 pdf-page">
+    <div class="row pl-1 mb-1">
         <button class="btn btn-success btn-sm" onclick="backPrePage()"><i class="la flaticon-left-arrow"></i>&nbsp;Back</button>
     </div>
     <div class="row">
@@ -126,10 +126,11 @@
             <div class="modal-body pt-0">
                 <div class="mb-2">
                     <strong>Reason</strong>
-                    <input type="text" class="form-control w-100" id="txtDocumentSignNote" autofocus="">
+                    <textarea class="form-control w-100" id="txtDocumentSignNote" autofocus=""></textarea>
                 </div>
             </div>
             <div class="modal-footer pt-2 pb-2">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                 <button class="btn btn-success" onclick="decline()">Submit</button>
             </div>
         </div>
@@ -150,6 +151,7 @@
                 </div>
             </div>
             <div class="modal-footer pt-2 pb-2">
+                <button type="button" class="btn btn-light" data-dismiss="modal">Close</button>
                 <button class="btn btn-success" onclick="cancel()">Submit</button>
             </div>
         </div>
@@ -256,39 +258,81 @@
             stampTool.setStandardStamps([ ]);
             stampTool.setCustomStamps(customStamps)
 
-            addSignature = function() {
-                // vẽ sẵn chữ ký tại một điểm
-                const annot = new Annotations.StampAnnotation({
-                    PageNumber: documentViewer.getCurrentPage(),
-                    X: 100,
-                    Y: 100,
-                    Width: 200,
-                    Height: 100,
-                    Author: "@currentUser.Email"
-                });
-                annot.setImageData("@Model.Item3.Base64Signature");
+            addSignature = function () {
+                let checkExistSignature = "@Model.Item3.Base64Signature" == "" ? false : true;
+                if (checkExistSignature) {
+                    // vẽ sẵn chữ ký tại một điểm
+                    const annot = new Annotations.StampAnnotation({
+                        PageNumber: documentViewer.getCurrentPage(),
+                        X: 100,
+                        Y: 100,
+                        Width: 200,
+                        Height: 100,
+                        Author: "@currentUser.Email"
+                    });
+                    annot.setImageData("@Model.Item3.Base64Signature");
 
-                annotationManager.addAnnotation(annot);
-                annotationManager.redrawAnnotation(annot);
+                    annotationManager.addAnnotation(annot);
+                    annotationManager.redrawAnnotation(annot);
 
-                // user define check add
-                listUserSignature.push(annot);
+                    // user define check add
+                    listUserSignature.push(annot);
+                }
+                else {
+                    $.confirm({
+                        title: 'Notice!',
+                        content: 'You do not have any signature. Do you want to create your own signature? Please go account information page to create!',
+                        buttons: {
+                            cancel: function () {
+
+                            },
+                            yes: {
+                                btnClass: 'btn btn-success',
+                                action: function () {
+                                    location.href = '/User/UserInfo';
+                                },
+                            },
+                        }
+                    });
+                    return false;
+                }
             }
 
-            addStamp = function() {
-                // vẽ sẵn dấu tại một điểm
-                const annot = new Annotations.StampAnnotation({
-                    PageNumber: documentViewer.getCurrentPage(),
-                    X: 300,
-                    Y: 100,
-                    Width: 200,
-                    Height: 200,
-                    Author: "@currentUser.Email"
-                });
-                annot.setImageData("@currentUser.StampBase64");
+            addStamp = function () {
+                let checkExistStamp = "@currentUser.StampBase64" == "" ? false : true;
+                if (checkExistStamp) {
+                    // vẽ sẵn dấu tại một điểm
+                    const annot = new Annotations.StampAnnotation({
+                        PageNumber: documentViewer.getCurrentPage(),
+                        X: 300,
+                        Y: 100,
+                        Width: 200,
+                        Height: 200,
+                        Author: "@currentUser.Email"
+                    });
+                    annot.setImageData("@currentUser.StampBase64");
 
-                annotationManager.addAnnotation(annot);
-                annotationManager.redrawAnnotation(annot);
+                    annotationManager.addAnnotation(annot);
+                    annotationManager.redrawAnnotation(annot);
+                }
+                else {
+                    $.confirm({
+                        title: 'Notice!',
+                        content: 'You do not have any stamp. Do you want to create your own stamp? Please go account information page to create!',
+                        buttons: {
+                            cancel: function () {
+
+                            },
+                            yes: {
+                                btnClass: 'btn btn-success',
+                                action: function () {
+                                    location.href = '/User/UserInfo';
+                                },
+                            },
+                        }
+                    });
+                    return false;
+                }
             }
 
             annotationManager.addEventListener('annotationChanged', (annotations, action) => {

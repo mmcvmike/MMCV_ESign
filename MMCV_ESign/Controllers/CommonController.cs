@@ -21,7 +21,7 @@ namespace MMCV_ESign.Controllers
                 {
                     DocumentTypeBLL dTBll = new DocumentTypeBLL();
                     var temp = dTBll.GetDocumentTypes();
-                    CacheHelper.Set(CacheKeyHelper.DocumentType_CacheKey, temp);
+                    CacheHelper.Set(CacheKeyHelper.DocumentType_CacheKey, temp, 2);
                 }
                 List<DocumentTypeBO> listDocTypes = (List<DocumentTypeBO>)CacheHelper.Get(CacheKeyHelper.DocumentType_CacheKey);
 
@@ -42,7 +42,7 @@ namespace MMCV_ESign.Controllers
                 {
                     CommonBLL cBLL = new CommonBLL();
                     var temp = cBLL.GetDepartments();
-                    CacheHelper.Set(CacheKeyHelper.Department_CacheKey, temp);
+                    CacheHelper.Set(CacheKeyHelper.Department_CacheKey, temp, 2);
                 }
                 List<DepartmentBO> listDepts = (List<DepartmentBO>)CacheHelper.Get(CacheKeyHelper.Department_CacheKey);
 
@@ -63,7 +63,7 @@ namespace MMCV_ESign.Controllers
                 {
                     CommonBLL cBLL = new CommonBLL();
                     var temp = cBLL.GetPositions();
-                    CacheHelper.Set(CacheKeyHelper.Position_CacheKey, temp);
+                    CacheHelper.Set(CacheKeyHelper.Position_CacheKey, temp, 2);
                 }
                 List<PositionBO> listPositions = (List<PositionBO>)CacheHelper.Get(CacheKeyHelper.Position_CacheKey);
 

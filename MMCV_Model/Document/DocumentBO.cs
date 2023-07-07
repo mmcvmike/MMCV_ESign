@@ -20,7 +20,7 @@ namespace MMCV_Model.Document
         public string CreatedBy { get; set; }
         public DateTime CreatedDate { get; set; }
         public int Active { get; set; }
-
+        public string EmailCC { get; set; }
         // custom properties
         public List<DocumentSignBO> DocumentSigns { get; set; }
         public string Base64File { get; set; }

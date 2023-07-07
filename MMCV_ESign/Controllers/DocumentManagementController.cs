@@ -230,7 +230,6 @@ namespace MMCV_ESign.Controllers
                         var ele = doc.DocumentSigns.OrderBy(x => x.SignIndex).FirstOrDefault();
                         ele.Sender = doc.Issuer;
                         ele.Title = doc.Title;
-
                         //var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
                         var templatePath = Server.MapPath("~/Template/Email/SignDocument.html");
                         var body = EmailSender.ReadEmailTemplate(templatePath);
@@ -247,7 +246,7 @@ namespace MMCV_ESign.Controllers
                                 MailTo = ele.Email,
                                 Subject = "Document Sign",
                                 Content = body,
-                                CC = ""
+                                CC = doc.EmailCC,
                             };
                             EmailSender.DocumentSendMail(ele, emailBO);
                         });

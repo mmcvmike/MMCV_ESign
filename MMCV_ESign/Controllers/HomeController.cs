@@ -141,18 +141,18 @@ namespace MMCV_ESign.Controllers
                         var body_new = $"Dear {doc.Issuer}," +
                                    $"<br>" +
                                    $"<br>" +
-                                   $"Your document has been completed. Reference code: {currentDocSign.DocumentReferenceCode}";
-
+                                   $"Your document has been completed. " +
+                                   $"<br>" +
+                                   $"Reference code: {currentDocSign.DocumentReferenceCode}";
+                        body = body.Replace("Digital Signature Request", " Document Completed ");
                         body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
-                        body = body.Replace("$SENDER_NAME$", doc.Issuer);
+                        body = body.Replace("$SENDER_NAME$", currentUser.Email);
                         body = body.Replace("Start Signing", " DetailsView ");
                         body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
-                        //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-
                         var list_mail = docSign.Where(x => x.DocumentID == doc.DocumentID && x.Email != doc.Issuer).Select(a=>a.Email).ToList();
-
-                        string send_cc = String.Join(";", list_mail);
+                        var emailCC = docBLL.GetDocumentById(doc.DocumentID).EmailCC;
+                        string send_cc = String.Join(";", list_mail) + ";" + emailCC;
                         var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, send_cc, body);
                     }
                     else
@@ -165,11 +165,13 @@ namespace MMCV_ESign.Controllers
                         var body_new = $"Dear {nextSignerEmail.Email}," +
                                     $"<br>" +
                                     $"<br>" +
-                                    $"You have a document need to sign. Reference code: {doc.ReferenceCode}" +
+                                    $"You have a document need to sign." +
+                                    $"<br>" +
+                                    $" Reference code: {doc.ReferenceCode}" +
                                     $"<br>Please access <a href='{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={nextSignerEmail.Email}&signIndex={nextSignerEmail.SignIndex}'>this link</a> to sign document";
                      
                         body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
-                        body = body.Replace("$SENDER_NAME$", doc.Issuer);
+                        body = body.Replace("$SENDER_NAME$", currentDocSign.Email);
                         body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
                         //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
@@ -270,12 +272,28 @@ namespace MMCV_ESign.Controllers
                 currentDocSign.Note = note;
                 docSignBLL.UpdateStatusDocumentSign(currentDocSign);
 
+                var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/DeclineDocument.html");
+                var body = EmailSender.ReadEmailTemplate(templatePath);
                 // send mail to issuer
-                var body = $"Dear {doc.Issuer}," +
+                var bodyNew = $"Dear {doc.Issuer}," +
                     $"<br>" +
-                    $"{currentDocSign.Email} decline to sign your document. Reference code: {doc.ReferenceCode}";
-                var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, "", body);
+                    $"<br>" +
+                    $"{currentUser.Email} decline to sign your document. " +
+                    $"<br>" +
+                    $"Reason: {note}." +
+                    $"<br>" +
+                    $"Reference code: {doc.ReferenceCode}";
+
+                body = body.Replace("Digital Signature Request", " Document has been destroyed ");
+                body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", bodyNew);
+                body = body.Replace("$SENDER_NAME$", currentUser.Email);
+
+
+                var list_mail = docSign.Where(x => x.DocumentID == doc.DocumentID && x.Email != currentUser.Email).Select(a => a.Email).ToList();
+                var emailCC = docBLL.GetDocumentById(doc.DocumentID).EmailCC;
+                string send_cc = String.Join(";", list_mail) + ";" + emailCC;
+
+                var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, "", body);
 
                 return Json(new { rs = true, msg = "Decline successfully" }, JsonRequestBehavior.AllowGet);
             }
@@ -303,7 +321,7 @@ namespace MMCV_ESign.Controllers
 
                 // Send mail to all signer which signed and the next signer
                 var documentSignList = docSignBLL.GetDocumentSignByDocumentID(doc.DocumentID);
-                SendCancelMail(documentSignList);
+                SendCancelMail(documentSignList, doc, note);
 
                 return Json(new { rs = true, msg = "Cancel document successfully" }, JsonRequestBehavior.AllowGet);
             }
@@ -314,11 +332,15 @@ namespace MMCV_ESign.Controllers
             }
         }
 
-        private void SendCancelMail(List<DocumentSignBO> listEmail)
+        private void SendCancelMail(List<DocumentSignBO> listEmail, DocumentBO doc, string note)
         {
             var listSignedEmail = listEmail.Where(x => x.Status == (int)EnumDocumentSign.Signed).ToList();
             var nextSignerEmail = listEmail.Where(x => x.Status == (int)EnumDocumentSign.Initital).OrderBy(x => x.SignIndex).FirstOrDefault();
 
+            DocumentBLL docBLL = new DocumentBLL();
+            DocumentSignBLL docSignBLL = new DocumentSignBLL();
+
+            var docSign = docSignBLL.GetDocumentSignByDocumentID(doc.DocumentID);
             if (nextSignerEmail != null)
             {
                 listSignedEmail.Add(nextSignerEmail);
@@ -328,11 +350,27 @@ namespace MMCV_ESign.Controllers
             {
                 listSignedEmail.ForEach((ele) =>
                 {
-                    var body = $"Dear {ele.Email}," +
+                    var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/DeclineDocument.html");
+                    var body = EmailSender.ReadEmailTemplate(templatePath);
+
+                    var bodyNew = $"Dear {ele.Email}," +
                     "<br >" +
-                    $"This email to announce that the document has been canceled. Reference code: {ele.DocumentReferenceCode}";
-                    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                    //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", ele.Email, "", body);
+                    "<br >" +
+                    $"This email to announce that the document has been canceled. " +
+                    "<br >" +
+                    $"Reason: {note}." +
+                    "<br >" +
+                    $"Reference code: {ele.DocumentReferenceCode}";
+
+                    body = body.Replace("Digital Signature Request", " Document has been canceled ");
+                    body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", bodyNew);
+                    body = body.Replace("$SENDER_NAME$", currentUser.Email);
+
+                    var list_mail = docSign.Where(x => x.DocumentID == doc.DocumentID && x.Email != ele.Email).Select(a => a.Email).ToList();
+                    var emailCC = docBLL.GetDocumentById(doc.DocumentID).EmailCC;
+                    string send_cc = String.Join(";", list_mail) + ";" + emailCC;
+
+                    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", ele.Email, send_cc, body);
                 });
             }
         }

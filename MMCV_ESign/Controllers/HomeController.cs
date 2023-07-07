@@ -284,7 +284,7 @@ namespace MMCV_ESign.Controllers
                     $"<br>" +
                     $"Reference code: {doc.ReferenceCode}";
 
-                body = body.Replace("Digital Signature Request", " Document has been destroyed ");
+                body = body.Replace("Digital Signature Request", " Document refused to sign ");
                 body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", bodyNew);
                 body = body.Replace("$SENDER_NAME$", currentUser.Email);
 
@@ -293,7 +293,7 @@ namespace MMCV_ESign.Controllers
                 var emailCC = docBLL.GetDocumentById(doc.DocumentID).EmailCC;
                 string send_cc = String.Join(";", list_mail) + ";" + emailCC;
 
-                var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, "", body);
+                var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, send_cc, body);
 
                 return Json(new { rs = true, msg = "Decline successfully" }, JsonRequestBehavior.AllowGet);
             }

@@ -59,20 +59,48 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
-                DocumentBLL docBLL = new DocumentBLL();
+                //DocumentBLL docBLL = new DocumentBLL();
                 //FormSearchDocument frmSearch = new FormSearchDocument()
                 //{
                 //    Signer = currentUser.Email,
                 //    Status = (int)EnumDocumentSign.Initital
                 //};
                 //var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
+                using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
+                {
+                    var listDocs = entity.Documents
+                                    .Join(entity.DocumentSigns,
+                                          t1 => t1.DocumentID,
+                                          t2 => t2.DocumentID,
+                                          (t1, t2) => new { t1, t2 })
+                                    .Where(x => (x.t2.Email == currentUser.Email && x.t1.Status != 3 && x.t1.Status != 4))
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.Title), x => x.t1.Title.Contains(frmSearch.Title))
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t2.Status.ToString() == frmSearch.Status)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    .Select(x => new
+                                    {
+                                        DocumentID = x.t1.DocumentID,
+                                        DocumentName = x.t1.DocumentName,
+                                        DocumentTypeID = x.t1.DocumentTypeID,
+                                        Issuer = x.t1.Issuer,
+                                        IssuerEmpId = x.t1.IssuerEmpId,
+                                        Title = x.t1.Title,
+                                        Status = x.t1.Status,
+                                        Link = x.t1.Link,
+                                        ReferenceCode = x.t1.ReferenceCode,
+                                        Note = x.t1.Note,
+                                        CreatedBy = x.t1.CreatedBy,
+                                        CreatedDate = x.t1.CreatedDate,
+                                        Active = x.t1.Active,
+                                        SignerStatus = x.t2.Status
+                                    })
+                                    .OrderByDescending(x => x.DocumentID)
+                                    .ToList();
 
-                frmSearch.Signer = currentUser.Email;
-                var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
+                    // Filter document which the previous signer has not signed yet
 
-                // Filter document which the previous signer has not signed yet
-
-                return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+                    return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
@@ -81,24 +109,60 @@ namespace MMCV_ESign.Controllers
             }
         }
 
-        public ActionResult GetSentDocuments()
+        public ActionResult GetSentDocuments(FormSearchDocument frmSearch)
         {
             try
             {
-                DocumentBLL docBLL = new DocumentBLL();
-                FormSearchDocument frmSearch = new FormSearchDocument()
+                //DocumentBLL docBLL = new DocumentBLL();
+                //FormSearchDocument frmSearch = new FormSearchDocument()
+                //{
+                //    Issuer = currentUser.Email,
+                //};
+
+                //var listDocs = docBLL.GetSentDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
+
+                //return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+
+                using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
                 {
-                    Issuer = currentUser.Email,
-                };
+                    var listDocs = entity.Documents
+                                    .Join(entity.DocumentSigns,
+                                          t1 => t1.DocumentID,
+                                          t2 => t2.DocumentID,
+                                          (t1, t2) => new { t1, t2 })
+                                    .Where(x => (x.t1.Issuer == currentUser.Email && x.t1.Status != 3 && x.t1.Status != 4))
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.Title), x => x.t1.Title.Contains(frmSearch.Title))
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t1.Status.ToString() == frmSearch.Status)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    .Select(x => new
+                                    {
+                                        DocumentID = x.t1.DocumentID,
+                                        DocumentName = x.t1.DocumentName,
+                                        DocumentTypeID = x.t1.DocumentTypeID,
+                                        Issuer = x.t1.Issuer,
+                                        IssuerEmpId = x.t1.IssuerEmpId,
+                                        Title = x.t1.Title,
+                                        Status = x.t1.Status,
+                                        Link = x.t1.Link,
+                                        ReferenceCode = x.t1.ReferenceCode,
+                                        Note = x.t1.Note,
+                                        CreatedBy = x.t1.CreatedBy,
+                                        CreatedDate = x.t1.CreatedDate,
+                                        Active = x.t1.Active,
+                                        SignerStatus = x.t2.Status
+                                    })
+                                    .OrderByDescending(x => x.DocumentID)
+                                    .ToList();
 
-                var listDocs = docBLL.GetSentDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
+                    // Filter document which the previous signer has not signed yet
 
-                return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+                    return Json(new { rs = true, msg = "Get sent documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+                }
             }
             catch (Exception ex)
             {
                 LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "DocumentManagement");
-                return Json(new { rs = false, msg = "Error get me sign documents" });
+                return Json(new { rs = false, msg = "Error get sent documents" });
             }
         }
 
@@ -148,7 +212,8 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
-                if (ModelState.IsValid){
+                if (ModelState.IsValid)
+                {
                     DocumentBLL docBLL = new DocumentBLL();
                     doc.CreatedDate = DateTime.Now;
                     doc.IssuerEmpId = currentUser.EmployeeID;
@@ -190,7 +255,8 @@ namespace MMCV_ESign.Controllers
 
                     return Json(new { rs = true, msg = "Add document succssfully" }, JsonRequestBehavior.AllowGet);
                 }
-                else {
+                else
+                {
                     var errors = ModelState.Select(x => (x.Value.Errors))
                                  .Where(y => y.Count > 0)
                                  .ToList();

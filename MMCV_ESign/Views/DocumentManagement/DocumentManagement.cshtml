@@ -62,7 +62,7 @@
                             <input type="text" class="form-control form-control-sm" id="txtFilterMeSignRefCode" autocomplete="off" />
                         </div>
                         <div class="pl-0 pr-1">
-                            <strong>Status</strong>
+                            <strong>Sign Status</strong>
                             <div class="">
                                 <select id="txtFilterMeSignStatus" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -96,6 +96,30 @@
         <div class="tab-pane fade" id="sent" role="tabpanel" aria-labelledby="sent-tab">
             <div class="card">
                 <div class="card-body p-0 pt-2 pb-2">
+                    <div class="d-flex pl-3">
+                        <div class="pl-0 pr-1">
+                            <strong>Title</strong>
+                            <input type="text" class="form-control form-control-sm" id="txtFilterSentTitle" autocomplete="off" />
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>Reference Code</strong>
+                            <input type="text" class="form-control form-control-sm" id="txtFilterSentRefCode" autocomplete="off" />
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>Status</strong>
+                            <div class="">
+                                <select id="txtFilterSentStatus" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    <option value="0">Initial</option>
+                                    <option value="1">Completed</option>
+                                    <option value="2">Declined</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="align-self-end">
+                            <button type="button" class="btn btn-success btn-sm" onclick="getSentDocuments()"><i class="fa fa-search"></i>&nbsp;Search</button>
+                        </div>
+                    </div>
                     <table id="sentDocumentDT" class="table table-bordered table-striped table-hover" style="width:100%">
                         <thead>
                             <tr>
@@ -222,11 +246,11 @@
             let txtStatus = $("#txtFilterMeSignStatus").val();
 
             let action = baseUrl + 'GetMeSignDocuments';
-            var datasend = JSON.stringify({
+            var datasend = {
                 Title: txtTitle,
                 ReferenceCode: txtRefCode,
                 Status: txtStatus
-            });
+            };
 
             LoadingShow();
             localStorage.setItem(activeTabLocalStorage, tabs.meSign);
@@ -245,10 +269,20 @@
         }
 
         function getSentDocuments() {
+            let txtTitle = $("#txtFilterSentTitle").val();
+            let txtRefCode = $("#txtFilterSentRefCode").val();
+            let txtStatus = $("#txtFilterSentStatus").val();
+
             let action = baseUrl + 'GetSentDocuments';
+            var datasend = {
+                Title: txtTitle,
+                ReferenceCode: txtRefCode,
+                Status: txtStatus
+            };
+
             LoadingShow();
             localStorage.setItem(activeTabLocalStorage, tabs.sent);
-            GetDataAjax(action, function (response) {
+            PostDataAjax(action, datasend, function (response) {
                 LoadingHide();
                 if (response.rs) {
                     let data = response.data;
@@ -328,6 +362,7 @@
                 "lengthChange": false,
                 "pageLength": 10,
                 "data": data,
+                "order": [],
                 "filter": false, // this is for disable filter (search box)
                 "columns": [
                     { "data": "DocumentID", "autoWidth": false },
@@ -388,8 +423,9 @@
                 "lengthChange": false,
                 "pageLength": 10,
                 "data": data,
-                "filter": true, // this is for disable filter (search box)
+                "filter": false, // this is for disable filter (search box)
                 "orderMulti": false, // for disable multiple column at once
+                "order": [],
                 "sort": true,
                 "columns": [
                     { "data": "DocumentID", "autoWidth": false },
@@ -446,6 +482,7 @@
                 "filter": false, // this is for disable filter (search box)
                 "orderMulti": false, // for disable multiple column at once
                 "sort": false,
+                "order": [],
                 "columns": [
                     { "data": "DocumentID", "autoWidth": false },
                     { "data": "ReferenceCode", "autoWidth": false },
@@ -501,6 +538,7 @@
                 "filter": false, // this is for disable filter (search box)
                 "orderMulti": false, // for disable multiple column at once
                 "sort": false,
+                "order": [],
                 "columns": [
                     { "data": "DocumentID", "autoWidth": false },
                     { "data": "ReferenceCode", "autoWidth": false },

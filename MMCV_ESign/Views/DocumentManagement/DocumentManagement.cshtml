@@ -388,12 +388,18 @@
                     },
                     {
                         data: null,
+                        autoWidth: '30%',
+                        className: 'text-left',
                         render: function (data, type, row) {
-                            let html = `
+                            var html = `
                                         <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
-                                        <a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>
                                         <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;Quick view</a>
                                     `;
+                            if (data.Status == 0) {
+                                html +=`<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                            } else {
+                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                            }
                             return html;
                         },
                     },
@@ -448,9 +454,13 @@
                         render: function (data, type, row) {
                             let html = `
                                         <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
-                                        <a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>
                                         <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;Quick view</a>
                                     `;
+                            if (data.Status == 0) {
+                                html +=`<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                            } else {
+                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                            }
                             return html;
                         },
                     },

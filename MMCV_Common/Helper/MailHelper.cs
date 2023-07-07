@@ -14,9 +14,8 @@ namespace MMCV_Common.Helper
             {
                 var delimiter = "------------------------------------------------------------";
                 body += $@"<br><br><br>{delimiter}
-    <br><a href='{baseUrl}'>MMCV E-Sign</a>
-    <br><strong>MMCV IT Innovation Center</strong>
-";
+                         <br><a href='{baseUrl}'>MMCV E-Sign</a>
+                         <br><strong>MMCV IT Innovation Center</strong>";
 
                 var message = new MailMessage();
 

@@ -16,6 +16,7 @@ using System.Threading.Tasks;
 using MMCV_Model.DocumentSign;
 using System.Collections.Generic;
 using MMCV_BLL.Email;
+using System.Web.UI.WebControls;
 
 namespace MMCV_ESign.Controllers
 {
@@ -134,17 +135,25 @@ namespace MMCV_ESign.Controllers
                         docBLL.UpdateStatusDocument(doc);
                         var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/CompleteDocument.html");
                         var body = EmailSender.ReadEmailTemplate(templatePath);
+                        // send mail to the next signer
+
                         // send mail to the issuer that document has completed signing flow
                         var body_new = $"Dear {doc.Issuer}," +
+                                   $"<br>" +
                                    $"<br>" +
                                    $"Your document has been completed. Reference code: {currentDocSign.DocumentReferenceCode}";
 
                         body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
                         body = body.Replace("$SENDER_NAME$", doc.Issuer);
+                        body = body.Replace("Start Signing", " DetailsView ");
                         body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
                         //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                        var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, "", body);
+
+                        var list_mail = docSign.Where(x => x.DocumentID == doc.DocumentID && x.Email != doc.Issuer).Select(a=>a.Email).ToList();
+
+                        string send_cc = String.Join(";", list_mail);
+                        var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", doc.Issuer, send_cc, body);
                     }
                     else
                     {

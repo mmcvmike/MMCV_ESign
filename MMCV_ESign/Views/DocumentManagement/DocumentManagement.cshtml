@@ -62,7 +62,7 @@
                             <input type="text" class="form-control form-control-sm" id="txtFilterMeSignRefCode" autocomplete="off" />
                         </div>
                         <div class="pl-0 pr-1">
-                            <strong>Sign Status</strong>
+                            <strong>Signing Status</strong>
                             <div class="">
                                 <select id="txtFilterMeSignStatus" class="form-control form-control-sm">
                                     <option value="">All</option>
@@ -112,6 +112,16 @@
                                     <option value="">All</option>
                                     <option value="0">Initial</option>
                                     <option value="1">Completed</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>Signing Status</strong>
+                            <div class="">
+                                <select id="txtFilterSentSignStatus" class="form-control form-control-sm">
+                                    <option value="">All</option>
+                                    <option value="0">No action</option>
+                                    <option value="1">Signed</option>
                                     <option value="2">Declined</option>
                                 </select>
                             </div>
@@ -272,12 +282,14 @@
             let txtTitle = $("#txtFilterSentTitle").val();
             let txtRefCode = $("#txtFilterSentRefCode").val();
             let txtStatus = $("#txtFilterSentStatus").val();
+            let txtSignStatus = $("#txtFilterSentSignStatus").val();
 
             let action = baseUrl + 'GetSentDocuments';
             var datasend = {
                 Title: txtTitle,
                 ReferenceCode: txtRefCode,
-                Status: txtStatus
+                Status: txtStatus,
+                SignStatus: txtSignStatus
             };
 
             LoadingShow();

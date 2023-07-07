@@ -493,6 +493,8 @@
             });
         }
 
+
+
         // heart beat design pattern to keep user session alive
         function checkSession() {
             let action = '/Base/CheckSession';
@@ -510,6 +512,61 @@
             });
         }
 
+    </script>
+
+    <script type="text/javascript">
+        //Có thể tác đoạn đầu này bỏ vào file .js sau đó load ra cũng được.
+        SessionUpdater = (function () {
+            var clientMovedSinceLastTimeout = false;
+            var keepSessionAliveUrl = null;
+            var timeout = 1 * 1000 * 60; // 1 phút xử lý load lại session 1 lần
+            function setupSessionUpdater(actionUrl) {
+                // store local value
+                keepSessionAliveUrl = actionUrl;
+                // setup handlers
+                listenForChanges();
+                // start timeout - it'll run after n minutes
+                checkToKeepSessionAlive();
+            }
+            function listenForChanges() {
+                $("body").one("mousemove keydown", function () {
+                    clientMovedSinceLastTimeout = true;
+                });
+            }
+            // fires every n minutes - if there's been movement ping server and restart timer
+            function checkToKeepSessionAlive() {
+                setTimeout(function () { keepSessionAlive(); }, timeout);
+            }
+            function keepSessionAlive() {
+                // if we've had any movement since last run, ping the server
+                if (clientMovedSinceLastTimeout && keepSessionAliveUrl != null) {
+                    $.ajax({
+                        type: "POST",
+                        url: keepSessionAliveUrl,
+                        success: function (data) {
+                            // reset movement flag
+                            clientMovedSinceLastTimeout = false;
+                            // start listening for changes again
+                            listenForChanges();
+                            // restart timeout to check again in n minutes
+                            checkToKeepSessionAlive();
+                        },
+                        error: function (data) {
+                            console.log("Error posting to " & keepSessionAliveUrl);
+                        }
+                    });
+                }
+            }
+            // export setup method
+            return {
+                Setup: setupSessionUpdater
+            };
+        })();
+    </script>
+
+    <script type="text/javascript">
+    // cài đặt update session KeepSessionAlive mỗi khi có người truy cập web, bạn thay controller Home bằng controller của bạn gắn mã.
+    SessionUpdater.Setup('@Url.Action("KeepSessionAlive","Base")');
     </script>
 
     @RenderSection("scripts", required: false)

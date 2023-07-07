@@ -24,6 +24,12 @@ namespace MMCV_ESign.Controllers
             return Json(new { rs = true, msg = "session alive" }, JsonRequestBehavior.AllowGet );
         }
 
+        [HttpPost]
+        public JsonResult KeepSessionAlive()
+        {
+            return new JsonResult { Data = "Success" };
+        }
+
         private void GetMenu()
         {
             try

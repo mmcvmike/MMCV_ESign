@@ -13,10 +13,11 @@ namespace MMCV_BLL.Email
     {
         private static string baseUrl = ConfigurationManager.AppSettings["BaseUrl"];
         public static void DocumentSendMail(DocumentSignBO documentSignBO, EmailBO emailBO)
-        { 
+        {
             try
             {
                 var body = emailBO.Content;
+                body = body.Replace("$SIGN_NAME$", documentSignBO.Email);
                 body = body.Replace("$SENDER_NAME$", documentSignBO.Sender);
                 body = body.Replace("$DOCUMENT_NAME$", documentSignBO.Title);
                 body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}Home/PdfPage?docId={documentSignBO.DocumentID}&email={documentSignBO.Email}&signIndex={documentSignBO.SignIndex}");
@@ -56,8 +57,8 @@ namespace MMCV_BLL.Email
                 var body = emailBO.Content;
 
                 body += $@"<br><br><br>{delimiter}
-    <br><a href='{baseUrl}'>MMCV E-Sign</a>
-    <br><strong>MMCV IT Innovation Center</strong>";
+                  <br><a href='{baseUrl}'>MMCV E-Sign</a>
+                  <br><strong>MMCV IT Innovation Center</strong>";
 
                 var message = new MailMessage();
 
@@ -74,17 +75,19 @@ namespace MMCV_BLL.Email
                         message.To.Add(new MailAddress(toMail)); // replace with valid value 
                     }
                 }
-
-                var toCCs = emailBO.CC.Split(';');
-                if (emailBO.CC.Contains(","))
+                if (emailBO.CC != null)
                 {
-                    toCCs = emailBO.CC.Split(',');
-                }
-                foreach (var tocc in toCCs)
-                {
-                    if (tocc != "")
+                    var toCCs = emailBO.CC.Split(';');
+                    if (emailBO.CC.Contains(","))
                     {
-                        message.CC.Add(new MailAddress(tocc)); // replace with valid value 
+                        toCCs = emailBO.CC.Split(',');
+                    }
+                    foreach (var tocc in toCCs)
+                    {
+                        if (tocc != "")
+                        {
+                            message.CC.Add(new MailAddress(tocc)); // replace with valid value 
+                        }
                     }
                 }
 

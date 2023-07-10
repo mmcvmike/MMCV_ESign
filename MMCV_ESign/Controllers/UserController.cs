@@ -1,5 +1,6 @@
 ﻿using MMCV_BLL.User;
 using MMCV_Common;
+using MMCV_Model.DB68;
 using MMCV_Model.User;
 using System;
 using System.Configuration;
@@ -7,13 +8,14 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 
+
 namespace MMCV_ESign.Controllers
 {
     public class UserController : BaseController
     {
         // GET: Account
         private string sessionUser = ConfigurationManager.AppSettings["SessionUser"];
-        
+        public MMCV_ESignEntities db = new MMCV_ESignEntities();
         [HttpGet]
         public ActionResult Login()
         {
@@ -289,6 +291,38 @@ namespace MMCV_ESign.Controllers
             {
                 LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "UserController");
                 return Json(new { rs = false, msg = "Error update user active" });
+            }
+        }
+
+        //TangDV add
+        public ActionResult SavePassWord(UserBO us)
+        {
+            try
+            {
+                if (currentUser.UserID > 0)
+                {
+                    User user = db.Users.FirstOrDefault(u => u.UserID == currentUser.UserID);
+                    user.UserID = currentUser.UserID;
+                    user.Password = us.Password;
+
+                    db.SaveChanges();
+
+                    return Json(new { rs = true, msg = "Change password successfully", data = user }, JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    var errors = ModelState.Select(x => (x.Value.Errors))
+                                 .Where(y => y.Count > 0)
+                                 .ToList();
+                    var returnData = errors.Where(x => x.Count > 0).Select(y => y.FirstOrDefault()).Select(x => x.ErrorMessage);
+
+                    return Json(new { rs = false, msg = string.Join("<br/>", returnData) }, JsonRequestBehavior.AllowGet);
+                }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "UserController");
+                return Json(new { rs = false, msg = "Error changing password!" });
             }
         }
     }

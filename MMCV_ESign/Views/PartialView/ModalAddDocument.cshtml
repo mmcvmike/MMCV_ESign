@@ -166,8 +166,11 @@
                             <div class="d-flex">
                                 @*<div class="timeline-badge-warning"><i class="flaticon-envelope"></i></div>*@
                                 <div class="w-100">
-                                    <div class="timeline-heading">
-                                        <h4 class="timeline-title">Receipts</h4>
+                                    <div class="timeline-heading ">
+                                        <h4 class="timeline-title"> Receipts (to sent)</h4>
+                                        <div class="d-flex">
+                                            <input type="checkbox" onchange="changeToCC()" id="ckbToCC" class="form-control mr-2" title="Choose followers" style="width: 20px; height: 20px" />Add Followers
+                                        </div>
                                     </div>
                                     <div class="timeline-body">
                                         <div class="receipt-email">
@@ -186,24 +189,16 @@
                                 </div>
                             </div>
                         </li>
-                        <li class="card p-2">
+                        <li class="card p-2" id="follow_user" style="display: none">
                             <div class="d-flex">
                                 @*<div class="timeline-badge-warning"><i class="flaticon-envelope"></i></div>*@
                                 <div class="w-100">
                                     <div class="timeline-heading">
-                                        <h4 class="timeline-title">To CC</h4>
+                                        <h4 class="timeline-title">Followers (to cc)</h4>
                                     </div>
                                     <div class="timeline-body">
                                         <div class="receipt-email-tocc">
-                                            <div class="form-group pl-0 col-md-12 col-sm-12 email-index-tocc-1">
-                                                @*<label for="password">Email</label>*@
-                                                <div class="d-flex">
-                                                    <input type="number" id="email-input-index-tocc-1" class="form-control w-25 receipt-email-index d-none" value="0" min="0" placeholder="sign order" />
-                                                    <input type="email" id="email-input-tocc-1" class="form-control w-100 mr-1 receipt-email-item" placeholder="Email">
-                                                    @* <input type="text" id="email-input-fullname-tocc-1" class="form-control ml-1 receipt-email-fullname" placeholder="Name"> &nbsp;*@
-                                                    <button class="btn btn-danger" onclick="deleteMoreEmail_toCC(1)">Delete</button>
-                                                </div>
-                                            </div>
+
                                         </div>
                                         <button class="btn btn-success" onclick="addMoreEmail_toCC()"><i class="fa fa-plus"></i>&nbsp Add more email</button>
                                     </div>
@@ -250,12 +245,14 @@
                                             <button class="btn btn-primary btn-sm w-100 mb-2" onclick="addSignature()" title="place your signature into document"><i class="fa fa-sign"></i> &nbsp; Sign signature here</button>
                                             <button class="btn btn-secondary btn-sm w-100" onclick="addStamp()" title="place your stamp into document"><i class="fa fa-stamp"></i> &nbsp; Sign stamp here</button>
                                             <hr />
-                                            <b>To Sent :</b>
+                                            <b>Receipts (to sent):</b>
                                             <div class="mb-2 list-receiver-email">
                                             </div>
-                                            <b>To CC :</b>
+
+                                            <b>Followers (to cc):</b>
                                             <div class="mb-2 list-receiver-email-tocc">
                                             </div>
+
                                         </div>
                                     </div>
                                 </div>
@@ -714,7 +711,7 @@
             req.setRequestHeader("Content-type", "application/json");
 
             let listDocSign = [];
-            ///index > 0 when sent 
+            ///index > 0 when sent
             listEmail.filter(a => a.index > 0).forEach((ele, index) => {
                 listDocSign.push({
                     Email: ele.value,
@@ -807,10 +804,23 @@
 
 
     /// TangDV add 07/07/2023
-    var emailIndex_tocc = 1;
+    var emailIndex_tocc = 0;
+
+    const changeToCC = () => {
+        if ($('#ckbToCC').is(":checked")) {
+            $('#follow_user').show();
+            addMoreEmail_toCC();
+        } else {
+            $('#follow_user').hide();
+            var ap = document.getElementsByClassName('receipt-email-tocc')[0];
+            if (ap != undefined)
+                ap.innerHTML = "";
+        }
+        emailIndex_tocc = 0;
+    }
     function addMoreEmail_toCC() {
         emailIndex_tocc++;
-        ///index = 0 when to cc 
+        ///index = 0 when to cc
         let emailPanel = ` <div class="form-group pl-0 col-md-12 col-sm-12 email-index-tocc-${emailIndex_tocc}">
                                     <div class="d-flex">
                                         <input type="number" id="email-input-index-tocc-${emailIndex_tocc}" class="form-control w-25 receipt-email-index d-none" value="0" min="0" placeholder="sign order" />

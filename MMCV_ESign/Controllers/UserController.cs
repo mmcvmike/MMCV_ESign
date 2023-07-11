@@ -15,7 +15,7 @@ namespace MMCV_ESign.Controllers
     {
         // GET: Account
         private string sessionUser = ConfigurationManager.AppSettings["SessionUser"];
-        public MMCV_ESignEntities db = new MMCV_ESignEntities();
+
         [HttpGet]
         public ActionResult Login()
         {
@@ -295,29 +295,24 @@ namespace MMCV_ESign.Controllers
         }
 
         //TangDV add
-        public ActionResult SavePassWord(UserBO us)
+        public ActionResult SavePassword(UserBO us)
         {
             try
             {
                 if (currentUser.UserID > 0)
                 {
-                    User user = db.Users.FirstOrDefault(u => u.UserID == currentUser.UserID);
-                    user.UserID = currentUser.UserID;
-                    user.Password = us.Password;
+                    using (MMCV_ESignEntities db = new MMCV_ESignEntities())
+                    {
+                        User user = db.Users.FirstOrDefault(u => u.UserID == currentUser.UserID);
+                        user.UserID = currentUser.UserID;
+                        user.Password = us.Password;
 
-                    db.SaveChanges();
-
-                    return Json(new { rs = true, msg = "Change password successfully", data = user }, JsonRequestBehavior.AllowGet);
+                        db.SaveChanges();
+                        return Json(new { rs = true, msg = "Change password successfully", data = user }, JsonRequestBehavior.AllowGet);
+                    }
                 }
                 else
-                {
-                    var errors = ModelState.Select(x => (x.Value.Errors))
-                                 .Where(y => y.Count > 0)
-                                 .ToList();
-                    var returnData = errors.Where(x => x.Count > 0).Select(y => y.FirstOrDefault()).Select(x => x.ErrorMessage);
-
-                    return Json(new { rs = false, msg = string.Join("<br/>", returnData) }, JsonRequestBehavior.AllowGet);
-                }
+                    return Json(new { rs = false, msg = "UserID not found!" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {

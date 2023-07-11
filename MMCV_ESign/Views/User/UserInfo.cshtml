@@ -57,31 +57,31 @@
                     Department: @currentUser.DepartmentName <br />
                     Position: @currentUser.PositionName <br />
                     EmployeeID: @currentUser.EmployeeID <br /><br />
-                    <button type="button" onclick="onModalPassWord()" class="btn btn-sm btn-info">Change the password</button>
+                    <button type="button" onclick="onModalPassword()" class="btn btn-sm btn-info">Change the password</button>
                 </div>
             </div>
             <div class="card card-stats card-round">
                 <div class="card-body" id="modalPassWord" style="display: none">
                     <label><strong>Settings</strong></label>
-                    <button type="button" onclick="offModalPassWord()" class="float-right border-0 bg-light"><i class=" far fa fa-times-circle fa-1x"></i></button>
+                    <button type="button" onclick="offModalPassword()" class="float-right border-0 bg-light"><i class=" far fa fa-times-circle fa-1x"></i></button>
                     <hr />
                     <label>Current password</label>
                     <div class="input-group mb-2">
-                        <input type="password" id="currentPassword" onchange="change_Current('currentPassword')" class="form-control" placeholder="Current password" /><br />
-                        <i class="far fa-eye-slash" id="toggle_currentPassword" onclick="change_password('#currentPassword','#toggle_currentPassword')" style="position: absolute; right: 5%;top: 35%; z-index:100"></i>
+                        <input type="password" id="currentPassword" onchange="changeCurrentPassword('currentPassword')" class="form-control" placeholder="Current password" /><br />
+                        <i class="far fa-eye-slash" id="toggleCurrentPassword" onclick="changesPassword('#currentPassword','#toggleCurrentPassword')" style="position: absolute; right: 5%;top: 35%; z-index:100"></i>
                     </div>
                     <label>New password</label>
                     <div class="input-group mb-2">
                         <input type="password" id="newPassword" class="form-control" placeholder="New password" /><br />
-                       <i class="far fa-eye-slash" id="toggle_newPassword" onclick="change_password('#newPassword','#toggle_newPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
+                        <i class="far fa-eye-slash" id="toggleNewPassword" onclick="changesPassword('#newPassword','#toggleNewPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
                     </div>
                     <div class="input-group mb-2">
-                        <input type="password" onchange="change_confirm('confirmPassword','newPassword')" id="confirmPassword" class="form-control" placeholder="Confirm new password" /><br />
-                        <i class="far fa-eye-slash" id="toggle_confirmPassword"  onclick="change_password('#confirmPassword','#toggle_confirmPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
+                        <input type="password" onchange="changeConfirm('confirmPassword','newPassword')" id="confirmPassword" class="form-control" placeholder="Confirm new password" /><br />
+                        <i class="far fa-eye-slash" id="toggleConfirmPassword" onclick="changesPassword('#confirmPassword','#toggleConfirmPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
                     </div>
-                    <span id="text_passWord" class="text-danger mb-2" style="display:none"></span>
+                    <span id="txtPassword" class="text-danger mb-2" style="display:none"></span>
                     <hr />
-                    <button type="button" onclick="save_passWord()" class="btn btn-sm btn-success text-center">Save changes</button>
+                    <button type="button" onclick="savePassword()" class="btn btn-sm btn-success text-center">Save changes</button>
                 </div>
             </div>
         </div>
@@ -437,20 +437,19 @@
 
 
         ///TangDV Add
-        const onModalPassWord = () => {
+        const onModalPassword = () => {
             $('#currentPassword').val('');
             $('#newPassword').val('');
             $('#confirmPassword').val('');
-            $('#text_passWord').hide();
-
+            $('#txtPassword').hide();
             $('#modalPassWord').show();
         }
-        const offModalPassWord = () => {
+        const offModalPassword = () => {
             $('#modalPassWord').hide();
         }
-        const change_password = (id_pass,id_toggle) => {
-            var password = document.querySelector(id_pass);
-            var togglepassword = document.querySelector(id_toggle);
+        const changesPassword = (idPassword,idToggle) => {
+            var password = document.querySelector(idPassword);
+            var togglepassword = document.querySelector(idToggle);
             // toggle the type attribute
             const type = password.getAttribute("type") === "password" ? "text" : "password";
             password.setAttribute("type", type);
@@ -458,70 +457,65 @@
             // toggle the eye icon
             togglepassword.classList.toggle('fa-eye');
         }
-        const change_Current = (id_pass) => {
-            var password = document.getElementById(id_pass);
-            $('#text_passWord').hide();
+        const changeCurrentPassword = (idPassword) => {
+            var password = document.getElementById(idPassword);
+            $('#txtPassword').hide();
             if (password != undefined) {
-                var str_pas = @currentUser.Password+"";
-                var stas = password.value === str_pas ? false : true;
-                if (stas) {
+                var status = password.value === "@currentUser.Password" ? false : true;
+                if (status) {
                     password.focus();
-                    var text = document.getElementById('text_passWord');
-                    text.innerText = "Wrong password!";
-                    $('#text_passWord').show();
+                    setInnerText('txtPassword', 'Wrong password!');
                 }
             }
 
         }
-        const change_confirm = (id_pass, new_pass) => {
-            $('#text_passWord').hide();
-            var newPassWord = document.getElementById(new_pass);
-            var passWord = document.getElementById(id_pass);
-            if (passWord != undefined) {
-                var stas = passWord.value === newPassWord.value ? false : true;
-                if (stas) {
-                    var text = document.getElementById('text_passWord');
-                    text.innerText = "Password does not match the new password!";
-                    passWord.focus();
-                    $('#text_passWord').show();
+        const changeConfirm = (idPassword, idNewPassword) => {
+            $('#txtPassword').hide();
+            var newPassrord = document.getElementById(idNewPassword);
+            var password = document.getElementById(idPassword);
+            if (password != undefined) {
+                var status = password.value === newPassrord.value ? false : true;
+                if (status) {
+                    setInnerText('txtPassword','Password does not match the new password!');
+                    password.focus();
                 }
             }
 
         }
+        const savePassword = () => {
 
-        const save_passWord = () => {
-             var curentPass = @currentUser.Password+"";
-            if ($('#currentPassword').val() != curentPass) {
+            let currentPassword = $("#currentPassword");
+            let newPassword = $("#newPassword");
+            let confirmPassword = $("#confirmPassword");
+
+            if (currentPassword.val() != "@currentUser.Password") {
                 toastr.error("Wrong password!", "Warning");
-                $('#currentPassword').focus();
-                return;
+                currentPassword.focus();
+                return false;
             }
-            else if ($('#confirmPassword').val() == '') {
-                toastr.error("Enter your new password!", "Warning");
-                $('#confirmPassword').focus();
-                return;
-            }else if ($('#newPassword').val() != $('#confirmPassword').val()) {
+            if (!CheckNullOrEmpty(confirmPassword, "Password can not be empty or null!")) {
+                confirmPassword.focus();
+                return false;
+            }
+            if (newPassword.val() != confirmPassword.val()) {
                 toastr.error("Password does not match the new password!", "Warning");
-                $('#confirmPassword').focus();
-                return;
+                confirmPassword.focus();
+                return false;
             } else {
                 var dataUrl = canvas.toDataURL();
 
                 // save dataUrl to database
-                let action = baseUrl + 'SavePassWord';
+                let action = baseUrl + 'SavePassword';
                 var us = {
                     UserID: @currentUser.UserID,
-                    Password: $('#confirmPassword').val(),
+                    Password:confirmPassword.val(),
                 };
                 LoadingShow();
                 PostDataAjax(action, us, function (response) {
                     LoadingHide();
                     if (response.rs) {
-                        let data = response.data;
-                        appendSignature(data); // append data to table below
-                        listSignatures.push(data); // add to list signatures
                         toastr.success(response.msg, "Success");
-                        offModalPassWord();
+                        offModalPassword();
                     }
                     else {
                         toastr.error(response.msg, "Warning");
@@ -529,6 +523,11 @@
                 });
             }
 
+        }
+        const setInnerText = (idInput,text) => {
+            var texts = document.getElementById(idInput);
+            texts.innerText = text;
+            $('#' + idInput).show();
         }
     </script>
 }

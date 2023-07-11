@@ -95,7 +95,8 @@ namespace MMCV_ESign.Controllers
                                         SignerStatus = x.t2.Status
                                     })
                                     .OrderByDescending(x => x.DocumentID)
-                                    .ToList();
+									.DistinctBy(x => x.DocumentID)
+									.ToList();
 
                     // Filter document which the previous signer has not signed yet
 
@@ -153,6 +154,7 @@ namespace MMCV_ESign.Controllers
                                         SignerStatus = x.t2.Status
                                     })
                                     .OrderByDescending(x => x.DocumentID)
+                                    .DistinctBy(x => x.DocumentID)
                                     .ToList();
 
                     // Filter document which the previous signer has not signed yet

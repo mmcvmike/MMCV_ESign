@@ -278,14 +278,15 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
-                foreach (string file in Request.Files)
+				var userFolder = currentUser.EmployeeID;
+				string path = CDN_Source_File + userFolder + "/";
+
+				foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
                     if (fileContent != null && fileContent.ContentLength > 0)
                     {
-                        string path = CDN_Source_File;
-
-                        if (!Directory.Exists(path))
+						if (!Directory.Exists(path))
                         {
                             Directory.CreateDirectory(path);
                         }
@@ -310,6 +311,7 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
+                var currentFolder = currentUser.EmployeeID;
                 DocumentBLL docBLL = new DocumentBLL();
                 var doc = docBLL.GetDocumentById(docId);
                 dynamic returnFile;
@@ -320,7 +322,8 @@ namespace MMCV_ESign.Controllers
                 }
                 else
                 {
-                    returnFile = System.IO.File.ReadAllBytes(CDN_Source_File + doc.Link);
+                    var path = CDN_Source_File + currentFolder + "/";
+					returnFile = System.IO.File.ReadAllBytes(path + doc.Link);
                 }
 
                 // Convert file stored in CDN to base64
@@ -499,12 +502,16 @@ namespace MMCV_ESign.Controllers
                 {
                     LogHelper.Instance.WriteLog(docBLL.ResultMessageBO.Message, docBLL.ResultMessageBO.MessageDetail, MethodBase.GetCurrentMethod().Name, "Download Document");
                 }
-                var filePath = CDN_Source_File + doc.Link;
+
+				var userFolder = currentUser.EmployeeID;
+				string path = CDN_Source_File + userFolder + "/";
+				var filePath = path + doc.Link;
                 byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 string fileName = doc.Link;
 
                 Response.AddHeader("Set-Cookie", "fileDownload=true; path=/"); // when use jquery.fileDonwload in UI need to set header to handle loading spinner
-                return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+                //return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+                return File(fileBytes, MediaTypeNames.Application.Zip, fileName);
             }
             catch (Exception ex)
             {

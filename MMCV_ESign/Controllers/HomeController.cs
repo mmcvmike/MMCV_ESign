@@ -94,7 +94,8 @@ namespace MMCV_ESign.Controllers
                 }
                 else
                 {
-                    returnFile = System.IO.File.ReadAllBytes(CDN_Source_File + doc.Link);
+					var path = CDN_Source_File + currentUser.EmployeeID + "/";
+					returnFile = System.IO.File.ReadAllBytes(path + doc.Link);
                 }
                 string base64String = Convert.ToBase64String(returnFile, 0, returnFile.Length);
                 doc.Base64File = base64String;
@@ -193,12 +194,13 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
+                var userFolder = currentUser.EmployeeID;
                 foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
                     if (fileContent != null && fileContent.ContentLength > 0)
                     {
-                        string path = CDN_Source_File;
+                        string path = CDN_Source_File + userFolder + "/";
 
                         if (!Directory.Exists(path))
                         {

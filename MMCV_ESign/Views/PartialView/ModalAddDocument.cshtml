@@ -672,36 +672,81 @@
         tool.setCustomStamps(customStamps)
 
         addSignature = function() {
-            // vẽ sẵn chữ ký tại một điểm
-            const annot = new Annotations.StampAnnotation({
-                PageNumber: documentViewer.getCurrentPage(),
-                X: 100,
-                Y: 100,
-                Width: 200,
-                Height: 100,
-                Author: "@currentUser.Email"
-            });
-            annot.setImageData("@currentUser.DefaultSignature.Base64Signature");
+            let checkExistSignature = "@currentUser.DefaultSignature.Base64Signature" == "" ? false : true;
+            if (checkExistSignature) {
+                // vẽ sẵn chữ ký tại một điểm
+                const annot = new Annotations.StampAnnotation({
+                    PageNumber: documentViewer.getCurrentPage(),
+                    X: 100,
+                    Y: 100,
+                    Width: 200,
+                    Height: 100,
+                    Author: "@currentUser.Email"
+                });
+                annot.setImageData("@currentUser.DefaultSignature.Base64Signature");
 
-            annotationManager.addAnnotation(annot);
-            annotationManager.redrawAnnotation(annot);
+                annotationManager.addAnnotation(annot);
+                annotationManager.redrawAnnotation(annot);
+
+                // user define check add
+                listUserSignature.push(annot);
+            }
+            else {
+                $.confirm({
+                    title: 'Notice!',
+                    content: 'You do not have any signature. Do you want to create your own signature? Please go account information page to create!',
+                    buttons: {
+                        cancel: function () {
+
+                        },
+                        yes: {
+                            btnClass: 'btn btn-success',
+                            action: function () {
+                                location.href = '/User/UserInfo';
+                            },
+                        },
+                    }
+                });
+                return false;
+            }
         }
 
-
         addStamp = function() {
-            // vẽ sẵn dấu tại một điểm
-            const annot = new Annotations.StampAnnotation({
-                PageNumber: documentViewer.getCurrentPage(),
-                X: 300,
-                Y: 100,
-                Width: 200,
-                Height: 200,
-                Author: "@currentUser.Email"
-            });
-            annot.setImageData("@currentUser.StampBase64");
+            let checkExistStamp = "@currentUser.StampBase64" == "" ? false : true;
+            if (checkExistStamp) {
+                // vẽ sẵn dấu tại một điểm
+                const annot = new Annotations.StampAnnotation({
+                    PageNumber: documentViewer.getCurrentPage(),
+                    X: 300,
+                    Y: 100,
+                    Width: 200,
+                    Height: 200,
+                    Author: "@currentUser.Email"
+                });
+                annot.setImageData("@currentUser.StampBase64");
 
-            annotationManager.addAnnotation(annot);
-            annotationManager.redrawAnnotation(annot);
+                annotationManager.addAnnotation(annot);
+                annotationManager.redrawAnnotation(annot);
+            }
+            else {
+                $.confirm({
+                    title: 'Notice!',
+                    content: 'You do not have any stamp. Do you want to create your own stamp? Please go account information page to create!',
+                    buttons: {
+                        cancel: function () {
+
+                        },
+                        yes: {
+                            btnClass: 'btn btn-success',
+                            action: function () {
+                                location.href = '/User/UserInfo';
+                            },
+                        },
+                    }
+                });
+                return false;
+            }
+
         }
 
         function choseNewFile() {

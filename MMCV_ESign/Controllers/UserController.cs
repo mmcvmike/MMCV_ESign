@@ -107,12 +107,17 @@ namespace MMCV_ESign.Controllers
             {
                 if (ModelState.IsValid)
                 {
+                    var isUserHaveDefaultSignature = currentUser.DefaultSignature.Base64Signature == null ? false : true;
                     UserBLL userBLL = new UserBLL();
                     us.UserID = currentUser.UserID;
                     us.CreatedDate = DateTime.Now;
-                    us.IsDefault = 0;
+                    us.IsDefault = isUserHaveDefaultSignature ? 0 : 1;
                     us.Active = 1;
                     var addResult = userBLL.AddUserSignature(us);
+                    if (!isUserHaveDefaultSignature)
+                    {
+                        currentUser.DefaultSignature = us;
+                    }
 
                     return Json(new { rs = true, msg = "Add signature succssfully", data = addResult }, JsonRequestBehavior.AllowGet);
                 }

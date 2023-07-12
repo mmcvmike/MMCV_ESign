@@ -74,8 +74,15 @@
     }
 
     .timeline li {
+        margin-bottom: 10px;
         padding-right: 0px !important;
     }
+
+	.timeline {
+		list-style: none;
+		padding: 10px 0 10px;
+		position: relative;
+	}
 
     .item-file {
         background: #FFFFFF 0% 0% no-repeat padding-box;
@@ -93,7 +100,7 @@
 }
 <div class="p-0 modal fade" id="modalAddDocument" tabindex="-1" role="dialog" aria-labelledby="" aria-hidden="true">
     <div class="modal-dialog modal-full" role="document">
-        <div class="modal-content">
+        <div class="modal-content" style="background: #f9fbfd">
             @*<div class="modal-header">
                     <h5 class="modal-title">Sign document process</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -108,13 +115,9 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
             </div>
             <div class="modal-body">
-                <div>
-
-                </div>
-
                 @*Step 1*@
                 <div class="container pl-0 pr-0 step-detail step-1">
-                    <div class="card p-3">
+                    <div class="card p-3 mb-2">
                         <h4 class="card-title text-success">Upload file need to sign</h4>
                     </div>
                     <div class="mb-2">
@@ -168,14 +171,17 @@
                                 <div class="w-100">
                                     <div class="timeline-heading ">
                                         <h4 class="timeline-title"> Receipts (to sent)</h4>
-                                        <div class="d-flex">
-                                            <input type="checkbox" onchange="changeToCC()" id="ckbToCC" class="form-control mr-2" title="Choose followers" style="width: 20px; height: 20px" />Add Followers
-                                        </div>
+										<div class="d-flex">
+											<label class="d-flex" style="cursor: pointer">
+												<input type="checkbox" onchange="changeToCC()" id="ckbToCC" class="form-control mr-2" title="Choose followers" style="width: 20px; height: 20px" />
+												<span>Add Followers</span>
+											</label>
+										</div>
                                     </div>
                                     <div class="timeline-body">
-                                        <div class="receipt-email">
-                                            <div class="form-group pl-0 col-md-12 col-sm-12 email-index-1">
-                                                <label for="password">Email</label>
+                                        <div class="receipt-email mb-2">
+                                            <div class="form-group pb-0 pl-0 col-md-12 col-sm-12 email-index-1">
+                                                <label for="password" class="mb-0">Email</label>
                                                 <div class="d-flex">
                                                     <input type="number" id="email-input-index-1" class="form-control w-25 receipt-email-index" value="1" min="0" placeholder="sign order" />
                                                     <input type="email" id="email-input-1" class="form-control w-100 ml-1 receipt-email-item" placeholder="Email">
@@ -197,7 +203,7 @@
                                         <h4 class="timeline-title">Followers (to cc)</h4>
                                     </div>
                                     <div class="timeline-body">
-                                        <div class="receipt-email-tocc">
+                                        <div class="receipt-email-tocc mb-2">
 
                                         </div>
                                         <button class="btn btn-success" onclick="addMoreEmail_toCC()"><i class="fa fa-plus"></i>&nbsp Add more email</button>
@@ -273,7 +279,7 @@
                                             @*<button class="btn btn-success w-100" id="btn_send_file"> <i class="fa fa-save"></i>&nbsp; Save and send</button>*@
                                             <button class="btn btn-success w-100" onclick="saveAndSend()" id="btn_send_file"> <i class="fa fa-save"></i>&nbsp; Save and send</button>
                                             <hr />
-                                            <button class="btn btn-light w-100" onclick="saveAsDraft()"> <i class="fa fa-ban text-danger"></i>&nbsp; Save as draft</button>
+                                            <button class="btn btn-light w-100" onclick="saveAsDraft()"> <i class="fa fa-file-pdf text-danger"></i>&nbsp; Save as draft</button>
                                         </div>
                                     </div>
                                 </div>
@@ -425,8 +431,8 @@
     var emailIndex = 1;
     function addMoreEmail() {
         emailIndex++;
-        let emailPanel = ` <div class="form-group pl-0 col-md-12 col-sm-12 email-index-${emailIndex}">
-                                    <label for="password">Email</label>
+        let emailPanel = ` <div class="form-group pb-0 pl-0 col-md-12 col-sm-12 email-index-${emailIndex}">
+                                    <label for="password" class="mb-0">Email</label>
                                     <div class="d-flex">
                                         <input type="number" id="email-input-index-${emailIndex}" class="form-control w-25 receipt-email-index" value="${emailIndex}" min="0" placeholder="sign order" />
                                         <input type="email" id="email-input-${emailIndex}" class="form-control ml-1 receipt-email-item" placeholder="Email">
@@ -518,6 +524,7 @@
     }
 
     var step = 1;
+	$(".btnPrevious").css("display", "none");
     function moveNextStep() {
         // before increase value
         if (step == 1) {
@@ -532,6 +539,17 @@
         }
 
         step++;
+
+        // after increase value
+		if (step == 2) {
+			$(".btnPrevious").css("display", "block");
+		}
+
+        if (step == 3) {
+			$(".btnPrevious").css("display", "block");
+			$(".btnNext").css("display", "none");
+		}
+
         step = step >= 3 ? 3 : step;
         $(".step-detail").css("display", "none");
         $(`.step-${step}`).css("display", "block");
@@ -554,9 +572,13 @@
 
         if (step == 1) {
             $("#txtDocumentTitle").focus();
+			$(".btnPrevious").css("display", "none");
+			$(".btnNext").css("display", "block");
         }
         if (step == 2) {
             $(".receipt-email-item")[0].focus();
+			$(".btnPrevious").css("display", "block");
+			$(".btnNext").css("display", "block");
         }
     }
 
@@ -821,7 +843,7 @@
     function addMoreEmail_toCC() {
         emailIndex_tocc++;
         ///index = 0 when to cc
-        let emailPanel = ` <div class="form-group pl-0 col-md-12 col-sm-12 email-index-tocc-${emailIndex_tocc}">
+        let emailPanel = ` <div class="form-group pb-0 pl-0 col-md-12 col-sm-12 email-index-tocc-${emailIndex_tocc}">
                                     <div class="d-flex">
                                         <input type="number" id="email-input-index-tocc-${emailIndex_tocc}" class="form-control w-25 receipt-email-index d-none" value="0" min="0" placeholder="sign order" />
                                         <input type="email" id="email-input-tocc-${emailIndex_tocc}" class="form-control mr-1 receipt-email-item" placeholder="Email">

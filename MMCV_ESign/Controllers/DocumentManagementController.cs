@@ -222,12 +222,25 @@ namespace MMCV_ESign.Controllers
                     doc.IssuerEmpId = currentUser.EmployeeID;
                     doc.ReferenceCode = Checksum.GenerateReferenceCode();
 
-                    var isAddSuccess = docBLL.AddDocument(doc);
-                    if (!isAddSuccess)
+                    var docId = docBLL.AddDocument(doc);
+                    if (docId <= 0)
                     {
                         return Json(new { rs = false, msg = "Error add document to database" }, JsonRequestBehavior.AllowGet);
                     }
 
+                    // save file to folder of user
+                    var tempPath = CDN_Source_File + currentUser.EmployeeID + "/" + doc.Link;
+                    if (System.IO.File.Exists(tempPath))
+                    {
+                        var correctFilePath = CDN_Source_File + currentUser.EmployeeID + "/" + docId + "/";
+                        if (!Directory.Exists(correctFilePath))
+                        {
+                            Directory.CreateDirectory(correctFilePath);
+                            System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
+                        }
+                    }
+
+                    // send mail for signer
                     if (doc.Status == (int)EnumDocumentStatus.Initital)
                     {
                         var ele = doc.DocumentSigns.OrderBy(x => x.SignIndex).FirstOrDefault();
@@ -238,12 +251,6 @@ namespace MMCV_ESign.Controllers
                         var body = EmailSender.ReadEmailTemplate(templatePath);
                         Task.Run(() =>
                         {
-                            //var body = $"Dear {ele.Email}," +
-                            //        $"<br >You have a document need to sign. Reference code: {doc.ReferenceCode}" +
-                            //        $"<br ><a style='height: 60px; background: green;' href='{baseUrl}Home/PdfPage?docId={ele.DocumentID}&email={ele.Email}&signIndex={ele.SignIndex}'>Start sign</a>";
-                            //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                            ////var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", ele.Email, "", body);
-
                             EmailBO emailBO = new EmailBO()
                             {
                                 MailTo = ele.Email,
@@ -311,7 +318,6 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
-                var currentFolder = currentUser.EmployeeID;
                 DocumentBLL docBLL = new DocumentBLL();
                 var doc = docBLL.GetDocumentById(docId);
                 dynamic returnFile;
@@ -322,7 +328,7 @@ namespace MMCV_ESign.Controllers
                 }
                 else
                 {
-                    var path = CDN_Source_File + currentFolder + "/";
+                    var path = CDN_Source_File + doc.IssuerEmpId + "/" + docId + "/";
 					returnFile = System.IO.File.ReadAllBytes(path + doc.Link);
                 }
 
@@ -466,15 +472,6 @@ namespace MMCV_ESign.Controllers
             var firstEmail = listEmail.Where(x => x.Status == (int)EnumDocumentSign.Initital).OrderBy(x => x.SignIndex).FirstOrDefault();
             if (firstEmail != null)
             {
-                //var body = $"Dear {firstEmail.Email}," +
-                //            "<br >" +
-                //            $"<br >You have a document need to sign. Reference code: {firstEmail.DocumentReferenceCode}" +
-                //            $"<br >Please access <a href='{baseUrl}/Home/PdfPage?docId={firstEmail.DocumentID}&email={firstEmail.Email}&signIndex={firstEmail.SignIndex}'>this link</a> to sign document";
-                //Task.Run(() =>
-                //{
-                //    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", firstEmail.Email, "", body);
-                //});
-
                 var templatePath = HttpContext.Server.MapPath("~/Template/Email/SignDocument.html");
                 var body = EmailSender.ReadEmailTemplate(templatePath);
                 Task.Run(() =>
@@ -503,8 +500,7 @@ namespace MMCV_ESign.Controllers
                     LogHelper.Instance.WriteLog(docBLL.ResultMessageBO.Message, docBLL.ResultMessageBO.MessageDetail, MethodBase.GetCurrentMethod().Name, "Download Document");
                 }
 
-				var userFolder = currentUser.EmployeeID;
-				string path = CDN_Source_File + userFolder + "/";
+				string path = CDN_Source_File + doc.IssuerEmpId + "/" + doc.DocumentID + "/";
 				var filePath = path + doc.Link;
                 byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 string fileName = doc.Link;

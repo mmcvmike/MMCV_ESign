@@ -28,7 +28,6 @@ namespace MMCV_Model.DB68
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Document> Documents { get; set; }
         public virtual DbSet<DocumentSign> DocumentSigns { get; set; }
-        public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<Menu> Menus { get; set; }
         public virtual DbSet<Permission> Permissions { get; set; }
         public virtual DbSet<Position> Positions { get; set; }
@@ -40,5 +39,6 @@ namespace MMCV_Model.DB68
         public virtual DbSet<UserPermission> UserPermissions { get; set; }
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<UserSignature> UserSignatures { get; set; }
+        public virtual DbSet<DocumentType> DocumentTypes { get; set; }
     }
 }

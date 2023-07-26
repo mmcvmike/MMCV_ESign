@@ -68,6 +68,18 @@ namespace MMCV_ESign.Controllers
                 //var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
                 using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
                 {
+                    DateTime? fromDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.FromDate))
+                    {
+                        fromDate = DateTime.Parse(frmSearch.FromDate);
+                    }
+
+                    DateTime? toDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.ToDate))
+                    {
+                        toDate = DateTime.Parse(frmSearch.ToDate);
+                    }
+
                     var listDocs = entity.Documents
                                     .Join(entity.DocumentSigns,
                                           t1 => t1.DocumentID,
@@ -77,6 +89,9 @@ namespace MMCV_ESign.Controllers
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Title), x => x.t1.Title.Contains(frmSearch.Title))
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t2.Status.ToString() == frmSearch.Status)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    //.WhereIf(!string.IsNullOrEmpty(frmSearch.DocumentType), x => x.t1.DocumentTypeID.ToString() == frmSearch.DocumentType)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.FromDate), x => x.t1.CreatedDate >= fromDate)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ToDate), x => x.t1.CreatedDate <= toDate)
                                     .Select(x => new
                                     {
                                         DocumentID = x.t1.DocumentID,
@@ -126,6 +141,19 @@ namespace MMCV_ESign.Controllers
 
                 using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
                 {
+
+                    DateTime? fromDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.FromDate))
+                    {
+                        fromDate = DateTime.Parse(frmSearch.FromDate);
+                    }
+
+                    DateTime? toDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.ToDate))
+                    {
+                        toDate = DateTime.Parse(frmSearch.ToDate);
+                    }
+
                     var listDocs = entity.Documents
                                     .Join(entity.DocumentSigns,
                                           t1 => t1.DocumentID,
@@ -136,6 +164,9 @@ namespace MMCV_ESign.Controllers
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t1.Status.ToString() == frmSearch.Status)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.SignStatus), x => x.t2.Status.ToString() == frmSearch.SignStatus)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.DocumentType), x => x.t1.DocumentTypeID.ToString() == frmSearch.DocumentType)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.FromDate), x => x.t1.CreatedDate >= fromDate)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ToDate), x => x.t1.CreatedDate <= toDate)
                                     .Select(x => new
                                     {
                                         DocumentID = x.t1.DocumentID,

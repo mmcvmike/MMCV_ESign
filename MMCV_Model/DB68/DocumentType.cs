@@ -16,6 +16,7 @@ namespace MMCV_Model.DB68
     {
         public int DocumentTypeID { get; set; }
         public string DocumentTypeName { get; set; }
+        public string EmployeeID { get; set; }
         public string Description { get; set; }
         public Nullable<int> Active { get; set; }
     }

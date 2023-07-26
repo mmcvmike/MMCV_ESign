@@ -93,6 +93,15 @@
     .action-file {
         cursor: pointer;
     }
+
+    select.form-control:not([size]):not([multiple]) {
+         height: initial; 
+    }
+
+    #addDocumentTypeModal .modal-content {
+        border: 2px dashed #dadfe3 !important;
+    }
+
 </style>
 
 @{
@@ -124,10 +133,15 @@
                         <strong>Title</strong>
                         <input type="text" class="form-control w-100" id="txtDocumentTitle" autofocus />
                     </div>
-                    <div class="mb-2">
-                        <strong>Document Type</strong>
-                        <select class="form-control w-50" id="txtDocumentType">
-                        </select>
+                    <div class="mb-2 d-flex">
+                        <div class="w-50">
+                            <strong>Document Type</strong>
+                            <select class="form-control w-100" id="txtDocumentType">
+                            </select>
+                        </div>
+                        <div class="align-self-end pl-2">
+                            <button class="btn btn-success" onclick="openAddDocType()"><i class="fa fa-plus"></i></button>
+                        </div>
                     </div>
                     <div class="text-center drop">
                         <div>
@@ -171,12 +185,12 @@
                                 <div class="w-100">
                                     <div class="timeline-heading ">
                                         <h4 class="timeline-title"> Receipts (to sent)</h4>
-										<div class="d-flex">
-											<label class="d-flex" style="cursor: pointer">
-												<input type="checkbox" onchange="changeToCC()" id="ckbToCC" class="form-control mr-2" title="Choose followers" style="width: 20px; height: 20px" />
-												<span>Add Followers</span>
-											</label>
-										</div>
+                                        <div class="d-flex">
+                                            <label class="d-flex" style="cursor: pointer">
+                                                <input type="checkbox" onchange="changeToCC()" id="ckbToCC" class="form-control mr-2" title="Choose followers" style="width: 20px; height: 20px" />
+                                                <span>Add Followers</span>
+                                            </label>
+                                        </div>
                                     </div>
                                     <div class="timeline-body">
                                         <div class="receipt-email mb-2">
@@ -294,7 +308,39 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="addDocumentTypeModal" tabindex="2">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fa fa-plus modal-header-icon"></i>
+                    <h3 class="modal-title" style="font-size: 1.3rem">
+                        &nbsp;&nbsp;FORM ADD DOCUMENT TYPE
+                    </h3>
+                    <button type="button" class="close" onclick="closeAddDocTypeModal()"><span aria-hidden="true">×</span></button>
+                </div>
+                <div class="" style="background-color: #28a745; height: 2px"></div>
+                <div class="modal-body">
+                    <div>
+                        <div class="col-md-12 col-sm-12 p-0 mb-2">
+                            <strong>Type Name <span class="text-danger">*</span></strong>
+                            <input type="text" class="form-control" id="txtATypeName" autocomplete="off" autofocus />
+                        </div>
+                        <div class="col-md-12 col-sm-12 p-0">
+                            <strong>Description</strong>
+                            <textarea class="form-control" id="txtADescription" autocomplete="off"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-light" onclick="closeAddDocTypeModal()">Close</button>
+                    <button type="button" class="btn btn-success" onclick="addDocType()">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 <script src="../Scripts/lib/webviewer.min.js"></script>
 <script src="../Scripts/old-browser-checker.js"></script>
@@ -322,8 +368,11 @@
     })
 
     function getDocumentTypes() {
-        let action = '/Common/GetDocumentTypes';
-        GetDataAjax(action, function (response) {
+        let action = '/DocumentType/GetDocTypeByEmployeeId';
+        var datasend = {
+            
+        };
+        PostDataAjax(action, datasend, function (response) {
             if (response.rs) {
                 let data = response.data;
                 bindDocumentTypeDropdown($("#txtDocumentType"), data);
@@ -455,6 +504,11 @@
         // validate title
         let title = $("#txtDocumentTitle");
         if (!CheckNullOrEmpty(title, "Title can not be null or empty"))
+            return false;
+
+        // validate document type
+        let docType = $("#txtDocumentType");
+        if (!CheckNullOrEmpty(docType, "Document Type can not be null or empty"))
             return false;
 
         // validate file
@@ -904,6 +958,44 @@
         emailIndex_tocc--;
         $(`.email-index-tocc-${index}`).remove();
 
+    }
+
+</script>
+
+<script>
+
+    function closeAddDocTypeModal() {
+        $("#addDocumentTypeModal").modal("hide");
+    }
+
+    function openAddDocType() {
+        $("#addDocumentTypeModal").modal("show");
+    }
+
+    function addDocType() {
+        let txtName = $("#txtATypeName");
+        let txtDesc = $("#txtADescription");
+
+        if (!CheckNullOrEmpty(txtName, "Document type name can not be empty or null"))
+            return false;
+
+        let action = '/DocumentType/AddDocType';
+        let datasend = {
+            DocumentTypeName: txtName.val(),
+            Description: txtDesc.val(),
+        };
+        LoadingShow();
+        PostDataAjax(action, datasend, function (response) {
+            LoadingHide();
+            if (response.rs) {
+                toastr.success(response.msg, "Success");
+                $("#addDocumentTypeModal").modal("hide");
+                getDocumentTypes();
+            }
+            else {
+                toastr.error(response.msg, "Warning");
+            }
+        });
     }
 
 </script>

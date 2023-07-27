@@ -27,5 +27,6 @@ namespace MMCV_Model.DB68
         public string CreatedBy { get; set; }
         public Nullable<System.DateTime> CreatedDate { get; set; }
         public Nullable<int> Active { get; set; }
+        public string EmailCC { get; set; }
     }
 }

@@ -296,7 +296,8 @@
             <!-- Navbar Header -->
             <nav class="navbar navbar-header navbar-expand-lg">
                 <div class="w-100 text-right mr-2">
-                    <button class="btn btn-outline-primary bg-white" data-toggle="modal" data-target="#modalAddDocument"><i class="fa fa-plus"></i></button>
+                    @RenderSection("ModalAddDoc", false)
+                    @*<button class="btn btn-outline-primary bg-white" data-toggle="modal" data-target="#modalAddDocument"><i class="fa fa-plus"></i></button>*@
                 </div>
                 @*<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                         <li class="nav-item dropdown hidden-caret">
@@ -358,7 +359,7 @@
                             <div class="dropdown-menu">
                                 <div class="arrow"></div>
                                 <a class="dropdown-item" href="/User/Login"><i class="fa fa-user-check"></i>&nbsp; Login</a>
-                                <a class="dropdown-item" href="/User/Logout"><i class="fa fa-sign-out-alt"></i>&nbsp; Logout</a>
+                                <a class="dropdown-item" href="/User/Login"><i class="fa fa-sign-out-alt"></i>&nbsp; Logout</a>
                             </div>
                         </div>
                     </li>
@@ -413,6 +414,12 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/DocumentType/DocumentType">
+                                <i class="fas fa-list-alt"></i>
+                                <p>Document Type</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/User/UserInfo">
                                 <i class="fas fa-user"></i>
                                 <p>Account Information</p>
@@ -425,11 +432,11 @@
                             </a>
                         </li>
                         @*<li class="nav-item">
-                                <a href="/Template/TemplateManagement">
-                                    <i class="fas fa-list-alt"></i>
-                                    <p>Template Management</p>
-                                </a>
-                            </li>*@
+            <a href="/Template/TemplateManagement">
+                <i class="fas fa-list-alt"></i>
+                <p>Template Management</p>
+            </a>
+        </li>*@
                     </ul>
                 </div>
             </div>

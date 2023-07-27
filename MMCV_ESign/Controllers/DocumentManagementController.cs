@@ -68,6 +68,18 @@ namespace MMCV_ESign.Controllers
                 //var listDocs = docBLL.GetMeSignDocuments(frmSearch).OrderByDescending(x => x.DocumentID);
                 using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
                 {
+                    DateTime? fromDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.FromDate))
+                    {
+                        fromDate = DateTime.Parse(frmSearch.FromDate);
+                    }
+
+                    DateTime? toDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.ToDate))
+                    {
+                        toDate = DateTime.Parse(frmSearch.ToDate);
+                    }
+
                     var listDocs = entity.Documents
                                     .Join(entity.DocumentSigns,
                                           t1 => t1.DocumentID,
@@ -77,6 +89,9 @@ namespace MMCV_ESign.Controllers
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Title), x => x.t1.Title.Contains(frmSearch.Title))
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t2.Status.ToString() == frmSearch.Status)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    //.WhereIf(!string.IsNullOrEmpty(frmSearch.DocumentType), x => x.t1.DocumentTypeID.ToString() == frmSearch.DocumentType)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.FromDate), x => x.t1.CreatedDate >= fromDate)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ToDate), x => x.t1.CreatedDate <= toDate)
                                     .Select(x => new
                                     {
                                         DocumentID = x.t1.DocumentID,
@@ -126,6 +141,19 @@ namespace MMCV_ESign.Controllers
 
                 using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
                 {
+
+                    DateTime? fromDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.FromDate))
+                    {
+                        fromDate = DateTime.Parse(frmSearch.FromDate);
+                    }
+
+                    DateTime? toDate = null;
+                    if (!string.IsNullOrEmpty(frmSearch.ToDate))
+                    {
+                        toDate = DateTime.Parse(frmSearch.ToDate);
+                    }
+
                     var listDocs = entity.Documents
                                     .Join(entity.DocumentSigns,
                                           t1 => t1.DocumentID,
@@ -136,6 +164,9 @@ namespace MMCV_ESign.Controllers
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.Status), x => x.t1.Status.ToString() == frmSearch.Status)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.SignStatus), x => x.t2.Status.ToString() == frmSearch.SignStatus)
                                     .WhereIf(!string.IsNullOrEmpty(frmSearch.ReferenceCode), x => x.t1.ReferenceCode == frmSearch.ReferenceCode)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.DocumentType), x => x.t1.DocumentTypeID.ToString() == frmSearch.DocumentType)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.FromDate), x => x.t1.CreatedDate >= fromDate)
+                                    .WhereIf(!string.IsNullOrEmpty(frmSearch.ToDate), x => x.t1.CreatedDate <= toDate)
                                     .Select(x => new
                                     {
                                         DocumentID = x.t1.DocumentID,
@@ -222,12 +253,25 @@ namespace MMCV_ESign.Controllers
                     doc.IssuerEmpId = currentUser.EmployeeID;
                     doc.ReferenceCode = Checksum.GenerateReferenceCode();
 
-                    var isAddSuccess = docBLL.AddDocument(doc);
-                    if (!isAddSuccess)
+                    var docId = docBLL.AddDocument(doc);
+                    if (docId <= 0)
                     {
                         return Json(new { rs = false, msg = "Error add document to database" }, JsonRequestBehavior.AllowGet);
                     }
 
+                    // save file to folder of user
+                    var tempPath = CDN_Source_File + currentUser.EmployeeID + "/" + doc.Link;
+                    if (System.IO.File.Exists(tempPath))
+                    {
+                        var correctFilePath = CDN_Source_File + currentUser.EmployeeID + "/" + docId + "/";
+                        if (!Directory.Exists(correctFilePath))
+                        {
+                            Directory.CreateDirectory(correctFilePath);
+                            System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
+                        }
+                    }
+
+                    // send mail for signer
                     if (doc.Status == (int)EnumDocumentStatus.Initital)
                     {
                         var ele = doc.DocumentSigns.OrderBy(x => x.SignIndex).FirstOrDefault();
@@ -238,12 +282,6 @@ namespace MMCV_ESign.Controllers
                         var body = EmailSender.ReadEmailTemplate(templatePath);
                         Task.Run(() =>
                         {
-                            //var body = $"Dear {ele.Email}," +
-                            //        $"<br >You have a document need to sign. Reference code: {doc.ReferenceCode}" +
-                            //        $"<br ><a style='height: 60px; background: green;' href='{baseUrl}Home/PdfPage?docId={ele.DocumentID}&email={ele.Email}&signIndex={ele.SignIndex}'>Start sign</a>";
-                            //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                            ////var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", ele.Email, "", body);
-
                             EmailBO emailBO = new EmailBO()
                             {
                                 MailTo = ele.Email,
@@ -278,14 +316,15 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
-                foreach (string file in Request.Files)
+				var userFolder = currentUser.EmployeeID;
+				string path = CDN_Source_File + userFolder + "/";
+
+				foreach (string file in Request.Files)
                 {
                     var fileContent = Request.Files[file];
                     if (fileContent != null && fileContent.ContentLength > 0)
                     {
-                        string path = CDN_Source_File;
-
-                        if (!Directory.Exists(path))
+						if (!Directory.Exists(path))
                         {
                             Directory.CreateDirectory(path);
                         }
@@ -320,7 +359,8 @@ namespace MMCV_ESign.Controllers
                 }
                 else
                 {
-                    returnFile = System.IO.File.ReadAllBytes(CDN_Source_File + doc.Link);
+                    var path = CDN_Source_File + doc.IssuerEmpId + "/" + docId + "/";
+					returnFile = System.IO.File.ReadAllBytes(path + doc.Link);
                 }
 
                 // Convert file stored in CDN to base64
@@ -463,15 +503,6 @@ namespace MMCV_ESign.Controllers
             var firstEmail = listEmail.Where(x => x.Status == (int)EnumDocumentSign.Initital).OrderBy(x => x.SignIndex).FirstOrDefault();
             if (firstEmail != null)
             {
-                //var body = $"Dear {firstEmail.Email}," +
-                //            "<br >" +
-                //            $"<br >You have a document need to sign. Reference code: {firstEmail.DocumentReferenceCode}" +
-                //            $"<br >Please access <a href='{baseUrl}/Home/PdfPage?docId={firstEmail.DocumentID}&email={firstEmail.Email}&signIndex={firstEmail.SignIndex}'>this link</a> to sign document";
-                //Task.Run(() =>
-                //{
-                //    var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", firstEmail.Email, "", body);
-                //});
-
                 var templatePath = HttpContext.Server.MapPath("~/Template/Email/SignDocument.html");
                 var body = EmailSender.ReadEmailTemplate(templatePath);
                 Task.Run(() =>
@@ -499,12 +530,15 @@ namespace MMCV_ESign.Controllers
                 {
                     LogHelper.Instance.WriteLog(docBLL.ResultMessageBO.Message, docBLL.ResultMessageBO.MessageDetail, MethodBase.GetCurrentMethod().Name, "Download Document");
                 }
-                var filePath = CDN_Source_File + doc.Link;
+
+				string path = CDN_Source_File + doc.IssuerEmpId + "/" + doc.DocumentID + "/";
+				var filePath = path + doc.Link;
                 byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 string fileName = doc.Link;
 
                 Response.AddHeader("Set-Cookie", "fileDownload=true; path=/"); // when use jquery.fileDonwload in UI need to set header to handle loading spinner
-                return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+                //return File(fileBytes, MediaTypeNames.Application.Octet, fileName);
+                return File(fileBytes, MediaTypeNames.Application.Zip, fileName);
             }
             catch (Exception ex)
             {

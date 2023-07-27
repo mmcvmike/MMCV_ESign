@@ -142,6 +142,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Controllers\DocumentTypeController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CommonController.cs" />
@@ -690,6 +691,7 @@
     <Content Include="Scripts\libs\jquery.fileDownload.js" />
     <Content Include="Views\User\UserManagement.cshtml" />
     <Content Include="Views\_ViewImports.cshtml" />
+    <Content Include="Views\DocumentType\DocumentType.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

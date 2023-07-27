@@ -57,7 +57,7 @@
                     Department: @currentUser.DepartmentName <br />
                     Position: @currentUser.PositionName <br />
                     EmployeeID: @currentUser.EmployeeID <br /><br />
-                    <button type="button" onclick="onModalPassword()" class="btn btn-sm btn-info">Change the password</button>
+                    <button type="button" onclick="onModalPassword()" class="btn btn-sm btn-success">Change the password</button>
                 </div>
             </div>
             <div class="card card-stats card-round">
@@ -75,6 +75,7 @@
                         <input type="password" id="newPassword" class="form-control" placeholder="New password" /><br />
                         <i class="far fa-eye-slash" id="toggleNewPassword" onclick="changesPassword('#newPassword','#toggleNewPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
                     </div>
+                    <label>Confirm new password</label>
                     <div class="input-group mb-2">
                         <input type="password" onchange="changeConfirm('confirmPassword','newPassword')" id="confirmPassword" class="form-control" placeholder="Confirm new password" /><br />
                         <i class="far fa-eye-slash" id="toggleConfirmPassword" onclick="changesPassword('#confirmPassword','#toggleConfirmPassword')" style="position: absolute; right: 5%; top: 35%; z-index: 100"></i>
@@ -115,7 +116,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-md-12">
-                                    <button class="btn btn-success btn-sm" id="sig-submitBtn" onclick="addSignature()">Submit Signature</button>
+                                    <button class="btn btn-success btn-sm" id="sig-submitBtn" onclick="addSignature()">Update Signature</button>
                                     <button class="btn btn-light btn-sm" id="sig-clearBtn" onclick="clearSignature()">Clear Signature</button>
                                 </div>
                             </div>
@@ -141,6 +142,8 @@
         </div>
     </div>
 </div>
+
+@Html.Partial("~/Views/PartialView/ModalAddDocument.cshtml")
 
 @section scripts{
     <script>

@@ -8,7 +8,6 @@
         <EntityTypeShape EntityType="MMCV_ESignModel.Department" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.Document" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.DocumentSign" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="MMCV_ESignModel.DocumentType" Width="1.5" PointX="4.75" PointY="4.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.Menu" Width="1.5" PointX="0.75" PointY="5.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.Permission" Width="1.5" PointX="6.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.Position" Width="1.5" PointX="6.75" PointY="3.75" IsExpanded="true" />
@@ -20,6 +19,7 @@
         <EntityTypeShape EntityType="MMCV_ESignModel.UserPermission" Width="1.5" PointX="4.75" PointY="9.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.UserRole" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.UserSignature" Width="1.5" PointX="0.75" PointY="10.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="MMCV_ESignModel.DocumentType" Width="1.5" PointX="7.375" PointY="10.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

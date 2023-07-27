@@ -148,7 +148,7 @@ namespace MMCV_BLL.Document
             }
         }
 
-        public bool AddDocument(DocumentBO doc)
+        public long AddDocument(DocumentBO doc)
         {
             IData objIData;
             if (objDataAccess == null)
@@ -173,14 +173,14 @@ namespace MMCV_BLL.Document
                 });
 
                 objIData.CommitTransaction();
-                return true;
+                return docId;
             }
             catch (Exception objEx)
             {
                 objIData.RollBackTransaction();
                 this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(objEx, "");
                 objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, objEx, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
-                return false;
+                return 0;
             }
             finally
             {

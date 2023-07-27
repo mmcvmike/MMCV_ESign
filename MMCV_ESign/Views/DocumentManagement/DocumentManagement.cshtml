@@ -13,8 +13,10 @@
         }
 
         .nav-tabs .nav-item.show .nav-link, .nav-tabs .nav-link.active {
-            color: black;
-            background-color: #e9ecef;
+            /*color: black;*/
+            /*background-color: #e9ecef;*/
+            color: white;
+            background-color: #35cd3a;
             border-color: #dee2e6 #dee2e6 #fff;
         }
 
@@ -31,6 +33,11 @@
             /*content: "" !important;*/
         }
     </style>
+}
+
+@section ModalAddDoc
+{
+    <button class="btn btn-outline-primary bg-white" data-toggle="modal" data-target="#modalAddDocument"><i class="fa fa-plus"></i></button>
 }
 
 <div class="p-3 document-management">
@@ -71,6 +78,14 @@
                                     <option value="2">Declined</option>
                                 </select>
                             </div>
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>From</strong>
+                            <input type="date" class="form-control form-control-sm" id="txtFilterMeSignFromDate" autocomplete="off" />
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>To</strong>
+                            <input type="date" class="form-control form-control-sm" id="txtFilterMeSignToDate" autocomplete="off" />
                         </div>
                         <div class="align-self-end">
                             <button type="button" class="btn btn-success btn-sm" onclick="getMeSignDocuments()"><i class="fa fa-search"></i>&nbsp;Search</button>
@@ -126,6 +141,21 @@
                                 </select>
                             </div>
                         </div>
+                        <div class="pl-0 pr-1">
+                            <strong>Document Type</strong>
+                            <div class="">
+                                <select id="txtFilterSentDocumentType" class="form-control form-control-sm">
+                                </select>
+                            </div>
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>From</strong>
+                            <input type="date" class="form-control form-control-sm" id="txtFilterSentFromDate" autocomplete="off" />
+                        </div>
+                        <div class="pl-0 pr-1">
+                            <strong>To</strong>
+                            <input type="date" class="form-control form-control-sm" id="txtFilterSentToDate" autocomplete="off" />
+                        </div>
                         <div class="align-self-end">
                             <button type="button" class="btn btn-success btn-sm" onclick="getSentDocuments()"><i class="fa fa-search"></i>&nbsp;Search</button>
                         </div>
@@ -148,7 +178,7 @@
 
         <div class="tab-pane fade" id="draft" role="tabpanel" aria-labelledby="draft-tab">
             <div class="card">
-                <div class="card-body p-0 pt-2 pb-2">
+                <div class="card-body p-0 pb-2">
                     <table id="draftDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
                         <thead>
                             <tr>
@@ -167,7 +197,7 @@
 
         <div class="tab-pane fade" id="cancel" role="tabpanel" aria-labelledby="cancel-tab">
             <div class="card">
-                <div class="card-body p-0 pt-2 pb-2">
+                <div class="card-body p-0 pb-2">
                     <table id="cancelDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
                         <thead>
                             <tr>
@@ -233,6 +263,7 @@
 
         $(document).ready(() => {
             showActiveTab();
+            getDocumentTypesIndex();
         })
 
         function showActiveTab() {
@@ -254,12 +285,16 @@
             let txtTitle = $("#txtFilterMeSignTitle").val();
             let txtRefCode = $("#txtFilterMeSignRefCode").val();
             let txtStatus = $("#txtFilterMeSignStatus").val();
+            let txtFromDate = $("#txtFilterMeSignFromDate").val();
+            let txtToDate = $("#txtFilterMeSignToDate").val();
 
             let action = baseUrl + 'GetMeSignDocuments';
             var datasend = {
                 Title: txtTitle,
                 ReferenceCode: txtRefCode,
-                Status: txtStatus
+                Status: txtStatus,
+                FromDate: txtFromDate,
+                ToDate: txtToDate
             };
 
             LoadingShow();
@@ -283,13 +318,19 @@
             let txtRefCode = $("#txtFilterSentRefCode").val();
             let txtStatus = $("#txtFilterSentStatus").val();
             let txtSignStatus = $("#txtFilterSentSignStatus").val();
+            let txtDocType = $("#txtFilterSentDocumentType").val();
+            let txtFromDate = $("#txtFilterSentFromDate").val();
+            let txtToDate = $("#txtFilterSentToDate").val();
 
             let action = baseUrl + 'GetSentDocuments';
             var datasend = {
                 Title: txtTitle,
                 ReferenceCode: txtRefCode,
                 Status: txtStatus,
-                SignStatus: txtSignStatus
+                SignStatus: txtSignStatus,
+                DocumentType: txtDocType,
+                FromDate: txtFromDate,
+                ToDate: txtToDate
             };
 
             LoadingShow();
@@ -673,5 +714,34 @@
                 }
             });
         }
+
+        function getDocumentTypesIndex() {
+            let action = '/DocumentType/GetDocTypeByEmployeeId';
+            var datasend = {
+
+            };
+            PostDataAjax(action, datasend, function (response) {
+                if (response.rs) {
+                    let data = response.data;
+                    bindDocumentTypeDropdownIndex($("#txtFilterMeSignDocumentType"), data);
+                    bindDocumentTypeDropdownIndex($("#txtFilterSentDocumentType"), data);
+                }
+                else {
+                    toastr.error(response.msg, "Thất bại");
+                }
+            });
+        }
+
+        function bindDocumentTypeDropdownIndex(selector, data) {
+            let html = `<option value="">All</option>`;
+            for (var i = 0; i < data.length; i++) {
+                let ele = data[i];
+                html += `
+                        <option value="${ele.DocumentTypeID}">${ele.DocumentTypeName}</option>
+                    `;
+            }
+            selector.html('').append(html);
+        }
+
     </script>
 }

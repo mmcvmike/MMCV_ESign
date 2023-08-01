@@ -6,6 +6,7 @@ using System;
 using System.Configuration;
 using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
 
 
@@ -53,8 +54,21 @@ namespace MMCV_ESign.Controllers
                     }
                     checkUser.DefaultSignature = userSig;
 
-                    // Set current user for session
-                    Session[sessionUser] = checkUser;
+                    // Set current user for session]
+                    //Session[sessionUser] = checkUser;
+
+
+                    // Generate a unique identifier for the user session
+                    string sessionId = Guid.NewGuid().ToString();
+
+                    // Set the session ID in a cookie with a long expiration time (7 days)
+                    HttpCookie sessionCookie = new HttpCookie("SessionId", sessionId);
+                    sessionCookie.Expires = DateTime.Now.AddDays(7);
+                    Response.Cookies.Add(sessionCookie);
+
+                    // Store session data on the server
+                    // (you can use a custom session provider or a database to store the session data)
+                    Session[sessionId] = checkUser;
 
                     return Json(new { rs = true, msg = "Login successfully" }, JsonRequestBehavior.AllowGet);
                 }
@@ -71,7 +85,10 @@ namespace MMCV_ESign.Controllers
 
         public ActionResult Logout()
         {
-            Session[sessionUser] = null;
+            //Session[sessionUser] = null;
+            string sessionId = Request.Cookies["SessionId"]?.Value;
+            Session[sessionId] = null;
+            Session["PreURL"] = Request.UrlReferrer;
             return View("Login");
         }
 

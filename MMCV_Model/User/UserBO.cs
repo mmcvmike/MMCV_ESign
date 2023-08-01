@@ -19,10 +19,18 @@ namespace MMCV_Model.User
         {
             try
             {
+                //if (HttpContext.Current != null && HttpContext.Current.Session != null)
+                //{
+                //    HttpSessionStateBase session = new HttpSessionStateWrapper(HttpContext.Current.Session);
+
+                //    return session["SessionUser"] as UserBO;
+                //}
+
                 if (HttpContext.Current != null && HttpContext.Current.Session != null)
                 {
-                    HttpSessionStateBase session = new HttpSessionStateWrapper(HttpContext.Current.Session);
-                    return session["SessionUser"] as UserBO;
+                    var session = HttpContext.Current.Session[HttpContext.Current.Request.Cookies["SessionId"].Value];
+
+                    return session as UserBO;
                 }
             }
             catch (Exception objEx)

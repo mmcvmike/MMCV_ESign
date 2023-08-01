@@ -58,6 +58,7 @@
     <Compile Include="Common\EmailBO.cs" />
     <Compile Include="Common\MenuBO.cs" />
     <Compile Include="Common\PositionBO.cs" />
+    <Compile Include="Common\ResultBO.cs" />
     <Compile Include="DB68\Department.cs">
       <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
     </Compile>

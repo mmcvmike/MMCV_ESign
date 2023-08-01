@@ -170,7 +170,7 @@ namespace MMCV_ESign.Controllers
                                     $"<br>" +
                                     $" Reference code: {doc.ReferenceCode}" +
                                     $"<br>Please access <a href='{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={nextSignerEmail.Email}&signIndex={nextSignerEmail.SignIndex}'>this link</a> to sign document";
-                     
+                        body = body.Replace("Dear $SIGN_NAME$,", "");
                         body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
                         body = body.Replace("$SENDER_NAME$", currentDocSign.Email);
                         body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");

@@ -4,10 +4,15 @@ using MMCV_Model.DB68;
 using MMCV_Model.User;
 using System;
 using System.Configuration;
+using System.Diagnostics;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Web;
 using System.Web.Mvc;
+using MMCV_Model.Common;
+
 
 
 namespace MMCV_ESign.Controllers
@@ -265,6 +270,10 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
+                var dataRemove = RemoveBackground(us.StampBase64);
+                if (dataRemove.status)
+                    us.StampBase64 = dataRemove.message;
+                
                 UserBLL userBLL = new UserBLL();
                 var isUpdateSuccess = userBLL.UpdateUserStamp(us);
                 if (!isUpdateSuccess)
@@ -342,5 +351,53 @@ namespace MMCV_ESign.Controllers
                 return Json(new { rs = false, msg = "Error changing password!" });
             }
         }
+
+
+        public ResultBO RemoveBackground(string pathToFile)
+        {
+            ResultBO res = new ResultBO();
+            try
+            {
+                var streamData = Convert.FromBase64String(pathToFile.Replace("data:image/png;base64,", String.Empty));
+                var stream = new MemoryStream(streamData);
+
+                byte[] newImage = new byte[0];
+                string error = string.Empty;
+
+                using (Bitmap bmp = new Bitmap(stream))
+                {
+                    Color pixel = bmp.GetPixel(0, 0);
+                    if (pixel.A != 0)
+                    {
+                        // Make backColor transparent for myBitmap.
+                        bmp.MakeTransparent(Color.Transparent);
+
+                        ImageConverter converter = new ImageConverter();
+                        newImage = (byte[])converter.ConvertTo(bmp, typeof(byte[]));
+                        bmp.Dispose();
+                    }
+                    else
+                    {
+                        FileStream fs = new FileStream(pathToFile, FileMode.OpenOrCreate, FileAccess.Read);
+                        newImage = new byte[fs.Length];
+                        fs.Read(newImage, 0, System.Convert.ToInt32(fs.Length));
+                        fs.Close();
+                    }
+                  
+                    string base64String = string.Concat("data:image/png;base64,", Convert.ToBase64String(newImage));
+                    res.status = true;
+                    res.message = base64String;
+                    return res;
+                }
+               
+            }
+            catch (Exception ex)
+            {
+                res.status = false;
+                res.message = ex.Message;
+                return res;
+            }
+        }
+       
     }
 }

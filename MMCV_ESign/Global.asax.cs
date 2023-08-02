@@ -31,17 +31,38 @@ namespace MMCV_ESign
                 //string rawUrl = HttpContext.Current.Request.RawUrl;
                 string strUserAgent = HttpContext.Current.Request.UserAgent;
 
-                if (!string.IsNullOrEmpty(strUserAgent))
+                //if (!string.IsNullOrEmpty(strUserAgent))
+                //{
+                //    if (Session[SessionUser] != null)
+                //    {
+                //        UserBO objUser = (UserBO)Session[SessionUser];
+                //    }
+                //    else if (!strUrl.Contains("/User/Login"))
+                //    {
+                //        Session["PreURL"] = strUrl; // Lưu trữ thông tin đường dẫn trước khi đăng nhập để khi đăng nhập thành công thì redirect đến trang đó
+                //        Response.Redirect("~/User/Login");
+                //    }
+                //}
+
+                //if (Session[SessionUser] != null)
+                //{
+                //    UserBO objUser = (UserBO)Session[SessionUser];
+                //}
+                //else if (!strUrl.Contains("/User/Login"))
+                //{
+                //    Session["PreURL"] = strUrl; // Lưu trữ thông tin đường dẫn trước khi đăng nhập để khi đăng nhập thành công thì redirect đến trang đó
+                //    Response.Redirect("~/User/Login");
+                //}
+
+                string sessionId = Request.Cookies["SessionId"]?.Value;
+                if (Session[sessionId] != null)
                 {
-                    if (Session[SessionUser] != null)
-                    {
-                        UserBO objUser = (UserBO)Session[SessionUser];
-                    }
-                    else if (!strUrl.Contains("/User/Login"))
-                    {
-                        Session["PreURL"] = strUrl; // Lưu trữ thông tin đường dẫn trước khi đăng nhập để khi đăng nhập thành công thì redirect đến trang đó
-                        Response.Redirect("~/User/Login");
-                    }
+                    UserBO objUser = (UserBO)Session[sessionId];
+                }
+                else if (!strUrl.Contains("/User/Login"))
+                {
+                    Session["PreURL"] = strUrl; // Lưu trữ thông tin đường dẫn trước khi đăng nhập để khi đăng nhập thành công thì redirect đến trang đó
+                    Response.Redirect("~/User/Login");
                 }
             }
             catch (ThreadAbortException)

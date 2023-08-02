@@ -11,8 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Web.Mvc;
 using MMCV_Model.Common;
-
-
+using System.Web.Helpers;
 
 namespace MMCV_ESign.Controllers
 {
@@ -256,7 +255,7 @@ namespace MMCV_ESign.Controllers
                 var dataRemove = RemoveBackground(us.StampBase64);
                 if (dataRemove.status)
                     us.StampBase64 = dataRemove.message;
-                
+
                 UserBLL userBLL = new UserBLL();
                 var isUpdateSuccess = userBLL.UpdateUserStamp(us);
                 if (!isUpdateSuccess)
@@ -335,14 +334,14 @@ namespace MMCV_ESign.Controllers
             }
         }
 
-
         public ResultBO RemoveBackground(string pathToFile)
         {
             ResultBO res = new ResultBO();
             try
             {
-                var streamData = Convert.FromBase64String(pathToFile.Replace("data:image/png;base64,", String.Empty));
-                var stream = new MemoryStream(streamData);
+                var strbase64 = pathToFile.Replace("data:image/png;base64,", String.Empty);
+                var streamData = Convert.FromBase64String(strbase64);
+                MemoryStream stream = new MemoryStream(streamData);
 
                 byte[] newImage = new byte[0];
                 string error = string.Empty;
@@ -361,18 +360,18 @@ namespace MMCV_ESign.Controllers
                     }
                     else
                     {
-                        FileStream fs = new FileStream(pathToFile, FileMode.OpenOrCreate, FileAccess.Read);
+                        FileStream fs = new FileStream(strbase64, FileMode.OpenOrCreate, FileAccess.Read);
                         newImage = new byte[fs.Length];
                         fs.Read(newImage, 0, System.Convert.ToInt32(fs.Length));
                         fs.Close();
                     }
-                  
+
                     string base64String = string.Concat("data:image/png;base64,", Convert.ToBase64String(newImage));
                     res.status = true;
                     res.message = base64String;
                     return res;
                 }
-               
+
             }
             catch (Exception ex)
             {
@@ -381,6 +380,6 @@ namespace MMCV_ESign.Controllers
                 return res;
             }
         }
-       
+
     }
 }

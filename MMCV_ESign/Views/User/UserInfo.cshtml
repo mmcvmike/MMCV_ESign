@@ -398,6 +398,9 @@
         imageLoader.addEventListener('change', handleImage, false);
 
         function handleImage(e) {
+            const image = new Image();
+            image.crossOrigin = "";
+
             var reader = new FileReader();
             reader.onload = function (event) {
                 var img = new Image();
@@ -407,8 +410,36 @@
                     ctx.drawImage(img, 0, 0);
                 }
                 img.src = event.target.result;
+
+                image.src = event.target.result;
             }
             reader.readAsDataURL(e.target.files[0]);
+
+            /// removebackground
+            image.onload = ({ target }) => {
+                const w = Math.round(target.width)
+                const h = Math.round(target.height)
+                const canvas = document.getElementById('sig-canvas')
+                canvas.width = w
+                canvas.height = h
+                const canvasContext = canvas.getContext('2d')
+                canvasContext.drawImage(target, 0, 0, target.width, target.height, 0, 0, w, h);
+                const canvasImageData = canvasContext.getImageData(0, 0, w, h);
+                for (
+                    let index = 0, datalength = canvasImageData.data.length;
+                    index < datalength;
+                    index += 4
+                ) {
+                    const r = canvasImageData.data[index];
+                    const g = canvasImageData.data[index + 1];
+                    const b = canvasImageData.data[index + 2];
+                    if ([r, g, b].every((item) => item > 140))
+                        canvasImageData.data[index + 3] = 0;
+                }
+                target.width = w;
+                target.height = h;
+                canvasContext.putImageData(canvasImageData, 0, 0);
+            };
         }
 
         function updateUserStamp() {
@@ -437,7 +468,6 @@
                 }
             });
         }
-
 
         ///TangDV Add
         const onModalPassword = () => {
@@ -532,5 +562,6 @@
             texts.innerText = text;
             $('#' + idInput).show();
         }
+
     </script>
 }

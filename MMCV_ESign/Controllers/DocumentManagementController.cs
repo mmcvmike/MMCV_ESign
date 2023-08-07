@@ -533,8 +533,13 @@ namespace MMCV_ESign.Controllers
 
 				string path = CDN_Source_File + doc.IssuerEmpId + "/" + doc.DocumentID + "/";
 				var filePath = path + doc.Link;
-                byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
-                string fileName = doc.Link;
+
+                var returnFile = docBLL.ConvertFileToPdf(doc);
+
+                //byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
+                byte[] fileBytes = System.IO.File.ReadAllBytes(returnFile);
+                //string fileName = doc.Link;
+                string fileName = doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
 
                 Response.AddHeader("Set-Cookie", "fileDownload=true; path=/"); // when use jquery.fileDonwload in UI need to set header to handle loading spinner
                 //return File(fileBytes, MediaTypeNames.Application.Octet, fileName);

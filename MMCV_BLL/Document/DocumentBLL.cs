@@ -205,8 +205,9 @@ namespace MMCV_BLL.Document
 
         public string ConvertFileToPdf(DocumentBO doc)
         {
-            string documentPath = CDN_Source_File + doc.Link;
-            string newDocumentPath = CDN_Source_File + doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+            //string documentPath = CDN_Source_File + doc.Link;
+            string documentPath = CDN_Source_File + doc.IssuerEmpId + "/" +  doc.DocumentID + "/" + doc.Link;
+            string newDocumentPath = CDN_Source_File + doc.IssuerEmpId + "/" + doc.DocumentID + "/" + doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
             try
             {
                 if (File.Exists(documentPath))
@@ -219,65 +220,72 @@ namespace MMCV_BLL.Document
                     // If doc is word document convert it into pdf file
                     else if (documentPath.ToLower().EndsWith(".doc") || documentPath.ToLower().EndsWith(".docx"))
                     {
-                        try
+                        if (File.Exists(newDocumentPath))
                         {
-                            object oMissing = System.Reflection.Missing.Value;
-                            Type wordType = Type.GetTypeFromProgID("Word.Application");
-                            dynamic app = Activator.CreateInstance(wordType);
-                            app.Visible = false;
-                            if (app.Documents != null)
-                            {
-                                var document = app.Documents.Open(documentPath, true);
-                                document.Activate();
-                                if (document != null)
-                                {
-                                    //document.ExportAsFixedFormat(newDocumentPath, Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
-                                    document.ExportAsFixedFormat(newDocumentPath, 17);
-                                    document.Close();
-                                }
-                                app.Quit();
-                            }
 
-                            //// Create a new Microsoft Word application object
-                            //Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
-                            //// C# doesn't have optional arguments so we'll need a dummy value
-                            //object oMissing = System.Reflection.Missing.Value;
-                            //word.Visible = false;
-                            //word.ScreenUpdating = false;
-
-                            //// Cast as Object for word Open method
-                            //object filename = documentPath;
-
-                            //// Use the dummy value as a placeholder for optional arguments
-                            //var doc1 = word.Documents.Open(ref filename, true, true, false);
-                            //doc1.Activate();
-
-                            //object outputFileName = newDocumentPath;
-                            //object fileFormat = WdSaveFormat.wdFormatPDF;
-
-                            //// Save document into PDF Format
-                            //doc1.SaveAs(ref outputFileName,
-                            //    ref fileFormat, ref oMissing, ref oMissing,
-                            //    ref oMissing, ref oMissing, ref oMissing, ref oMissing,
-                            //    ref oMissing, ref oMissing, ref oMissing, ref oMissing,
-                            //    ref oMissing, ref oMissing, ref oMissing, ref oMissing);
-
-                            //// Close the Word document, but leave the Word application open.
-                            //// doc has to be cast to type _Document so that it will find the
-                            //// correct Close method.                
-                            //object saveChanges = WdSaveOptions.wdDoNotSaveChanges;
-                            //((_Document)doc1).Close(ref saveChanges, ref oMissing, ref oMissing);
-                            //doc1 = null;
-
-                            //// word has to be cast to type _Application so that it will find
-                            //// the correct Quit method.
-                            //((_Application)word).Quit(ref oMissing, ref oMissing, ref oMissing);
-                            //word = null;
                         }
-                        catch (Exception ex)
+                        else
                         {
-                            this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(ex, "");
-                            objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                            try
+                            {
+                                object oMissing = System.Reflection.Missing.Value;
+                                Type wordType = Type.GetTypeFromProgID("Word.Application");
+                                dynamic app = Activator.CreateInstance(wordType);
+                                app.Visible = false;
+                                if (app.Documents != null)
+                                {
+                                    var document = app.Documents.Open(documentPath, true);
+                                    document.Activate();
+                                    if (document != null)
+                                    {
+                                        //document.ExportAsFixedFormat(newDocumentPath, Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
+                                        document.ExportAsFixedFormat(newDocumentPath, 17);
+                                        document.Close();
+                                    }
+                                    app.Quit();
+                                }
+
+                                //// Create a new Microsoft Word application object
+                                //Microsoft.Office.Interop.Word.Application word = new Microsoft.Office.Interop.Word.Application();
+                                //// C# doesn't have optional arguments so we'll need a dummy value
+                                //object oMissing = System.Reflection.Missing.Value;
+                                //word.Visible = false;
+                                //word.ScreenUpdating = false;
+
+                                //// Cast as Object for word Open method
+                                //object filename = documentPath;
+
+                                //// Use the dummy value as a placeholder for optional arguments
+                                //var doc1 = word.Documents.Open(ref filename, true, true, false);
+                                //doc1.Activate();
+
+                                //object outputFileName = newDocumentPath;
+                                //object fileFormat = WdSaveFormat.wdFormatPDF;
+
+                                //// Save document into PDF Format
+                                //doc1.SaveAs(ref outputFileName,
+                                //    ref fileFormat, ref oMissing, ref oMissing,
+                                //    ref oMissing, ref oMissing, ref oMissing, ref oMissing,
+                                //    ref oMissing, ref oMissing, ref oMissing, ref oMissing,
+                                //    ref oMissing, ref oMissing, ref oMissing, ref oMissing);
+
+                                //// Close the Word document, but leave the Word application open.
+                                //// doc has to be cast to type _Document so that it will find the
+                                //// correct Close method.                
+                                //object saveChanges = WdSaveOptions.wdDoNotSaveChanges;
+                                //((_Document)doc1).Close(ref saveChanges, ref oMissing, ref oMissing);
+                                //doc1 = null;
+
+                                //// word has to be cast to type _Application so that it will find
+                                //// the correct Quit method.
+                                //((_Application)word).Quit(ref oMissing, ref oMissing, ref oMissing);
+                                //word = null;
+                            }
+                            catch (Exception ex)
+                            {
+                                this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(ex, "");
+                                objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                            }
                         }
                     }
                     else if (documentPath.ToLower().EndsWith("jpg") || documentPath.ToLower().EndsWith("jpeg") || documentPath.ToLower().EndsWith("png") || documentPath.ToLower().EndsWith("webp"))

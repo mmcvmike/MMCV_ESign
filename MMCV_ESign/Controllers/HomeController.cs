@@ -205,6 +205,8 @@ namespace MMCV_ESign.Controllers
                         string fileName = doc.Link;
                         string path = CDN_Source_File + doc.IssuerEmpId + "/" + docId + "/";
 
+                        fileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+
                         if (!Directory.Exists(path))
                         {
                             Directory.CreateDirectory(path);

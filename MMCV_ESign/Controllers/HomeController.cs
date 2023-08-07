@@ -205,7 +205,14 @@ namespace MMCV_ESign.Controllers
                         string fileName = doc.Link;
                         string path = CDN_Source_File + doc.IssuerEmpId + "/" + docId + "/";
 
-                        fileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                        if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
+                        {
+                            fileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                        }
+                        else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
+                        {
+                            fileName = fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf");
+                        }                      
 
                         if (!Directory.Exists(path))
                         {

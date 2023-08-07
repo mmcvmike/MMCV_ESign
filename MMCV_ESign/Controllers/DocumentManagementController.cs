@@ -252,6 +252,7 @@ namespace MMCV_ESign.Controllers
                     doc.CreatedDate = DateTime.Now;
                     doc.IssuerEmpId = currentUser.EmployeeID;
                     doc.ReferenceCode = Checksum.GenerateReferenceCode();
+                    doc.Link = doc.Link.ToLower();
 
                     var docId = docBLL.AddDocument(doc);
                     if (docId <= 0)
@@ -267,7 +268,17 @@ namespace MMCV_ESign.Controllers
                         if (!Directory.Exists(correctFilePath))
                         {
                             Directory.CreateDirectory(correctFilePath);
+                            //System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
+
                             System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
+                            if (doc.Link.EndsWith("docx") || doc.Link.EndsWith("doc"))
+                            {
+                                System.IO.File.Copy(tempPath.Replace(".docx", ".pdf").Replace(".doc", ".pdf"), correctFilePath + doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf"));
+                            }
+                            else if (doc.Link.EndsWith("jpg") || doc.Link.EndsWith("jpeg") || doc.Link.EndsWith("png"))
+                            {
+                                System.IO.File.Copy(tempPath.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"), correctFilePath + doc.Link.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"));
+                            }
                         }
                     }
 
@@ -329,10 +340,21 @@ namespace MMCV_ESign.Controllers
                             Directory.CreateDirectory(path);
                         }
 
+                        var fileName = fileContent.FileName.ToLower();
                         foreach (string key in Request.Files)
                         {
                             HttpPostedFileBase postedFile = Request.Files[key];
-                            postedFile.SaveAs(path + fileContent.FileName);
+                            postedFile.SaveAs(path + fileName);
+
+                            // if file is not pdf then save one more file under pdf format
+                            if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
+                            {
+                                postedFile.SaveAs(path + fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf"));
+                            }
+                            else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
+                            {
+                                postedFile.SaveAs(path + fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"));
+                            }
                         }
                     }
                 }
@@ -539,7 +561,15 @@ namespace MMCV_ESign.Controllers
                 //byte[] fileBytes = System.IO.File.ReadAllBytes(filePath);
                 byte[] fileBytes = System.IO.File.ReadAllBytes(returnFile);
                 //string fileName = doc.Link;
-                string fileName = doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                string fileName = doc.Link;
+                if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
+                {
+                    fileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                }
+                else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
+                {
+                    fileName = fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf");
+                }
 
                 Response.AddHeader("Set-Cookie", "fileDownload=true; path=/"); // when use jquery.fileDonwload in UI need to set header to handle loading spinner
                 //return File(fileBytes, MediaTypeNames.Application.Octet, fileName);

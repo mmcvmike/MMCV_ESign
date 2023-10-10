@@ -165,7 +165,7 @@ namespace MMCV_BLL.Document
                 DocumentSignDAO docSignDAO = new DocumentSignDAO(objIData);
                 var docId = docDAO.AddDocument(doc);
 
-                doc.DocumentSigns.ForEach((ele) =>
+                doc.DocumentSigns?.ForEach((ele) =>
                 {
                     ele.DocumentReferenceCode = doc.ReferenceCode;
                     ele.DocumentID = docId;

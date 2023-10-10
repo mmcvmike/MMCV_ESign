@@ -1,6 +1,9 @@
 ﻿using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.parser;
+using pdftron.PDF;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 
 namespace MMCV_Common.Helper
@@ -14,8 +17,17 @@ namespace MMCV_Common.Helper
 
             for (int i = 1; i < numberOfPage + 1; i++)
             {
+                //PdfDictionary pg = reader.GetPageN(i);s
+                //PdfDictionary res = (PdfDictionary)PdfReader.GetPdfObject(pg.Get(PdfName.RESOURCES));
+                //PdfDictionary xobj = (PdfDictionary)PdfReader.GetPdfObject(res.Get(PdfName.XOBJECT));
+
+                //foreach (PdfName name in xobj.Keys)
+                //{
+                //    res.Remove(name);
+                //}
+
                 var resource = reader.GetPageResources(i);
-                resource.Remove(new PdfName("XObject"));
+                //resource.Remove(new PdfName("XObject"));
             }
 
             using (FileStream fs = new FileStream(outputFile, FileMode.Create))

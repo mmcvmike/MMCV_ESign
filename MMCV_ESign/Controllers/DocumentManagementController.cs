@@ -254,6 +254,11 @@ namespace MMCV_ESign.Controllers
                     doc.ReferenceCode = Checksum.GenerateReferenceCode();
                     doc.Link = doc.Link.ToLower();
 
+                    if (doc.DocumentSigns == null || doc.DocumentSigns.Count == 0)
+                    {
+                        return Json(new { rs = false, msg = "You need to add at least one signature for one person" }, JsonRequestBehavior.AllowGet);
+                    }
+
                     var docId = docBLL.AddDocument(doc);
                     if (docId <= 0)
                     {
@@ -268,40 +273,42 @@ namespace MMCV_ESign.Controllers
                         if (!Directory.Exists(correctFilePath))
                         {
                             Directory.CreateDirectory(correctFilePath);
-                            //System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
-
                             System.IO.File.Copy(tempPath, correctFilePath + doc.Link);
-                            if (doc.Link.EndsWith("docx") || doc.Link.EndsWith("doc"))
-                            {
-                                System.IO.File.Copy(tempPath.Replace(".docx", ".pdf").Replace(".doc", ".pdf"), correctFilePath + doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf"));
-                            }
-                            else if (doc.Link.EndsWith("jpg") || doc.Link.EndsWith("jpeg") || doc.Link.EndsWith("png"))
-                            {
-                                System.IO.File.Copy(tempPath.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"), correctFilePath + doc.Link.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"));
-                            }
+
+                            //if (doc.Link.EndsWith("docx") || doc.Link.EndsWith("doc"))
+                            //{
+                            //    System.IO.File.Copy(tempPath.Replace(".docx", ".pdf").Replace(".doc", ".pdf"), correctFilePath + doc.Link.Replace(".docx", ".pdf").Replace(".doc", ".pdf"));
+                            //}
+                            //else if (doc.Link.EndsWith("jpg") || doc.Link.EndsWith("jpeg") || doc.Link.EndsWith("png"))
+                            //{
+                            //    System.IO.File.Copy(tempPath.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"), correctFilePath + doc.Link.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"));
+                            //}
                         }
                     }
 
                     // send mail for signer
-                    if (doc.Status == (int)EnumDocumentStatus.Initital)
+                    if (doc.DocumentSigns != null && doc.DocumentSigns.Count > 0)
                     {
-                        var ele = doc.DocumentSigns.OrderBy(x => x.SignIndex).FirstOrDefault();
-                        ele.Sender = doc.Issuer;
-                        ele.Title = doc.Title;
-                        //var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
-                        var templatePath = Server.MapPath("~/Template/Email/SignDocument.html");
-                        var body = EmailSender.ReadEmailTemplate(templatePath);
-                        Task.Run(() =>
+                        if (doc.Status == (int)EnumDocumentStatus.Initital)
                         {
-                            EmailBO emailBO = new EmailBO()
+                            var ele = doc.DocumentSigns.OrderBy(x => x.SignIndex).FirstOrDefault();
+                            ele.Sender = doc.Issuer;
+                            ele.Title = doc.Title;
+                            //var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
+                            var templatePath = Server.MapPath("~/Template/Email/SignDocument.html");
+                            var body = EmailSender.ReadEmailTemplate(templatePath);
+                            Task.Run(() =>
                             {
-                                MailTo = ele.Email,
-                                Subject = "Document Sign",
-                                Content = body,
-                                CC = doc.EmailCC,
-                            };
-                            EmailSender.DocumentSendMail(ele, emailBO);
-                        });
+                                EmailBO emailBO = new EmailBO()
+                                {
+                                    MailTo = ele.Email,
+                                    Subject = "Document Sign",
+                                    Content = body,
+                                    CC = doc.EmailCC,
+                                };
+                                EmailSender.DocumentSendMail(ele, emailBO);
+                            });
+                        }
                     }
 
                     return Json(new { rs = true, msg = "Add document succssfully" }, JsonRequestBehavior.AllowGet);
@@ -346,19 +353,21 @@ namespace MMCV_ESign.Controllers
                             HttpPostedFileBase postedFile = Request.Files[key];
                             postedFile.SaveAs(path + fileName);
 
-                            // if file is not pdf then save one more file under pdf format
-                            if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
-                            {
-                                postedFile.SaveAs(path + fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf"));
-                            }
-                            else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
-                            {
-                                postedFile.SaveAs(path + fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf"));
-                            }
+                            //// if file is not pdf then save one more file under pdf format
+                            //var pdfFileName = fileName;
+                            //if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
+                            //{
+                            //    pdfFileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                            //}
+                            //else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
+                            //{
+                            //    pdfFileName = fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf");
+                            //}
+                            //postedFile.SaveAs(path + pdfFileName);
                         }
                     }
                 }
-                return Json(new { rs = true, msg = "Save file document succssfully" }, JsonRequestBehavior.AllowGet);
+                return Json(new { rs = true, msg = "Save file document successfully" }, JsonRequestBehavior.AllowGet);
             }
             catch (Exception ex)
             {
@@ -425,6 +434,9 @@ namespace MMCV_ESign.Controllers
         {
             try
             {
+                string base64String = "";
+                var newTestPath = "";
+                var newTestFileName = "";
                 var fileName = "";
                 var filePath = "";
                 var fileSize = 0;
@@ -445,13 +457,51 @@ namespace MMCV_ESign.Controllers
                             HttpPostedFileBase postedFile = Request.Files[key];
                             postedFile.SaveAs(path + fileContent.FileName);
 
-                            fileName = fileContent.FileName;
+                            fileName = fileContent.FileName.ToLower();
                             filePath = path + fileContent.FileName;
                             fileSize = fileContent.ContentLength / 1024;
+
+                            newTestPath = filePath;
+                            newTestFileName = fileName;
+
+                            if (fileName.EndsWith("docx") || fileName.EndsWith("doc"))
+                            {
+                                object oMissing = System.Reflection.Missing.Value;
+                                Type wordType = Type.GetTypeFromProgID("Word.Application");
+                                dynamic app = Activator.CreateInstance(wordType);
+                                app.Visible = false;
+                                if (app.Documents != null)
+                                {
+                                    var document = app.Documents.Open(filePath, true);
+                                    document.Activate();
+                                    if (document != null)
+                                    {
+                                        //document.ExportAsFixedFormat(newDocumentPath, Microsoft.Office.Interop.Word.WdExportFormat.wdExportFormatPDF);
+                                        newTestFileName = fileName.Replace(".docx", ".pdf").Replace(".doc", ".pdf");
+                                        newTestPath = path + newTestFileName;
+                                        document.ExportAsFixedFormat(newTestPath, 17);
+                                        document.Close();
+                                    }
+                                    app.Quit();
+                                }
+                            }
+                            else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
+                            {
+                                newTestFileName = fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf");
+                                newTestPath = path + newTestFileName;
+                                DocumentBLL docBLL = new DocumentBLL();
+                                docBLL.ConvertImageToPdf(filePath, newTestPath);
+                            }
+
+                            // Convert file stored in CDN to byte array
+                            dynamic returnFile;
+                            returnFile = System.IO.File.ReadAllBytes(newTestPath);
+                            base64String = Convert.ToBase64String(returnFile, 0, returnFile.Length);
                         }
                     }
                 }
-                var data = new { fileName = fileName, fileLink = filePath, fileSize = fileSize };
+                //var data = new { fileName = fileName, fileLink = filePath, fileSize = fileSize };
+                var data = new { fileName = newTestFileName, fileLink = newTestPath, fileSize = fileSize, base64Data = base64String };
 
                 return Json(new { rs = true, msg = "Upload file successfully", data = data }, JsonRequestBehavior.AllowGet);
             }
@@ -461,6 +511,47 @@ namespace MMCV_ESign.Controllers
                 return Json(new { rs = false, msg = "Error upload document" });
             }
         }
+
+        //public ActionResult UploadDocumentFile()
+        //{
+        //    try
+        //    {
+        //        var fileName = "";
+        //        var filePath = "";
+        //        var fileSize = 0;
+        //        foreach (string file in Request.Files)
+        //        {
+        //            var fileContent = Request.Files[file];
+        //            if (fileContent != null && fileContent.ContentLength > 0)
+        //            {
+        //                string path = Server.MapPath("~/Data/");
+
+        //                if (!Directory.Exists(path))
+        //                {
+        //                    Directory.CreateDirectory(path);
+        //                }
+
+        //                foreach (string key in Request.Files)
+        //                {
+        //                    HttpPostedFileBase postedFile = Request.Files[key];
+        //                    postedFile.SaveAs(path + fileContent.FileName);
+
+        //                    fileName = fileContent.FileName;
+        //                    filePath = path + fileContent.FileName;
+        //                    fileSize = fileContent.ContentLength / 1024;
+        //                }
+        //            }
+        //        }
+        //        var data = new { fileName = fileName, fileLink = filePath, fileSize = fileSize };
+
+        //        return Json(new { rs = true, msg = "Upload file successfully", data = data }, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "DocumentManagement");
+        //        return Json(new { rs = false, msg = "Error upload document" });
+        //    }
+        //}
 
         public ActionResult IssueAndSendMail(DocumentBO doc)
         {

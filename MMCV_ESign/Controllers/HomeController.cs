@@ -17,6 +17,7 @@ using MMCV_Model.DocumentSign;
 using System.Collections.Generic;
 using MMCV_BLL.Email;
 using System.Web.UI.WebControls;
+using Microsoft.Ajax.Utilities;
 
 namespace MMCV_ESign.Controllers
 {
@@ -120,16 +121,21 @@ namespace MMCV_ESign.Controllers
                 var docSign = docSignBLL.GetDocumentSignByDocumentID(doc.DocumentID);
                 doc.DocumentSigns = docSign;
 
-                var currentDocSign = docSign.Where(x => (x.Email == currentUser.Email && x.DocumentID == doc.DocumentID)).FirstOrDefault();
-                if (currentDocSign != null)
-                {
-                    // update status of document sign
-                    currentDocSign.UserSignatureID = currentUser.DefaultSignature.UserSignatureID;
-                    currentDocSign.UserEmpID = currentUser.EmployeeID;
-                    currentDocSign.Status = (int)EnumDocumentSign.Signed;
-                    docSignBLL.UpdateStatusDocumentSign(currentDocSign);
+                var listCurrentDocSign = docSign.Where(x => (x.Email == currentUser.Email && x.DocumentID == doc.DocumentID));
 
-                    if (currentDocSign.SignIndex >= docSign.Count())
+                if (listCurrentDocSign != null)
+                {
+                    var currentDocSign = listCurrentDocSign.FirstOrDefault();
+                    // update status of document sign
+                    listCurrentDocSign.ForEach((ele) =>
+                    {
+                        ele.UserSignatureID = currentUser.DefaultSignature.UserSignatureID;
+                        ele.UserEmpID = currentUser.EmployeeID;
+                        ele.Status = (int)EnumDocumentSign.Signed;
+                        docSignBLL.UpdateStatusDocumentSign(ele);
+                    });
+
+                    if (listCurrentDocSign.Count() >= docSign.Count())
                     {
                         // update status of document to complete
                         doc.Status = (int)EnumDocumentStatus.Completed;
@@ -259,7 +265,7 @@ namespace MMCV_ESign.Controllers
             catch (Exception ex)
             {
                 LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "DocumentManagement");
-                return Json(new { rs = false, msg = "Error save file and signature document" });
+                return Json(new { rs = false, msg = "Error save file and signature document. " + ex.Message });
             }
         }
 

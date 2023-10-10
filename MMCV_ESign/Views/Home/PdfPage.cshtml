@@ -14,6 +14,12 @@
             margin-bottom: 5px !important;
         }
 
+        .list-user-sign {
+            border: 2px dashed #28a745;
+            padding: 3px;
+            cursor: pointer;
+        }
+
         @@media screen and (max-width: 400px) {
             .pdf-page .right-panel {
                 position: fixed;
@@ -40,13 +46,13 @@
                 <div class="card-body p-2">
                     <div class="col-md-12 m-0 p-0 pl-1">
                         @*<div class="document-file">
-                                <label><strong>Document file</strong></label>
-                                <div class="custom-file">
-                                    <input type="file" id="file_upload" class="custom-file-input" name="file_upload" accept=".pdf">
-                                    <label class="custom-file-label" for="customFile">Choose file</label>
-                                </div>
-                            </div>
-                            <hr />*@
+                        <label><strong>Document file</strong></label>
+                        <div class="custom-file">
+                            <input type="file" id="file_upload" class="custom-file-input" name="file_upload" accept=".pdf">
+                            <label class="custom-file-label" for="customFile">Choose file</label>
+                        </div>
+                    </div>
+                    <hr />*@
                         <div class="mt-2 general-info">
                             <lable class=""><strong>General information</strong></lable>
                             <hr />
@@ -69,10 +75,10 @@
                 </div>
             </div>
             <hr />
-            <div class="card">
+            @*<div class="card">
                 <div class="card-body p-2">
                     <div class="col-md-12 m-0 p-0 pl-1">
-                        <lable class=""><strong>List order sign via email</strong> </lable>
+                        <lable class=""><strong>List order signing via email</strong> </lable>
                         <hr />
                         <button class="btn btn-primary btn-sm w-100 mb-2" onclick="addSignature()" title="place your signature into document"><i class="fa fa-sign"></i> &nbsp; Sign signature here</button>
                         <button class="btn btn-secondary btn-sm w-100" onclick="addStamp()" title="place your stamp into document"><i class="fa fa-stamp"></i> &nbsp; Sign stamp here</button>
@@ -81,6 +87,17 @@
                             {
                                 <div class="card badge badge-danger sign-email">@(item.SignIndex).@item.Email</div>
                             }
+                        </div>
+                    </div>
+                </div>
+            </div>*@
+            <div class="card">
+                <div class="card-body p-2">
+                    <div class="col-md-12 m-0 p-0 pl-1">
+                        <lable class=""><strong>Your order signing</strong> </lable>
+                        <hr />
+                        <div class="mt-3 list-signing">
+                           
                         </div>
                     </div>
                 </div>
@@ -99,7 +116,8 @@
             <div class="card m-0">
                 <div class="card-body p-2">
                     <div class="col-md-12 m-0 p-0">
-                        <button class="btn btn-success w-100" id="btn_send_file" title="save signature and send email to signer"> <i class="fa fa-save"></i>&nbsp; Save and send</button>
+                        @*<button class="btn btn-success w-100" id="btn_send_file" title="save signature and send email to signer"> <i class="fa fa-save"></i>&nbsp; Save and send</button>*@
+                        <button class="btn btn-success w-100" id="btn_send_file" title="save signature and send email to signer"> <i class="fa fa-save"></i>&nbsp; Complete</button>
                         <hr />
                         @if (currentDoc.Issuer != currentUser.Email)
                         {
@@ -168,6 +186,9 @@
         * Variables
         * */
         var baseUrl = "/Home/";
+        var currentUser = @Html.Raw(Json.Encode(currentUser));
+        var currentDoc = @Html.Raw(Json.Encode(currentDoc));
+        var listDocSigns = @Html.Raw(Json.Encode(currentDoc.DocumentSigns));
 
         /*
          * Methods
@@ -177,6 +198,7 @@
         }
 
         $(document).ready(function () {
+            displayEmailList();
             $('iframe').on('load', function () {
                 setTimeout(() => {
                     $("iframe").contents().find(".divider").css("display", "none");
@@ -195,6 +217,20 @@
             $(".btn-minimize").trigger("click");
         });
 
+        function displayEmailList() {
+            let html = '';
+            listDocSigns.filter(x => x.Email == currentUser.Email).forEach((ele, index) => {
+                html += ` 
+                <div class='card list-user-sign' onclick="jumpToAnnot(${ele.X}, ${ele.Y}, ${ele.Width}, ${ele.Height})">
+                    ${index + 1}. ${ele.Email}
+                    <div>Type: ${ele.Type == 0 ? 'Signature' : 'Stamp'}</div>
+                    <div>Page: ${ele.Page}</div>
+                </div>                 
+                `;
+            });
+            $(".list-signing").html("").append(html);
+        }
+
         $(".custom-file-input").on("change", function () {
             var fileName = $(this).val().split("\\").pop();
             $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
@@ -203,7 +239,9 @@
         const input = document.getElementById('file_upload');
         const btnSendFile = document.getElementById('btn_send_file');
         var addSignature;
+        var jumpToAnnot;
         var listUserSignature = [];
+        var listAnnots = [];
 
         WebViewer(
             {
@@ -215,6 +253,7 @@
             //var FitMode = instance.UI.FitMode;
             //instance.UI.setFitMode(FitMode.FitWidth);
             instance.UI.setZoomLevel('100%');
+
             // Load document to viewer
             function base64ToArrayBuffer(base64) {
                 var binaryString = window.atob(base64);
@@ -227,7 +266,7 @@
                 return bytes;
             }
 
-            var arrayByte = base64ToArrayBuffer("@currentDoc.Base64File");
+            var arrayByte = base64ToArrayBuffer(currentDoc.Base64File);
             var blob = new Blob([arrayByte], { type: "application/pdf" });
             instance.UI.loadDocument(blob, { filename: "test.pdf" });
 
@@ -244,116 +283,73 @@
             disableElements(['toolbarGroup-Forms']);
             disableElements(['leftPanel', 'leftPanelButton']);
 
-            var base64Image = "data:image/png;base64,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gACBiQQEtokgXaaXwF2BTVjrxecgAgQIEDiqgMB21J5v0+5Lga2GNZvhtukTpRIgQIDABgQEtg100o6qeB7YbNuxo87VFAIECBCYT0Bgm8/WlV8sUAPahzr7qr07yathESBAgAABAncLCGxGx5ICNbCVMq0EXVJeWQQIECCwaQGBbdPdt7nK18DmebXNdZ0KEyBAgEBLAYGtpb6yCRAgQIAAAQI9BAS2HkgOIUCAAAECBAi0FBDYWuormwABAgQIECDQQ0Bg64HkEAIECBAgQIBASwGBraW+sgkQIECAAAECPQQEth5IDiFAgAABAgQItBQQ2FrqK5sAAQIECBAg0ENAYOuB5BACBAgQIECAQEsBga2lvrIJECBAgAABAj0EBLYeSA4hQIAAAQIECLQUENha6iubAAECBAgQINBDQGDrgeQQAgQIECBAgEBLAYGtpb6yCRAgQIAAAQI9BAS2HkgOIUCAAAECBAi0FBDYWuormwABAgQIECDQQ0Bg64HkEAIECBAgQIBASwGBraW+sgkQIECAAAECPQQEth5IDiFAgAABAgQItBQQ2FrqK5sAAQIECBAg0ENAYOuB5BACBAgQIECAQEsBga2lvrIJECBAgAABAj0EBLYeSA4hQIAAAQIECLQUENha6iubAAECBAgQINBDQGDrgeQQAgQIECBAgEBLAYGtpb6yCRAgQIAAAQI9BAS2HkgOIUCAAAECBAi0FBDYWuormwABAgQIECDQQ0Bg64HkEAIECBAgQIBASwGBraW+sgkQIECAAAECPQQEth5IDiFAgAABAgQItBT4P9z2Zb96WCIaAAAAAElFTkSuQmCC";
             const { documentViewer, annotationManager, Annotations } = instance.Core;
             // set current user for anntonation manager to avoid an user can modified other user's annotation
-            annotationManager.setCurrentUser("@currentUser.Email");
+            annotationManager.setCurrentUser(currentUser.Email);
 
             // rubber stamp
-            const stampTool = documentViewer.getTool('AnnotationCreateRubberStamp');
+            //const stampTool = documentViewer.getTool('AnnotationCreateRubberStamp');
 
-            const customStamps = [
-                { title: "@currentUser.Fullname", subtitle: "[@currentUser.DepartmentID]", color: new Annotations.Color('#33b837') },
-            ]
-            stampTool.setStandardStamps([ ]);
-            stampTool.setCustomStamps(customStamps)
+            //const customStamps = [
+            //    { title: currentUser.Fullname, subtitle: `[${currentUser.DepartmentID}]`, color: new Annotations.Color('#33b837') },
+            //]
+            //stampTool.setStandardStamps([ ]);
+            //stampTool.setCustomStamps(customStamps)
 
-            addSignature = function () {
-                let checkExistSignature = "@Model.Item3.Base64Signature" == "" ? false : true;
-                if (checkExistSignature) {
-                    // vẽ sẵn chữ ký tại một điểm
-                    const annot = new Annotations.StampAnnotation({
-                        PageNumber: documentViewer.getCurrentPage(),
-                        X: 100,
-                        Y: 100,
-                        Width: 200,
-                        Height: 100,
-                        Author: "@currentUser.Email"
-                    });
-                    annot.setImageData("@Model.Item3.Base64Signature");
-
-                    annotationManager.addAnnotation(annot);
-                    annotationManager.redrawAnnotation(annot);
-
-                    // user define check add
-                    listUserSignature.push(annot);
-                }
-                else {
-                    $.confirm({
-                        title: 'Notice!',
-                        content: 'You do not have any signature. Do you want to create your own signature? Please go account information page to create!',
-                        buttons: {
-                            cancel: function () {
-
-                            },
-                            yes: {
-                                btnClass: 'btn btn-success',
-                                action: function () {
-                                    location.href = '/User/UserInfo';
-                                },
-                            },
+            annotationManager.addEventListener('annotationSelected', (annotations, action) => {
+                let annot = annotations[0];
+                if (action === 'selected') {
+                    if (annot.Author == currentUser.Email) {
+                        annot.NoResize = true;
+                        annot.NoMove = true;
+                        annot.NoDelete = true;
+                        let isSig = listDocSigns.filter(x => (x.X == Math.round(annot.X) && x.Y == Math.round(annot.Y) && x.Width == Math.round(annot.Width) && x.Height == Math.round(annot.Height)))[0];
+                        if (isSig.Type == 0) {
+                            annot.setImageData(currentUser.DefaultSignature.Base64Signature);
                         }
-                    });
-                    return false;
-                }
-            }
-
-            addStamp = function () {
-                let checkExistStamp = "@currentUser.StampBase64" == "" ? false : true;
-                if (checkExistStamp) {
-                    // vẽ sẵn dấu tại một điểm
-                    const annot = new Annotations.StampAnnotation({
-                        PageNumber: documentViewer.getCurrentPage(),
-                        X: 300,
-                        Y: 100,
-                        Width: 200,
-                        Height: 200,
-                        Author: "@currentUser.Email"
-                    });
-                    annot.setImageData("@currentUser.StampBase64");
-
-                    annotationManager.addAnnotation(annot);
-                    annotationManager.redrawAnnotation(annot);
-                }
-                else {
-                    $.confirm({
-                        title: 'Notice!',
-                        content: 'You do not have any stamp. Do you want to create your own stamp? Please go account information page to create!',
-                        buttons: {
-                            cancel: function () {
-
-                            },
-                            yes: {
-                                btnClass: 'btn btn-success',
-                                action: function () {
-                                    location.href = '/User/UserInfo';
-                                },
-                            },
+                        else {
+                            annot.setImageData(currentUser.StampBase64);
                         }
-                    });
-                    return false;
+                        //annotationManager.addAnnotation(annot);
+                        annotationManager.redrawAnnotation(annot);
+
+                        //$("#declineModal").modal("show");
+                    }
                 }
-            }
+            });
 
             annotationManager.addEventListener('annotationChanged', (annotations, action) => {
+                let annotation = annotations[0];
                 if (action === 'add') {
 
                 } else if (action === 'modify') {
+                    let index = listUserSignature.indexOf(annotation);
 
                 } else if (action === 'delete') {
                     annotations.forEach((annot) => {
-                        if (annot.Author == "@currentUser.Email") {
+                        if (annot.Author == currentUser.Email) {
                             var index = listUserSignature.indexOf(annot);
                             listUserSignature.splice(index, 1)
                         }
                     });
                 }
-
-                //annotations.forEach((annot) => {
-                //    console.log(annot);
-                //    console.log('annotation page number', annot.PageNumber);
-                //});
             });
+
+            documentViewer.addEventListener('annotationsLoaded', () => {
+                listAnnots = annotationManager.getAnnotationsList();
+                listAnnots.filter(x => x.Author == currentUser.Email).forEach(function (ele) {
+                    ele.isSigned = false;
+                });
+            })
+
+            jumpToAnnot = function (x, y, w, h) {
+                let annot = listAnnots.filter(z => (Math.round(z.X) == x && Math.round(z.Y) == y && Math.round(z.Width) == w && Math.round(z.Height) == h))[0];
+
+                annotationManager.jumpToAnnotation(annot, [isSmoothScroll = true]);
+                annotationManager.deselectAllAnnotations();
+                annotationManager.selectAnnotation(annot);
+                annot.isSigned = true;
+            }
 
             function updateDocumentAfterSigning() {
                 const req = new XMLHttpRequest();
@@ -377,19 +373,39 @@
 
                 LoadingShow();
                 let data = {
-                    DocumentID: @currentDoc.DocumentID,
-                    Issuer: "@currentDoc.Issuer",
-                    ReferenceCode: "@currentDoc.ReferenceCode"
+                    DocumentID: currentDoc.DocumentID,
+                    Issuer: currentDoc.Issuer,
+                    ReferenceCode: currentDoc.ReferenceCode
                 };
 
                 req.send(JSON.stringify(data));
             }
 
             async function saveFile() {
-                if (listUserSignature.length <= 0) {
-                    toastr.error("You need to put your signature", "Warning");
-                    return false;
+                let annotNotSigned = listAnnots.filter(x => (x.Author == currentUser.Email && x.isSigned == false));
+                if (annotNotSigned.length > 0) {
+                    $.confirm({
+                        title: 'Notice!',
+                        content: 'You still have some signature or stamp are not signed. Are you sure to sign all to this document?',
+                        buttons: {
+                            cancel: function () {
+                                return false;
+                            },
+                            yes: {
+                                btnClass: 'btn btn-success',
+                                action: function () {
+                                    listAnnots.forEach(function (ele) {
+                                        annotationManager.jumpToAnnotation(ele, [isSmoothScroll = true]);
+                                        annotationManager.deselectAllAnnotations();
+                                        annotationManager.selectAnnotation(ele);
+                                        ele.isSigned = true;
+                                    })
+                                },
+                            },
+                        }
+                    });
                 }
+               
                 LoadingShow();
                 const doc = documentViewer.getDocument();
                 const xfdfString = await annotationManager.exportAnnotations();
@@ -402,8 +418,8 @@
 
                 // save file and signature
                 const frmData = new FormData();
-                frmData.append('@currentDoc.Link', blob, '@currentDoc.Link');
-                frmData.append("docId", '@currentDoc.DocumentID');
+                frmData.append(`${currentDoc.Link}`, blob, `${currentDoc.Link}`);
+                frmData.append("docId", `${currentDoc.DocumentID}`);
 
                 const req = new XMLHttpRequest();
                 req.open("POST", '/Home/SaveFileAndSignature', true);
@@ -421,43 +437,6 @@
                 req.send(frmData);
             }
             btnSendFile.addEventListener("click", saveFile);
-
-            //documentViewer.addEventListener("documentLoaded", () => {
-            //    const flags = new instance.Core.Annotations.WidgetFlags({});
-            //    flags.set('Required', true);
-            //    let field = new instance.Core.Annotations.Forms.Field(
-            //        "field1Test",
-            //        {
-            //            type: 'Sig',
-            //            flags: flags,
-            //        });
-            //    let inputAnnot = new instance.Core.Annotations.SignatureWidgetAnnotation(field, {
-            //        appearance: '_DEFAULT',
-            //        appearances: {
-            //            _DEFAULT: {
-            //                Normal: {
-            //                    data:
-            //                        'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAYdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjEuMWMqnEsAAAANSURBVBhXY/j//z8DAAj8Av6IXwbgAAAAAElFTkSuQmCC',
-            //                    offset: {
-            //                        x: 100,
-            //                        y: 100,
-            //                    },
-            //                },
-            //            },
-            //        },
-            //    });
-
-            //    inputAnnot.PageNumber = 1;
-            //    inputAnnot.X = 100;
-            //    inputAnnot.Y = 100;
-            //    inputAnnot.Width = 50;
-            //    inputAnnot.Height = 20;
-
-            //    annotationManager.addAnnotation(inputAnnot);
-            //    annotationManager.drawAnnotationsFromList([inputAnnot]);
-            //    annotationManager.getFieldManager().addField(field);
-            //});
-
         });
 
         function openModalDecline() {
@@ -472,9 +451,9 @@
 
             let action = baseUrl + 'Decline';
             var datasend = {
-                DocumentID: @currentDoc.DocumentID,
-                Issuer: "@currentDoc.Issuer",
-                ReferenceCode: "@currentDoc.ReferenceCode",
+                DocumentID: currentDoc.DocumentID,
+                Issuer: currentDoc.Issuer,
+                ReferenceCode: currentDoc.ReferenceCode,
                 note: note.val()
             };
 
@@ -505,9 +484,9 @@
 
             let action = baseUrl + 'Cancel';
             var datasend = {
-                DocumentID: @currentDoc.DocumentID,
-                Issuer: "@currentDoc.Issuer",
-                ReferenceCode: "@currentDoc.ReferenceCode",
+                DocumentID: currentDoc.DocumentID,
+                Issuer: currentDoc.Issuer,
+                ReferenceCode: currentDoc.ReferenceCode,
                 note: note.val()
             };
 

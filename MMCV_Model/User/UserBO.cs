@@ -28,7 +28,7 @@ namespace MMCV_Model.User
 
                 if (HttpContext.Current != null && HttpContext.Current.Session != null)
                 {
-                    var session = HttpContext.Current.Session[HttpContext.Current.Request.Cookies["SessionId"].Value];
+                    var session = HttpContext.Current.Session[HttpContext.Current.Request.Cookies["SessionId"]?.Value];
 
                     return session as UserBO;
                 }

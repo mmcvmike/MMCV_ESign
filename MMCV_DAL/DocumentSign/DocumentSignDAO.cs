@@ -55,8 +55,9 @@ namespace MMCV_DAL.DocumentSign
             IData objIData = this.CreateIData();
             try
             {
-                string query = $"INSERT INTO DocumentSign(DocumentID, DocumentReferenceCode, Fullname, Email, SignIndex) " +
-                    $"VALUES ({docSign.DocumentID}, '{docSign.DocumentReferenceCode}', '{docSign.Fullname}', '{docSign.Email}', {docSign.SignIndex})";
+                string query = $"INSERT INTO DocumentSign(DocumentID, DocumentReferenceCode, Fullname, Email, SignIndex, X, Y, Width, Height, Type, Page) " +
+                    $"VALUES ({docSign.DocumentID}, '{docSign.DocumentReferenceCode}', '{docSign.Fullname}', '{docSign.Email}', {docSign.SignIndex}, " +
+                    $"{docSign.X}, {docSign.Y}, {docSign.Width}, {docSign.Height}, {docSign.Type}, {docSign.Page})";
                 BeginTransactionIfAny(objIData);
                 objIData.CreateNewSqlText(query);
                 var reader = objIData.ExecNonQuery();

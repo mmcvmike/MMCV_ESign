@@ -209,6 +209,25 @@ END
 
 go
 
+CREATE TABLE Tag
+(
+	TagID INT PRIMARY KEY IDENTITY,
+	TagName NVARCHAR(50),
+	EmployeeID NVARCHAR(20),
+	Active INT,
+	[Order] INT
+)
+
+go
+
+CREATE TABLE TagDoc
+(
+	ID INT PRIMARY KEY IDENTITY,
+	TagID INT,
+	DocID INT,
+	EmpID NVARCHAR(50)
+)
+
 go
 
 CREATE PROCEDURE [dbo].[USP_Documents_Get_Draft] 

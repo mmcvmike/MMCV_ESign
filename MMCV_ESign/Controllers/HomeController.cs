@@ -53,7 +53,8 @@ namespace MMCV_ESign.Controllers
                 var isSigner = isSignerIncludeCurrentUser == null ? false : true;
                 if (!isAuthor && !isSigner)
                 {
-                    return Json(new { rs = false, msg = "You do not have right to access this document" }, JsonRequestBehavior.AllowGet);
+                    //return Json(new { rs = false, msg = "You do not have right to access this document" }, JsonRequestBehavior.AllowGet);
+                    return View("Error", new { Message = "You do not have right to access this document" });
                 }
 
                 // Check signing flow
@@ -65,7 +66,8 @@ namespace MMCV_ESign.Controllers
                         var preSigner = docSign.Where(x => x.SignIndex == isSignerIncludeCurrentUser.SignIndex - 1).Where(x => x.Status == (int)EnumDocumentSign.Signed);
                         if (preSigner.Count() <= 0)
                         {
-                            return Json(new { rs = false, msg = "The previous signer has not signed or declined" }, JsonRequestBehavior.AllowGet);
+                            //return Json(new { rs = false, msg = "The previous signer has not signed or declined" }, JsonRequestBehavior.AllowGet);
+                            return View("Error", new { Message = "The previous signer has not signed or declined" });
                         }
                     }
                 }
@@ -118,15 +120,17 @@ namespace MMCV_ESign.Controllers
                 DocumentBLL docBLL = new DocumentBLL();
                 DocumentSignBLL docSignBLL = new DocumentSignBLL();
 
+                // lấy danh sách chữ ký, con dấu cần ký của tài liệu
                 var docSign = docSignBLL.GetDocumentSignByDocumentID(doc.DocumentID);
                 doc.DocumentSigns = docSign;
 
+                // lấy danh sách chữ ký cần ký cho tài liệu của user hiện tại đang đăng nhập
                 var listCurrentDocSign = docSign.Where(x => (x.Email == currentUser.Email && x.DocumentID == doc.DocumentID));
 
-                if (listCurrentDocSign != null)
+                if (listCurrentDocSign != null && listCurrentDocSign.Count() > 0)
                 {
                     var currentDocSign = listCurrentDocSign.FirstOrDefault();
-                    // update status of document sign
+                    // cập nhật thông tin của chữ ký
                     listCurrentDocSign.ForEach((ele) =>
                     {
                         ele.UserSignatureID = currentUser.DefaultSignature.UserSignatureID;
@@ -135,16 +139,15 @@ namespace MMCV_ESign.Controllers
                         docSignBLL.UpdateStatusDocumentSign(ele);
                     });
 
-                    if (listCurrentDocSign.Count() >= docSign.Count())
+                    if (currentDocSign.SignIndex >= docSign.Max(x => x.SignIndex))
                     {
                         // update status of document to complete
                         doc.Status = (int)EnumDocumentStatus.Completed;
                         docBLL.UpdateStatusDocument(doc);
                         var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/CompleteDocument.html");
                         var body = EmailSender.ReadEmailTemplate(templatePath);
-                        // send mail to the next signer
 
-                        // send mail to the issuer that document has completed signing flow
+                        // gửi mail cho người phát hành khi tài liệu đã hoàn thành tất cả luồng ký
                         var body_new = $"Dear {doc.Issuer}," +
                                    $"<br>" +
                                    $"<br>" +
@@ -167,22 +170,25 @@ namespace MMCV_ESign.Controllers
                         var templatePath = System.Web.HttpContext.Current.Server.MapPath("~/Template/Email/SignDocument.html");
                         var body = EmailSender.ReadEmailTemplate(templatePath);
 
-                        // send mail to the next signer
+                        // gửi mail cho người tiếp theo
                         var nextSignerEmail = docSign.Where(x => x.SignIndex == (currentDocSign.SignIndex + 1)).FirstOrDefault();
-                        var body_new = $"Dear {nextSignerEmail.Email}," +
+                        if (nextSignerEmail != null)
+                        {
+                            var body_new = $"Dear {nextSignerEmail.Email}," +
                                     $"<br>" +
                                     $"<br>" +
                                     $"You have a document need to sign." +
                                     $"<br>" +
                                     $" Reference code: {doc.ReferenceCode}" +
                                     $"<br>Please access <a href='{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={nextSignerEmail.Email}&signIndex={nextSignerEmail.SignIndex}'>this link</a> to sign document";
-                        body = body.Replace("Dear $SIGN_NAME$,", "");
-                        body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
-                        body = body.Replace("$SENDER_NAME$", currentDocSign.Email);
-                        body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
+                            body = body.Replace("Dear $SIGN_NAME$,", "");
+                            body = body.Replace("$SENDER_NAME$ has requested you to review and sign $DOCUMENT_NAME$", body_new);
+                            body = body.Replace("$SENDER_NAME$", currentDocSign.Email);
+                            body = body.Replace("$LINK_TO_SIGN$", $"{baseUrl}/Home/PdfPage?docId={doc.DocumentID}&email={currentDocSign.Email}&signIndex={currentDocSign.SignIndex}");
 
-                        //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
-                        var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", nextSignerEmail.Email, "", body);
+                            //var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", "tuyen.nguyenvan@mmcv.mektec.com", "", body);
+                            var isSendMailSuccess = MailHelper.SendEmail("Document Sign", "system@mmcv.mektec.com", nextSignerEmail.Email, "", body);
+                        }
                     }
                 }
 

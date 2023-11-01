@@ -104,6 +104,12 @@
     <Compile Include="DB68\RolePermission.cs">
       <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
     </Compile>
+    <Compile Include="DB68\Tag.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
+    <Compile Include="DB68\TagDoc.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB68\User.cs">
       <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
     </Compile>

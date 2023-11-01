@@ -40,5 +40,7 @@ namespace MMCV_Model.DB68
         public virtual DbSet<UserRole> UserRoles { get; set; }
         public virtual DbSet<UserSignature> UserSignatures { get; set; }
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
+        public virtual DbSet<Tag> Tags { get; set; }
+        public virtual DbSet<TagDoc> TagDocs { get; set; }
     }
 }

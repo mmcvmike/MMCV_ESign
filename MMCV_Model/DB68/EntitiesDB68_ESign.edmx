@@ -47,6 +47,12 @@
           <Property Name="UserEmpID" Type="varchar" MaxLength="20" />
           <Property Name="Status" Type="int" />
           <Property Name="Note" Type="nvarchar" MaxLength="200" />
+          <Property Name="X" Type="int" />
+          <Property Name="Y" Type="int" />
+          <Property Name="Width" Type="int" />
+          <Property Name="Height" Type="int" />
+          <Property Name="Type" Type="int" />
+          <Property Name="Page" Type="int" />
         </EntityType>
         <EntityType Name="DocumentType">
           <Key>
@@ -108,6 +114,25 @@
           <Property Name="RolePermissionID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
           <Property Name="RoleID" Type="int" />
           <Property Name="PermissionID" Type="int" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="TagID" />
+          </Key>
+          <Property Name="TagID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TagName" Type="nvarchar" MaxLength="50" />
+          <Property Name="EmployeeID" Type="nvarchar" MaxLength="20" />
+          <Property Name="Active" Type="int" />
+          <Property Name="Order" Type="int" />
+        </EntityType>
+        <EntityType Name="TagDoc">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="TagID" Type="int" />
+          <Property Name="DocID" Type="int" />
+          <Property Name="EmpID" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="User">
           <Key>
@@ -171,6 +196,8 @@
           <EntitySet Name="Role" EntityType="Self.Role" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RoleMenu" EntityType="Self.RoleMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="RolePermission" EntityType="Self.RolePermission" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Tag" EntityType="Self.Tag" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="TagDoc" EntityType="Self.TagDoc" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserMenu" EntityType="Self.UserMenu" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="UserPermission" EntityType="Self.UserPermission" Schema="dbo" store:Type="Tables" />
@@ -223,6 +250,12 @@
           <Property Name="UserEmpID" Type="String" MaxLength="20" FixedLength="false" Unicode="false" />
           <Property Name="Status" Type="Int32" />
           <Property Name="Note" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="X" Type="Int32" />
+          <Property Name="Y" Type="Int32" />
+          <Property Name="Width" Type="Int32" />
+          <Property Name="Height" Type="Int32" />
+          <Property Name="Type" Type="Int32" />
+          <Property Name="Page" Type="Int32" />
         </EntityType>
         <EntityType Name="Menu">
           <Key>
@@ -342,6 +375,8 @@
           <EntitySet Name="UserRoles" EntityType="Self.UserRole" />
           <EntitySet Name="UserSignatures" EntityType="Self.UserSignature" />
           <EntitySet Name="DocumentTypes" EntityType="MMCV_ESignModel.DocumentType" />
+          <EntitySet Name="Tags" EntityType="MMCV_ESignModel.Tag" />
+          <EntitySet Name="TagDocs" EntityType="MMCV_ESignModel.TagDoc" />
         </EntityContainer>
         <EntityType Name="DocumentType">
           <Key>
@@ -352,6 +387,25 @@
           <Property Name="EmployeeID" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="false" />
           <Property Name="Description" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="Active" Type="Int32" />
+        </EntityType>
+        <EntityType Name="Tag">
+          <Key>
+            <PropertyRef Name="TagID" />
+          </Key>
+          <Property Name="TagID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TagName" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="EmployeeID" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="Active" Type="Int32" />
+          <Property Name="Order" Type="Int32" />
+        </EntityType>
+        <EntityType Name="TagDoc">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="TagID" Type="Int32" />
+          <Property Name="DocID" Type="Int32" />
+          <Property Name="EmpID" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
         </EntityType>
       </Schema>
     </edmx:ConceptualModels>
@@ -391,6 +445,12 @@
           <EntitySetMapping Name="DocumentSigns">
             <EntityTypeMapping TypeName="MMCV_ESignModel.DocumentSign">
               <MappingFragment StoreEntitySet="DocumentSign">
+                <ScalarProperty Name="Page" ColumnName="Page" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="Height" ColumnName="Height" />
+                <ScalarProperty Name="Width" ColumnName="Width" />
+                <ScalarProperty Name="Y" ColumnName="Y" />
+                <ScalarProperty Name="X" ColumnName="X" />
                 <ScalarProperty Name="DocumentSignID" ColumnName="DocumentSignID" />
                 <ScalarProperty Name="DocumentID" ColumnName="DocumentID" />
                 <ScalarProperty Name="DocumentReferenceCode" ColumnName="DocumentReferenceCode" />
@@ -526,6 +586,27 @@
                 <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
                 <ScalarProperty Name="DocumentTypeName" ColumnName="DocumentTypeName" />
                 <ScalarProperty Name="DocumentTypeID" ColumnName="DocumentTypeID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Tags">
+            <EntityTypeMapping TypeName="MMCV_ESignModel.Tag">
+              <MappingFragment StoreEntitySet="Tag">
+                <ScalarProperty Name="Order" ColumnName="Order" />
+                <ScalarProperty Name="Active" ColumnName="Active" />
+                <ScalarProperty Name="EmployeeID" ColumnName="EmployeeID" />
+                <ScalarProperty Name="TagName" ColumnName="TagName" />
+                <ScalarProperty Name="TagID" ColumnName="TagID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="TagDocs">
+            <EntityTypeMapping TypeName="MMCV_ESignModel.TagDoc">
+              <MappingFragment StoreEntitySet="TagDoc">
+                <ScalarProperty Name="EmpID" ColumnName="EmpID" />
+                <ScalarProperty Name="DocID" ColumnName="DocID" />
+                <ScalarProperty Name="TagID" ColumnName="TagID" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

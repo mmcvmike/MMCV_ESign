@@ -1,0 +1,294 @@
+﻿@{
+    ViewBag.Title = "DocumentType";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles{
+    <style>
+        .modal-header-icon {
+            margin-top: 5px;
+            font-size: 20px;
+            color: #33b837;
+        }
+
+        .container-fluid {
+            width: 100%;
+            padding-right: 0px;
+            padding-left: 0px;
+            margin-right: auto;
+            margin-left: auto;
+        }
+    </style>
+}
+
+<div class="p-3">
+    <div class="card card-stats card-round mb-0">
+        <div class="pt-3 pb-2">
+            <div class="pl-3">
+                <button class="btn btn-success btn-sm" data-toggle="modal" data-target="#addDocumentTypeModal"><i class="fa fa-plus"></i>&nbsp; Add document type</button>
+                @*<button class="btn btn-o btn-sm"><i class="fa fa-file-excel"></i>&nbsp; Export to excel</button>*@
+            </div>
+            <div class="p-3">
+                <table id="docTypeDT" class="table table-bordered table-striped table-hover" style="width:100%">
+                    <thead class="">
+                        <tr>
+                            <td><strong>No</strong></td>
+                            <td><strong>Name</strong></td>
+                            <td><strong>Description</strong></td>
+                            <td><strong>Active</strong></td>
+                            <td></td>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addDocumentTypeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fa fa-plus modal-header-icon"></i>
+                <h3 class="modal-title" style="font-size: 1.3rem">
+                    &nbsp;&nbsp;FORM ADD DOCUMENT TYPE
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="" style="background-color: #28a745; height: 2px"></div>
+            <div class="modal-body">
+                <div>
+                    <div class="col-md-12 col-sm-12 p-0 mb-2">
+                        <strong>Type Name <span class="text-danger">*</span></strong>
+                        <input type="text" class="form-control" id="txtATypeName" autocomplete="off" autofocus />
+                    </div>
+                    <div class="col-md-12 col-sm-12 p-0">
+                        <strong>Description</strong>
+                        <textarea class="form-control" id="txtADescription" autocomplete="off"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="addDocType()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="editDocumentTypeModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <i class="fa fa-plus modal-header-icon"></i>
+                <h3 class="modal-title" style="font-size: 1.3rem">
+                    &nbsp;&nbsp;FORM EDIT DOCUMENT TYPE
+                </h3>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            </div>
+            <div class="" style="background-color: #28a745; height: 2px"></div>
+            <div class="modal-body">
+                <div>
+                    <input type="hidden" class="form-control" id="txtUDocTypeId" autocomplete="off" autofocus />
+                    <div class="col-md-12 col-sm-12 p-0 mb-2">
+                        <strong>Type Name <span class="text-danger">*</span></strong>
+                        <input type="text" class="form-control" id="txtUTypeName" autocomplete="off" autofocus />
+                    </div>
+                    <div class="col-md-12 col-sm-12 p-0 mb-2">
+                        <strong>Description</strong>
+                        <textarea class="form-control" id="txtUDescription" autocomplete="off"></textarea>
+                    </div>
+                    <div>
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input ckbActive" name="ckbActive" id="ckbActive">
+                            <label class="custom-control-label" for="ckbActive">Is Active</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" onclick="updateDocType()">Submit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        /*
+         * Variables
+         * */
+        var baseUrl = "/Tag/";
+
+        /*
+         * Methods
+         */
+
+        $(document).ready(function (e) {
+            $('.modal').on('shown.bs.modal', function () {
+                $(this).find('[autofocus]').focus();
+            });
+
+            getTags();
+        })
+
+        function getTags() {
+            let action = baseUrl + 'GetTags';
+            LoadingShow();
+            GetDataAjax(action, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    let data = response.data;
+                    setTimeout(() => {
+                        bindDocTypeDataTable(data);
+                    });
+                }
+                else {
+                    toastr.error(response.msg, "Warning");
+                }
+            });
+        }
+
+        function bindDocTypeDataTable(data) {
+            $("#docTypeDT").DataTable({
+                "destroy": true,
+                "lengthChange": false,
+                "pageLength": 10,
+                "data": data,
+                "columns": [
+                    { "data": "DocumentTypeID", "autoWidth": false },
+                    { "data": "DocumentTypeName", "autoWidth": false },
+                    { "data": "Description", "autoWidth": false },
+                    {
+                        data: 'Active',
+                        render: function (data, type, row) {
+                            return formatActiveStatus(data);
+                        },
+                    },
+                    {
+                        data: null,
+                        render: function (data, type, row) {
+                            let html = `
+                                                    <a href='javascript:void(0)' onclick='openEdit(${row.DocumentTypeID})' class='btn btn-light btn-sm'><i class='fa fa-edit text-primary'></i>&nbsp; Detail</a>
+                                                `;
+                            return html;
+                        },
+                    },
+                ],
+                "columnDefs": [
+                    { "className": "text-center", "targets": "_all" }, //{ "className": "text-center", "targets": [0,1,2,3,4] },
+                ],
+                "language": {
+                    "info": "Show _START_ - _END_ / _TOTAL_",
+                    "paginate": {
+                        'previous': '<span class="la flaticon-left-arrow"></span>',
+                        'next': '<span class="la flaticon-right-arrow"></span>'
+                    },
+                },
+                "scrollY": "530px",
+                scrollX: true,
+                scrollCollapse: true,
+                //fixedColumns: {
+                //    right: 1
+                //}
+            });
+        }
+
+        function addDocType() {
+            let txtName = $("#txtATypeName");
+            let txtDesc = $("#txtADescription");
+
+            if (!CheckNullOrEmpty(txtName, "Document type name can not be empty or null"))
+                return false;
+
+            let action = baseUrl + 'AddDocType';
+            let datasend = {
+                DocumentTypeName: txtName.val(),
+                Description: txtDesc.val(),
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    toastr.success(response.msg, "Success");
+                    $("#addDocumentTypeModal").modal("hide");
+                    getDocType();
+                }
+                else {
+                    toastr.error(response.msg, "Warning");
+                }
+            });
+        }
+
+        function openEdit(id) {
+            // call server to get detail info
+            let action = baseUrl + 'GetDocTypeById';
+            let datasend = {
+                id: id
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    $("#editDocumentTypeModal").modal("show");
+                    let docType = response.data;
+                    $("#txtUDocTypeId").val(docType.DocumentTypeID);
+                    $("#txtUTypeName").val(docType.DocumentTypeName);
+                    $("#txtUDescription").val(docType.Description);
+
+                    if (docType.Active == 1) {
+                        $("#ckbActive").prop("checked", true);
+                    }
+                    else {
+                        $("#ckbActive").prop("checked", false);
+                    }
+                }
+                else {
+                    toastr.error(response.msg, "Warning");
+                }
+            });
+        }
+
+        function updateDocType() {
+            let txtDocTypeId = $("#txtUDocTypeId").val();
+            let txtName = $("#txtUTypeName");
+            let txtDesc = $("#txtUDescription");
+            let active = $("#ckbActive").prop("checked");
+
+            if (!CheckNullOrEmpty(txtName, "Document type name can not be empty or null"))
+                return false;
+
+            let action = baseUrl + 'UpdateDocType';
+            let datasend = {
+                DocumentTypeID: txtDocTypeId,
+                DocumentTypeName: txtName.val(),
+                Description: txtDesc.val(),
+                Active: active == true ? 1 : 0
+            };
+            LoadingShow();
+            PostDataAjax(action, datasend, function (response) {
+                LoadingHide();
+                if (response.rs) {
+                    toastr.success(response.msg, "Success");
+                    $("#editDocumentTypeModal").modal("hide");
+                    getDocType();
+                }
+                else {
+                    toastr.error(response.msg, "Warning");
+                }
+            });
+        }
+
+        function formatActiveStatus(data) {
+            let format = "";
+            let unactive = "<span class='badge badge-danger'>UnActive</span>";
+            let active = "<span class='badge badge-success'>Active</span>";
+            format = data == 0 ? unactive : active;
+
+            return format;
+        }
+
+    </script>
+}
+
+

@@ -25,5 +25,11 @@ namespace MMCV_Model.DB68
         public string UserEmpID { get; set; }
         public Nullable<int> Status { get; set; }
         public string Note { get; set; }
+        public Nullable<int> X { get; set; }
+        public Nullable<int> Y { get; set; }
+        public Nullable<int> Width { get; set; }
+        public Nullable<int> Height { get; set; }
+        public Nullable<int> Type { get; set; }
+        public Nullable<int> Page { get; set; }
     }
 }

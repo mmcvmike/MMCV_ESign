@@ -2,7 +2,17 @@
     <div>
         <button class="btn btn-success btn-sm" onclick="window.history.back()"><i class="la flaticon-left-arrow"></i>&nbsp;Back</button>
     </div>
-    <div class="card-body p-1">
-        <div class="text-danger">Error: @Model</div>
+    <div class="card-body pl-0 pt-2">
+        <h2 class="text-danger">Error: <text id="txtErrorMessage"></text></h2>
     </div>
 </div>
+
+@section scripts{
+    
+    <script>
+        var error = @Html.Raw(Json.Encode(Model));
+
+        $("#txtErrorMessage").text(error.Message);
+    </script>
+    
+}

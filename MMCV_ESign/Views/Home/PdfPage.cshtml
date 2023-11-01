@@ -222,7 +222,7 @@
             listDocSigns.filter(x => x.Email == currentUser.Email).forEach((ele, index) => {
                 html += ` 
                 <div class='card list-user-sign' onclick="jumpToAnnot(${ele.X}, ${ele.Y}, ${ele.Width}, ${ele.Height})">
-                    ${index + 1}. ${ele.Email}
+                    <text><strong>${ele.SignIndex}.${index + 1}.</strong> ${ele.Email}</text>
                     <div>Type: ${ele.Type == 0 ? 'Signature' : 'Stamp'}</div>
                     <div>Page: ${ele.Page}</div>
                 </div>                 

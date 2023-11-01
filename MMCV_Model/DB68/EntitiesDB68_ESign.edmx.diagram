@@ -20,6 +20,8 @@
         <EntityTypeShape EntityType="MMCV_ESignModel.UserRole" Width="1.5" PointX="10.75" PointY="0.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.UserSignature" Width="1.5" PointX="0.75" PointY="10.75" IsExpanded="true" />
         <EntityTypeShape EntityType="MMCV_ESignModel.DocumentType" Width="1.5" PointX="7.375" PointY="10.75" />
+        <EntityTypeShape EntityType="MMCV_ESignModel.Tag" Width="1.5" PointX="9.375" PointY="10.75" />
+        <EntityTypeShape EntityType="MMCV_ESignModel.TagDoc" Width="1.5" PointX="11.375" PointY="3.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

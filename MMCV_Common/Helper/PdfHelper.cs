@@ -28,6 +28,7 @@ namespace MMCV_Common.Helper
 
                 var resource = reader.GetPageResources(i);
                 //resource.Remove(new PdfName("XObject"));
+                resource.Remove(new PdfName("XObject"));
             }
 
             using (FileStream fs = new FileStream(outputFile, FileMode.Create))

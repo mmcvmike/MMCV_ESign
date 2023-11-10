@@ -218,6 +218,42 @@ namespace MMCV_BLL.Document
                         File.Copy(documentPath, newDocumentPath, true);
                     }
                     // If doc is word document convert it into pdf file
+                    else if (documentPath.ToLower().EndsWith(".xlsx") || documentPath.ToLower().EndsWith(".xls"))
+                    {
+                        if (File.Exists(newDocumentPath))
+                        {
+
+                        }
+                        else
+                        {
+                            try
+                            {
+                                object oMissing = System.Reflection.Missing.Value;
+                                Type excelType = Type.GetTypeFromProgID("Excel.Application");
+                                dynamic excelApp = Activator.CreateInstance(excelType);
+                                excelApp.Visible = false;
+
+                                if (excelApp.Workbooks != null)
+                                {
+                                    var workbook = excelApp.Workbooks.Open(documentPath);
+                                    if (workbook != null)
+                                    {
+                                        // Save the Excel workbook as PDF
+                                        //workbook.ExportAsFixedFormat(Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF, "D:\\test.pdf");
+                                        workbook.ExportAsFixedFormat(0, newDocumentPath);
+                                        workbook.Close(false, oMissing, oMissing);
+                                    }
+
+                                    excelApp.Quit();
+                                }
+                            }
+                            catch (Exception ex)
+                            {
+                                this.ErrorMsg = MethodHelper.Instance.GetErrorMessage(ex, "");
+                                objResultMessageBO = LogHelper.Instance.WriteLog(this.ErrorMsg, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), this.NameSpace);
+                            }
+                        }
+                    }
                     else if (documentPath.ToLower().EndsWith(".doc") || documentPath.ToLower().EndsWith(".docx"))
                     {
                         if (File.Exists(newDocumentPath))

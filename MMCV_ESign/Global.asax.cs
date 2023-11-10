@@ -54,6 +54,12 @@ namespace MMCV_ESign
                 //    Response.Redirect("~/User/Login");
                 //}
 
+                // get access token, refesh token từ cookie or localstorage
+                // check access token is expire. if expire call refresh token
+                // if refresh token expire then redirect to login page
+                // when get access token then get user info from access token
+                // then assign user info to Session
+
                 string sessionId = Request.Cookies["SessionId"]?.Value;
                 if (Session[sessionId] != null)
                 {

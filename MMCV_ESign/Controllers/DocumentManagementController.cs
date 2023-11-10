@@ -485,6 +485,29 @@ namespace MMCV_ESign.Controllers
                                     app.Quit();
                                 }
                             }
+                            else if (fileName.EndsWith("xlsx") || fileName.EndsWith("xls"))
+                            {
+                                object oMissing = System.Reflection.Missing.Value;
+                                Type excelType = Type.GetTypeFromProgID("Excel.Application");
+                                dynamic excelApp = Activator.CreateInstance(excelType);
+                                excelApp.Visible = false;
+
+                                if (excelApp.Workbooks != null)
+                                {
+                                    var workbook = excelApp.Workbooks.Open(filePath);
+                                    if (workbook != null)
+                                    {
+                                        // Save the Excel workbook as PDF
+                                        //workbook.ExportAsFixedFormat(Microsoft.Office.Interop.Excel.XlFixedFormatType.xlTypePDF, "D:\\test.pdf");
+                                        newTestFileName = fileName.Replace(".xlsx", ".pdf").Replace(".xls", ".pdf");
+                                        newTestPath = path + newTestFileName;
+                                        workbook.ExportAsFixedFormat(0, newTestPath);
+                                        workbook.Close();
+                                    }
+
+                                    excelApp.Quit();
+                                }
+                            }
                             else if (fileName.EndsWith("jpg") || fileName.EndsWith("jpeg") || fileName.EndsWith("png"))
                             {
                                 newTestFileName = fileName.Replace(".jpg", ".pdf").Replace(".jpeg", ".pdf").Replace(".png", ".pdf");

@@ -29,6 +29,7 @@ create table Document(
 	CreatedBy nvarchar(20),
 	CreatedDate datetime,
 	Active int default(1), -- 1: Active, 0: Inactive
+	[EmailCC] [nvarchar](600) NULL,
 )
 
 go
@@ -44,7 +45,13 @@ create table DocumentSign(
 	UserSignatureID int,
 	UserEmpID varchar(20),
 	[Status] int default(0), -- 0: Initial, 1: Signed, 2: Declined
-	Note nvarchar(200)
+	Note nvarchar(200),
+	[X] [int] NULL,
+	[Y] [int] NULL,
+	[Width] [int] NULL,
+	[Height] [int] NULL,
+	[Type] [int] NULL,
+	[Page] [int] NULL,
 )
 
 go
@@ -315,6 +322,14 @@ go
 
 insert into Permission(PermissionName) values ('');
 insert into Permission(PermissionName) values ('');
+
+go
+
+insert into Department(DepartmentName, Active) values ('IT', 1)
+
+go
+
+insert into Position(PositionName, Active) values ('Manager', 1)
 
 go
 

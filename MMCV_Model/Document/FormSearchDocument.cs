@@ -14,6 +14,7 @@ namespace MMCV_Model.Document
         public string SignStatus { get; set; }
         public string FromDate { get; set; }
         public string ToDate { get; set; }
+        public int TagId { get; set; }
 
     }
 

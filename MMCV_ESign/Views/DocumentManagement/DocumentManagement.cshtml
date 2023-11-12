@@ -1,8 +1,8 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "DocumentManagement";
     var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
     var isAdmin = currentUser != null ? (currentUser.IsAdmin) ? "" : "d-none" : "d-none";
+    var tags = (List<MMCV_Model.DB68.Tag>)ViewBag.Tags;
 }
 @section styles{
     <style>
@@ -31,6 +31,20 @@
         .dataTable > thead > tr > th[class*="sort"]:before,
         .dataTable > thead > tr > th[class*="sort"]:after {
             /*content: "" !important;*/
+        }
+
+        .folder {
+            margin: 0px 5px;
+            cursor: pointer;
+            color: black;
+           /* background: #ebeced;
+            border-radius: 5px;
+            padding: 5px 8px;*/
+        }
+
+        .folder-active {
+            background: #35cd3a;
+            color: white;
         }
     </style>
 }
@@ -65,9 +79,9 @@
                             <input type="text" class="form-control form-control-sm" id="txtFilterMeSignTitle" autocomplete="off" />
                         </div>
                         @*<div class="pl-0 pr-1">
-                            <strong>Reference Code</strong>
-                            <input type="text" class="form-control form-control-sm" id="txtFilterMeSignRefCode" autocomplete="off" />
-                        </div>*@
+                                <strong>Reference Code</strong>
+                                <input type="text" class="form-control form-control-sm" id="txtFilterMeSignRefCode" autocomplete="off" />
+                            </div>*@
                         <div class="pl-0 pr-1">
                             <strong>Signing Status</strong>
                             <div class="">
@@ -92,21 +106,44 @@
                         </div>
                     </div>
                     <div class="d-flex pl-3">
-                        Tags:
+                        Tags: 
+                        <div class="d-flex" id="tag-area">
+                            <div id="folder0" data-id='0' class='folder folder-active' onclick='tagClick(0)'>
+                                <span>ALL <span id="number0">0</span></span>
+                                <div class="sortable-list">
+
+                                </div>
+                            </div>
+                            @foreach (MMCV_Model.DB68.Tag item in tags)
+                            {
+                                <div id="folder" + @item.TagID data-id='@item.TagID' class='folder' onclick='tagClick(@item.TagID)'>
+                                    <span>@item.TagName <span id="number + @item.TagID">0</span></span>
+                                    <div class="sortable-list">
+
+                                    </div>
+                                </div>
+                            }
+
+                        </div>
                     </div>
-                    <table id="meSignDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>ReferenceCode</th>
-                                <th>Title</th>
-                                <th>Status</th>
-                                <th>Your Sign Status</th>
-                                <th>CreatedDate</th>
-                                <th>Action</th>
-                            </tr>
-                        </thead>
-                    </table>
+
+                    <div id="folder00" class="folder">
+                        <table id="meSignDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Issuer</th>
+                                    <th>Title</th>
+                                    <th>Status</th>
+                                    <th>Your Sign Status</th>
+                                    <th>CreatedDate</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody class="sortable-list">
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -120,9 +157,9 @@
                             <input type="text" class="form-control form-control-sm" id="txtFilterSentTitle" autocomplete="off" />
                         </div>
                         @*<div class="pl-0 pr-1">
-                            <strong>Reference Code</strong>
-                            <input type="text" class="form-control form-control-sm" id="txtFilterSentRefCode" autocomplete="off" />
-                        </div>*@
+                                <strong>Reference Code</strong>
+                                <input type="text" class="form-control form-control-sm" id="txtFilterSentRefCode" autocomplete="off" />
+                            </div>*@
                         <div class="pl-0 pr-1">
                             <strong>Status</strong>
                             <div class="">
@@ -245,7 +282,7 @@
 
 @section scripts{
     @*<script src="~/Scripts/ESign/DocumentManagement/documentManagement.js"></script>*@
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
     <script>
         /*
         * variables
@@ -267,8 +304,15 @@
         $(document).ready(() => {
             showActiveTab();
             getDocumentTypesIndex();
-            getTags();
+            //getTags();
+
         })
+
+        var currentTagId = 0;
+        function tagClick(tagId) {
+            currentTagId = tagId;
+            getMeSignDocuments();
+        }
 
         function showActiveTab() {
             if (!localStorage.getItem(activeTabLocalStorage))
@@ -298,7 +342,8 @@
                 ReferenceCode: txtRefCode,
                 Status: txtStatus,
                 FromDate: txtFromDate,
-                ToDate: txtToDate
+                ToDate: txtToDate,
+                TagId: currentTagId
             };
 
             LoadingShow();
@@ -421,9 +466,15 @@
                 "data": data,
                 "order": [],
                 "filter": false, // this is for disable filter (search box)
+
+                "createdRow": function (row, data, dataIndex) {
+                    // Set the data-status attribute, and add a class
+                    $(row).attr('data-id', data.DocumentID);
+                    $(row).attr('id', "doc" + data.DocumentID);
+                },
                 "columns": [
                     { "data": "DocumentID", "autoWidth": false },
-                    { "data": "ReferenceCode", "autoWidth": false },
+                    { "data": "Issuer", "autoWidth": false },
                     { "data": "Title", "autoWidth": false },
                     {
                         data: 'Status',
@@ -449,13 +500,13 @@
                         className: 'text-left',
                         render: function (data, type, row) {
                             var html = `
-                                        <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
-                                        <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;Quick view</a>
+                                        <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;</a>
+                                        <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;</a>
                                     `;
                             if (data.Status == 0) {
                                 html +=`<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
                             } else {
-                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-pen-nib text-success'></i>&nbsp;Sign</a>`;
                             }
                             return html;
                         },
@@ -512,13 +563,13 @@
                         className: 'text-left',
                         render: function (data, type, row) {
                             let html = `
-                                        <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i>&nbsp;Detail</a>
-                                        <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i>&nbsp;Quick view</a>
+                                        <a href='/DocumentManagement/DetailView?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-info text-primary'></i></a>
+                                        <a href='javascript:void(0)' onclick='quickView(${row.DocumentID})' class='btn btn-light btn-sm'><i class='fa fa-eye text-default'></i></a>
                                     `;
                             if (data.Status == 0) {
-                                html +=`<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm'><i class='fa fa-pen-nib text-success'></i>&nbsp;Sign</a>`;
                             } else {
-                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-sign text-success'></i>&nbsp;Sign</a>`;
+                                html += `<a href='/Home/PdfPage?docId=${row.DocumentID}' class='btn btn-light btn-sm @isAdmin'><i class='fa fa-pen-nib text-success'></i>&nbsp;Sign</a>`;
                             }
                             return html;
                         },
@@ -754,13 +805,98 @@
                 LoadingHide();
                 if (response.rs) {
                     let data = response.data;
-                    console.log(data);
+                    let html = `<div id='folder0' data-id='0' class='folder' onclick='tagClick(0)'>
+    <div class="sortable-list">
+        <span class='badge badge-success'>ALL <span id="number0">0</span></span>
+      </div>
+    </div>`;
+
+
+                    data.forEach((item, index) => {
+                        index++;
+                        html += `<div id='folder${index}' data-id='${index}' class='folder' onclick='tagClick(${index})'>
+    <div class="sortable-list">
+        <span class='badge badge-light'>${item.TagName} <span id="number${index}">0</span></span>
+      </div>
+    </div>`;
+                    })
+
+                    $("#tag-area").html(html);
                 }
                 else {
                     toastr.error(response.msg, "Warning");
                 }
             });
         }
+
+    </script>
+
+    <script>
+        
+        document.addEventListener('DOMContentLoaded', function () {
+            var t1 = 0;
+            var t2 = 0;
+
+            // Lấy danh sách thư mục và tài liệu
+            var folders = document.querySelectorAll('.folder');
+            var documents = document.querySelectorAll('.sortable-list');
+
+            // Khởi tạo Sortable cho từng thư mục và tài liệu
+            folders.forEach(function (folder) {
+                new Sortable(folder.querySelector('.sortable-list'), {
+                    group: 'documents',
+                    animation: 150,
+                    onAdd: function (evt) {
+                        // Xử lý sự kiện khi thả tài liệu vào thư mục
+                        var documentId = evt.item.getAttribute('data-id');
+                        var folderId = folder.getAttribute('data-id');
+                        if (folderId == 1) {
+                            t1++;
+                            document.querySelector('#number1').innerHTML = t1;
+                        }
+                        if (folderId == 2) {
+                            t2++;
+                            document.querySelector('#number2').innerHTML = t2;
+                        }
+                    },
+                    onRemove: function (evt) {
+                        var documentId = evt.item.getAttribute('data-id');
+                        var folderId = folder.getAttribute('data-id');
+                        if (folderId == 1) {
+                            t1--
+                            document.querySelector('#number1').innerHTML = t1;
+                        }
+                        if (folderId == 2) {
+                            t2--
+                            document.querySelector('#number2').innerHTML = t2;
+                        }
+                    },
+                    onEnd: function (evt) {
+                        var docId = evt.item.getAttribute('data-id');
+                        var tagId = folder.getAttribute('data-id');
+
+                        // update to backend
+                        let action = baseUrl + 'AssignDocToTag';
+                        var datasend = {
+                            tagId: tagId,
+                            docId: docId
+                        };
+                        PostDataAjax(action, datasend, function (response) {
+                            if (response.rs) {
+                                toastr.success(response.msg, "Thành công");
+                            }
+                            else {
+                                toastr.error(response.msg, "Thất bại");
+                            }
+                        });
+
+                        if (evt.to != evt.from) {
+                            document.querySelector('#doc' + documentId).remove();
+                        }
+                    },
+                });
+            });
+        })
 
     </script>
 }

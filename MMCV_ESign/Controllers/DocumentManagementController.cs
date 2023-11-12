@@ -30,7 +30,11 @@ namespace MMCV_ESign.Controllers
 
         public ActionResult DocumentManagement()
         {
-            return View();
+            using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
+            {
+                ViewBag.Tags = entity.Tags.Where(x => x.EmployeeID == currentUser.EmployeeID).ToList();
+                return View();
+            }
         }
 
         public ActionResult GetDocuments()
@@ -115,7 +119,21 @@ namespace MMCV_ESign.Controllers
 
                     // Filter document which the previous signer has not signed yet
 
-                    return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
+                    // Filter by tags
+                    var tagDocList = entity.TagDocs
+                        .Where(x => x.EmpID == currentUser.EmployeeID)
+                        .WhereIf(frmSearch.TagId != 0, x => x.TagID == frmSearch.TagId)
+                        .ToList();
+
+                    var returnData = listDocs;
+                    if (tagDocList.Count > 0)
+                    {
+                        returnData = listDocs
+                        .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
+                    }
+                   
+                    return Json(new { rs = true, msg = "Get me sign documents successfully", data = returnData }, JsonRequestBehavior.AllowGet);
+                    //return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
                 }
             }
             catch (Exception ex)
@@ -693,6 +711,45 @@ namespace MMCV_ESign.Controllers
             {
                 LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "DocumentManagement");
                 return Json(new { rs = false, msg = "Error download document in detail view" });
+            }
+        }
+
+        public async Task<ActionResult> AssignDocToTag(int docId, int tagId)
+        {
+            try
+            {
+                using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
+                {
+                    var objExist = entity.TagDocs
+                        .Where(x => x.EmpID == currentUser.EmployeeID && x.DocID == docId)
+                        .FirstOrDefault();
+
+                    if (objExist == null)
+                    {
+                        entity.TagDocs.Add(new TagDoc()
+                        {
+                            DocID = docId,
+                            TagID = tagId,
+                            EmpID = currentUser.EmployeeID
+                        });
+                    }
+                    else
+                    {
+                        if (objExist.TagID != tagId) // update
+                        {
+                            entity.Entry(objExist).State = System.Data.Entity.EntityState.Modified;
+                        }
+                    }
+
+                    await entity.SaveChangesAsync();
+                }
+
+                return Json(new { rs = true, msg = "" }, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Instance.WriteLog(ex.Message, ex, MethodHelper.Instance.MergeEventStr(MethodBase.GetCurrentMethod()), "DocumentManagement");
+                return Json(new { rs = false, msg = "" });
             }
         }
     }

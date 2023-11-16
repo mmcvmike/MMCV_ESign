@@ -30,11 +30,12 @@ namespace MMCV_ESign.Controllers
 
         public ActionResult DocumentManagement()
         {
-            using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
-            {
-                ViewBag.Tags = entity.Tags.Where(x => x.EmployeeID == currentUser.EmployeeID).ToList();
-                return View();
-            }
+            //using (MMCV_ESignEntities entity = new MMCV_ESignEntities())
+            //{
+            //    ViewBag.Tags = entity.Tags.Where(x => x.EmployeeID == currentUser.EmployeeID && x.Active == 1).ToList();
+            //    return View();
+            //}
+            return View();
         }
 
         public ActionResult GetDocuments()
@@ -126,12 +127,14 @@ namespace MMCV_ESign.Controllers
                         .ToList();
 
                     var returnData = listDocs;
-                    if (tagDocList.Count > 0)
-                    {
-                        returnData = listDocs
+                    //if (tagDocList.Count > 0)
+                    //{
+                    //    returnData = listDocs
+                    //    .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
+                    //}
+                    returnData = listDocs
                         .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
-                    }
-                   
+
                     return Json(new { rs = true, msg = "Get me sign documents successfully", data = returnData }, JsonRequestBehavior.AllowGet);
                     //return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
                 }
@@ -714,7 +717,7 @@ namespace MMCV_ESign.Controllers
             }
         }
 
-        public async Task<ActionResult> AssignDocToTag(int docId, int tagId)
+        public ActionResult AssignDocToTag(int docId, int tagId)
         {
             try
             {
@@ -737,11 +740,12 @@ namespace MMCV_ESign.Controllers
                     {
                         if (objExist.TagID != tagId) // update
                         {
+                            objExist.TagID = tagId;
                             entity.Entry(objExist).State = System.Data.Entity.EntityState.Modified;
                         }
                     }
 
-                    await entity.SaveChangesAsync();
+                    entity.SaveChanges();
                 }
 
                 return Json(new { rs = true, msg = "" }, JsonRequestBehavior.AllowGet);

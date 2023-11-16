@@ -4,6 +4,8 @@
     var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
     var menu = (List<MenuBO>)CacheHelper.Get(CacheKeyHelper.Menu_CacheKey);
     var isAdmin = currentUser.RoleName != "Admin" ? "d-none" : "";
+
+    var tags = (List<MMCV_Model.DB68.Tag>)ViewBag.UserTags;
 }
 <!DOCTYPE html>
 <html lang="en">
@@ -231,6 +233,21 @@
             margin-right: 15px;
         }
 
+        .folder {
+            padding-left: 30px;
+            cursor: pointer;
+            color: black;
+        }
+
+        .folder-active {
+            background: #35cd3a;
+            color: white;
+        }
+
+        .sortable-list {
+            height: 40px;
+        }
+
         /*end alert*/
     </style>
 
@@ -276,7 +293,7 @@
             <!-- Logo Header -->
             <div class="logo-header">
 
-                <a href="/Dashboard/Dashboard" class="logo">
+                <a href="/portal/index" class="logo">
                     @*<img src="../Content/assets/img/icon.png" alt="navbar brand" class="navbar-brand">*@
                     <strong class="text-white">MMCV</strong>
                 </a>
@@ -295,61 +312,16 @@
             <!-- End Logo Header -->
             <!-- Navbar Header -->
             <nav class="navbar navbar-header navbar-expand-lg">
-                <div class="w-100 text-right mr-2">
-                    @RenderSection("ModalAddDoc", false)
+                <div class="w-100 mr-2">
+                    <h3 class="text-white"><strong>@ViewBag.Title</strong></h3>
                     @*<button class="btn btn-outline-primary bg-white" data-toggle="modal" data-target="#modalAddDocument"><i class="fa fa-plus"></i></button>*@
                 </div>
-                @*<ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
-                        <li class="nav-item dropdown hidden-caret">
-                            <a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fa fa-bell"></i>
-                                <span class="notification">3</span>
-                            </a>
-                            <ul class="dropdown-menu notif-box animated fadeIn" aria-labelledby="notifDropdown">
-                                <li>
-                                    <div class="dropdown-title">You have 3 new notification</div>
-                                </li>
-                                <li>
-                                    <div class="notif-center">
-                                        <a href="#">
-                                            <div class="notif-icon notif-primary"> <i class="fa fa-user-plus"></i> </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    New user registered
-                                                </span>
-                                                <span class="time">5 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-icon notif-success"> <i class="fa fa-comment"></i> </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    Rahmad commented on Admin
-                                                </span>
-                                                <span class="time">12 minutes ago</span>
-                                            </div>
-                                        </a>
-                                        <a href="#">
-                                            <div class="notif-icon notif-danger"> <i class="fa fa-heart"></i> </div>
-                                            <div class="notif-content">
-                                                <span class="block">
-                                                    Farrah liked Admin
-                                                </span>
-                                                <span class="time">17 minutes ago</span>
-                                            </div>
-                                        </a>
-                                    </div>
-                                </li>
-                                <li>
-                                    <a class="see-all" href="javascript:void(0);">See all notifications<i class="fa fa-angle-right"></i> </a>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>*@
-
                 <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
                     <li class="">
                         <div class="btn-group btn-group-page-header ml-auto">
+                            <div class="mr-2">
+                                @RenderSection("ModalAddDoc", false)
+                            </div>
                             @*<a class="nav-link dropdown-toggle" href="#" id="notifDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-user"></i>
                                 </a>*@
@@ -419,10 +391,32 @@
                                 <p>Document Type</p>
                             </a>
                         </li>
-                        <li class="nav-item">
+                        <li class="nav-item d-flex">
                             <a href="/Tag/Index">
                                 <i class="fa fa-tags"></i>
                                 <p>Tags</p>
+                            </a>
+                            <i data-target="#tags" data-toggle="collapse" class="align-self-center pr-2"
+                               style="color: #35cd3a; cursor: pointer; font-size: 20px;">
+                                <i class="fa fa-chevron-down"></i>
+                            </i>
+                        </li>
+                        <li class="collapse" id="tags">
+                            <ul class="nav nav-collapse mb-0 p-0">
+                                @foreach (MMCV_Model.DB68.Tag item in tags ?? new List<MMCV_Model.DB68.Tag>())
+                                {
+                                    <li id="folder_@item.TagID" data-id='@item.TagID' class='folder'>
+                                        <div class="sortable-list pt-2">
+                                            <span>@item.TagName</span>
+                                        </div>
+                                    </li>
+                                }
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/FormManagement/FormManagement">
+                                <i class="fas fa-list"></i>
+                                <p>Form Management</p>
                             </a>
                         </li>
                         <li class="nav-item">
@@ -484,7 +478,8 @@
                 url = '/Dashboard/Dashboard';
             }
             // Loop all menu items
-            $('.menu li').each(function () {
+            //$('.menu li').each(function () {
+            $('.nav-item').each(function () {
                 // select href
                 var href = $(this).find('a').attr('href');
                 // Check filename

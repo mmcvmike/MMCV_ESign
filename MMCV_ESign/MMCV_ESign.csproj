@@ -143,6 +143,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\DocumentTypeController.cs" />
+    <Compile Include="Controllers\Form\FormManagementController.cs" />
     <Compile Include="Controllers\PortalController.cs" />
     <Compile Include="Controllers\TagController.cs" />
     <Compile Include="Controllers\UserController.cs" />
@@ -680,7 +681,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Controllers\Form\" />
     <Folder Include="Data\" />
     <Folder Include="Views\Base\" />
   </ItemGroup>
@@ -697,6 +697,7 @@
     <Content Include="Views\DocumentType\DocumentType.cshtml" />
     <Content Include="Views\Tag\Index.cshtml" />
     <Content Include="Views\Portal\Index.cshtml" />
+    <Content Include="Views\FormManagement\FormManagement.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />

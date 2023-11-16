@@ -1,8 +1,145 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+﻿@{
+    Layout = "";
 }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>Office Portal</title>
+    <meta content='width=device-width, initial-scale=1.0, shrink-to-fit=no' name='viewport' />
+    <link rel="icon" type="image/x-icon" href="~/Content/assets/img/favicon.png">
 
-<h2>Index</h2>
+    <link rel="stylesheet" href="../Content/assets/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../Content/assets/css/azzara.min.css">
+    <link href="~/Scripts/libs/bootstrap-toastr/toastr.min.css" rel="stylesheet" />
 
+    <!-- Fonts and icons -->
+    <script src="../Content/assets/js/plugin/webfont/webfont.min.js"></script>
+    <script>
+        WebFont.load({
+            google: { "families": ["Open+Sans:300,400,600,700"] },
+            custom: { "families": ["Flaticon", "Font Awesome 5 Solid", "Font Awesome 5 Regular", "Font Awesome 5 Brands"], urls: ['../Content/assets/css/fonts.css'] },
+            active: function () {
+                sessionStorage.fonts = true;
+            }
+        });
+    </script>
+    <script src="../Content/assets/js/core/jquery.3.2.1.min.js"></script>
+    <script src="../Content/assets/js/core/popper.min.js"></script>
+    <script src="../Content/assets/js/core/bootstrap.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js"></script>
+    <script src="../Content/assets/js/plugin/jquery-scrollbar/jquery.scrollbar.min.js"></script>
+    <script src="../Content/assets/js/plugin/moment/moment.min.js"></script>
+    <script src="../Content/assets/js/plugin/chart.js/chart.min.js"></script>
+    <script src="~/Scripts/libs/jquery.fileDownload.js"></script>
+    <script src="../Content/assets/js/plugin/datatables/datatables.min.js"></script>
+    <script src="../Content/assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
+    <script src="~/Scripts/libs/bootstrap-toastr/toastr.min.js"></script>
+    <script src="../Content/assets/js/ready.min.js"></script>
+    <!-- Common -->
+    <script src="~/Scripts/libs/Datatables/fixed.column.min.js"></script>
+    <script src="~/Scripts/libs/Datatables/pagination.input.js"></script>
+    <script src="~/Scripts/libs/jquery-confirm/jquery-confirm.min.js"></script>
+    <script src="~/Scripts/ESign/common.js"></script>
+
+    <style>
+
+        .main-header[data-background-color] .logo-header {
+            background-color: #35cd3a !important;
+        }
+
+        .main-header[data-background-color=purple] {
+            background: #35cd3a !important;
+        }
+
+        .main-header[data-background-color=purple] .navbar-header {
+            background: #35cd3a !important;
+        }
+
+        .card-system{
+            padding: 20px;
+            text-align: center;
+            height: 200px;
+            width: 200px;
+            font-size: 80px;
+            margin: 5px;
+            cursor: pointer;
+        }
+
+        .portal-content{
+            padding-top: 57px;
+        }
+
+        .wrapper{
+            min-height: unset;
+        }
+    </style>
+
+</head>
+<body class="login">
+    <div class="main-header" data-background-color="purple">
+        <!-- Logo Header -->
+        <div class="logo-header">
+            <a href="/portal/index" class="logo">
+                <img src="../Content/assets/img/mektec_logo.png" alt="navbar brand" height="55" class="navbar-brand">
+                @*<strong class="text-white">MMCV Portal</strong>*@
+            </a>
+            @*<button class="navbar-toggler sidenav-toggler ml-auto" type="button" data-toggle="collapse" data-target="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon">
+                    <i class="fa fa-bars"></i>
+                </span>
+            </button>*@
+        </div>
+        <!-- End Logo Header -->
+        <!-- Navbar Header -->
+        <nav class="navbar navbar-header navbar-expand-lg">
+            <div class="w-100 text-right mr-2">
+
+            </div>
+            <ul class="navbar-nav topbar-nav ml-md-auto align-items-center">
+                <li class="">
+                    <div class="btn-group btn-group-page-header ml-auto">
+                        <button class="btn btn-light dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-user"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <div class="arrow"></div>
+                            <a class="dropdown-item" href="/User/Logout"><i class="fa fa-sign-out-alt"></i>&nbsp; Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </nav>
+        <!-- End Navbar -->
+    </div>
+
+    <div class="portal-content">
+        <div class="portal-header text-center">
+            <div class="card card-header mb-0">
+                <h1><strong style="font-weight: 900">MMCV E-Portal</strong></h1>
+                <h4><strong class="text-success">Smart office</strong></h4>
+            </div>
+        </div>
+        <div class="wrapper wrapper-login">
+            <div class="card card-system">
+                <a href="#" style="color: #007bff">
+                    <h1 class="text-center mb-4">E-Form</h1>
+                    <i class="fa fa-file-pdf"></i>
+                </a>
+            </div>
+            <div class="card card-system">
+                <a href="/Dashboard/Dashboard" style="color: #35cd3a">
+                    <h1 class="text-center mb-4">E-Sign</h1>
+                    <i class="fa fa-pen-nib"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+    </script>
+
+</body>
+</html>

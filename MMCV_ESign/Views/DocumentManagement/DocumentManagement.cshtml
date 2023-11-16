@@ -1,8 +1,8 @@
 ﻿@{
-    ViewBag.Title = "DocumentManagement";
+    ViewBag.Title = "Document Management";
     var currentUser = MMCV_Model.User.UserBO.Current.CurrentUser();
     var isAdmin = currentUser != null ? (currentUser.IsAdmin) ? "" : "d-none" : "d-none";
-    var tags = (List<MMCV_Model.DB68.Tag>)ViewBag.Tags;
+    var tags = (List<MMCV_Model.DB68.Tag>)ViewBag.UserTags;
 }
 @section styles{
     <style>
@@ -33,19 +33,15 @@
             /*content: "" !important;*/
         }
 
-        .folder {
-            margin: 0px 5px;
+        .ms-tag{
             cursor: pointer;
-            color: black;
-           /* background: #ebeced;
-            border-radius: 5px;
-            padding: 5px 8px;*/
         }
 
-        .folder-active {
+        .tag-active {
             background: #35cd3a;
             color: white;
         }
+
     </style>
 }
 
@@ -108,26 +104,19 @@
                     <div class="d-flex pl-3">
                         Tags: 
                         <div class="d-flex" id="tag-area">
-                            <div id="folder0" data-id='0' class='folder folder-active' onclick='tagClick(0)'>
-                                <span>ALL <span id="number0">0</span></span>
-                                <div class="sortable-list">
-
-                                </div>
-                            </div>
+                            <span class="badge badge-light p-2 ml-2 ms-tag tag-active" id="ms_tag_0" onclick='tagClick(0)'>
+                                <span>ALL @*<span id="number0">0</span>*@</span>
+                            </span>
                             @foreach (MMCV_Model.DB68.Tag item in tags)
                             {
-                                <div id="folder" + @item.TagID data-id='@item.TagID' class='folder' onclick='tagClick(@item.TagID)'>
-                                    <span>@item.TagName <span id="number + @item.TagID">0</span></span>
-                                    <div class="sortable-list">
-
-                                    </div>
-                                </div>
+                                <span class="badge badge-light p-2 ml-2 ms-tag" id="ms_tag_@item.TagID" onclick='tagClick(@item.TagID)'>
+                                    <span>@item.TagName @*<span id="tag_number_@item.TagID">0</span>*@</span>
+                                </span>
                             }
-
                         </div>
                     </div>
 
-                    <div id="folder00" class="folder">
+                    <div id="folder00" class="folder m-0 p-0">
                         <table id="meSignDocumentDT" class="table table-bordered table-striped table-hover dataTable" style="width:100%">
                             <thead>
                                 <tr>
@@ -312,6 +301,19 @@
         function tagClick(tagId) {
             currentTagId = tagId;
             getMeSignDocuments();
+
+            // highlight menu li
+            $(".folder").each((i, ele) => {
+                $(ele).removeClass("folder-active");
+            });
+            $("#folder_" + tagId).addClass("folder-active");
+
+            // highlight tag
+            $(".ms-tag").each((i, ele) => {
+                $(ele).removeClass("tag-active");
+            });
+            $("#ms_tag_" + tagId).addClass("tag-active");
+            $("#tag_number_" + tagId).text();
         }
 
         function showActiveTab() {
@@ -846,34 +848,15 @@
                 new Sortable(folder.querySelector('.sortable-list'), {
                     group: 'documents',
                     animation: 150,
-                    onAdd: function (evt) {
-                        // Xử lý sự kiện khi thả tài liệu vào thư mục
-                        var documentId = evt.item.getAttribute('data-id');
-                        var folderId = folder.getAttribute('data-id');
-                        if (folderId == 1) {
-                            t1++;
-                            document.querySelector('#number1').innerHTML = t1;
-                        }
-                        if (folderId == 2) {
-                            t2++;
-                            document.querySelector('#number2').innerHTML = t2;
-                        }
-                    },
-                    onRemove: function (evt) {
-                        var documentId = evt.item.getAttribute('data-id');
-                        var folderId = folder.getAttribute('data-id');
-                        if (folderId == 1) {
-                            t1--
-                            document.querySelector('#number1').innerHTML = t1;
-                        }
-                        if (folderId == 2) {
-                            t2--
-                            document.querySelector('#number2').innerHTML = t2;
-                        }
-                    },
                     onEnd: function (evt) {
                         var docId = evt.item.getAttribute('data-id');
-                        var tagId = folder.getAttribute('data-id');
+                        var tagId = evt.to.parentNode.getAttribute('data-id');
+
+                        $("#meSignDocumentDT").css("background", "");
+                        resetFolderHighlight();
+                        if (evt.to != evt.from) {
+                            $('#doc' + docId).remove();
+                        }
 
                         // update to backend
                         let action = baseUrl + 'AssignDocToTag';
@@ -889,13 +872,36 @@
                                 toastr.error(response.msg, "Thất bại");
                             }
                         });
-
-                        if (evt.to != evt.from) {
-                            document.querySelector('#doc' + documentId).remove();
-                        }
                     },
+                    onMove: function (evt, originalEvent) {
+                        // Reset the background color of all folders if not over a valid drop area
+                        if (!isOverFolder(evt.from, originalEvent.clientX, originalEvent.clientY)) {
+                            resetFolderHighlight();
+                        }
+ 
+                        // Highlight the target folder when dragging over it
+                        var folder = evt.to.parentNode;
+                        folder.style.backgroundColor = 'lightblue';
+                    }
                 });
             });
+
+            // Reset the background color of all folders when the drag operation is cancelled
+            document.addEventListener('dragend', function () {
+                resetFolderHighlight();
+            });
+
+            function resetFolderHighlight() {
+                folders.forEach(function (folder) {
+                    folder.style.backgroundColor = '';
+                });
+            }
+
+            function isOverFolder(container, x, y) {
+                // Check if the dragged item is over the container
+                var rect = container.getBoundingClientRect();
+                return x >= rect.left && x <= rect.right && y >= rect.top && y <= rect.bottom;
+            }
         })
 
     </script>

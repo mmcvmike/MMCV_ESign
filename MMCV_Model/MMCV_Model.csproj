@@ -86,6 +86,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>EntitiesDB68_ESign.edmx</DependentUpon>
     </Compile>
+    <Compile Include="DB68\Form.cs">
+      <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
+    </Compile>
     <Compile Include="DB68\Menu.cs">
       <DependentUpon>EntitiesDB68_ESign.tt</DependentUpon>
     </Compile>

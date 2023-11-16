@@ -237,6 +237,19 @@ CREATE TABLE TagDoc
 
 go
 
+CREATE TABLE Form
+(
+	FormID INT PRIMARY KEY IDENTITY,
+	FormName NVARCHAR(200),
+	FormLink NVARCHAR(500),
+	DeptName NVARCHAR(50),
+	Description NVARCHAR(500),
+	ModifiedDate DATETIME,
+	ModifiedBy VARCHAR(50)
+)
+
+go
+
 CREATE PROCEDURE [dbo].[USP_Documents_Get_Draft] 
 	@Issuer NVARCHAR(50)
 AS

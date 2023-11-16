@@ -42,5 +42,6 @@ namespace MMCV_Model.DB68
         public virtual DbSet<DocumentType> DocumentTypes { get; set; }
         public virtual DbSet<Tag> Tags { get; set; }
         public virtual DbSet<TagDoc> TagDocs { get; set; }
+        public virtual DbSet<Form> Forms { get; set; }
     }
 }

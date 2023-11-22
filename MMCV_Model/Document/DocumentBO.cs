@@ -21,6 +21,8 @@ namespace MMCV_Model.Document
         public DateTime CreatedDate { get; set; }
         public int Active { get; set; }
         public string EmailCC { get; set; }
+        public DateTime DueDate { get; set; }
+
         // custom properties
         public List<DocumentSignBO> DocumentSigns { get; set; }
         public string Base64File { get; set; }

@@ -102,6 +102,38 @@
         border: 2px dashed #dadfe3 !important;
     }
 
+    #listForm {
+        background: whitesmoke;
+        padding: 5px;
+        overflow: auto;
+        height: auto;
+        border-radius: 3px;
+        max-height: 400px;
+    }
+
+    #btnForm {
+        border: 2px dashed #4CAF50;
+    }
+
+    #listForm .mb-0 > a {
+        display: block;
+        position: relative;
+    }
+
+    #listForm .mb-0 > a:after {
+        content: "\f067";
+        font-family: "Font Awesome 5 Solid";
+        position: absolute;
+        right: 0;
+        font-weight: 600;
+    }
+
+    #listForm .mb-0 > a[aria-expanded="true"]:after {
+        content: "\f068";
+        font-family: "Font Awesome 5 Solid";
+        font-weight: 600;
+    }
+
 </style>
 
 @{
@@ -129,18 +161,37 @@
                     <div class="card p-3 mb-2">
                         <h4 class="card-title text-success">Upload file need to sign</h4>
                     </div>
-                    <div class="mb-2">
-                        <strong>Title</strong>
-                        <input type="text" class="form-control w-100" id="txtDocumentTitle" autofocus />
+                    <div class="mb-2 d-flex">
+                        <div class="w-50 mr-2">
+                            <strong>Title</strong>
+                            <input type="text" class="form-control w-100" id="txtDocumentTitle" autofocus />
+                        </div>
+                        <div class="w-50">
+                            <strong>Due date</strong>
+                            <input type="date" class="form-control w-100" id="txtDocumentDueDate" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
                     </div>
                     <div class="mb-2 d-flex">
-                        <div class="w-50">
+                        <div class="w-50 mr-2">
                             <strong>Document Type</strong>
-                            <select class="form-control w-100" id="txtDocumentType">
-                            </select>
+                            <div class="d-flex">
+                                <select class="form-control w-100" id="txtDocumentType">
+                                </select>
+                                <div class="align-self-end pl-2">
+                                    <button class="btn btn-success" onclick="openAddDocType()"><i class="fa fa-plus"></i></button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="align-self-end pl-2">
-                            <button class="btn btn-success" onclick="openAddDocType()"><i class="fa fa-plus"></i></button>
+                        <div class="w-50">
+                            <strong>Select Form</strong>
+                            <div class="dropdown">
+                                <button class="btn btn-o dropdown-toggle" type="button" id="btnForm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <strong>Download Request Form</strong>
+                                </button>
+                                <div class="dropdown-menu w-100" aria-labelledby="btnForm" id="listForm">
+                                    
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div class="text-center drop">
@@ -373,7 +424,16 @@
 
     $(document).ready(function () {
         getDocumentTypes();
+        getForms();
     })
+
+    $(document).on('click', '.dropdown .dropdown-menu', function (e) {
+        e.stopPropagation();
+    });
+
+    $(document).on('click', '.btn-form', function (e) {
+        e.stopPropagation();
+    });
 
     function getDocumentTypes() {
         let action = '/DocumentType/GetDocTypeByEmployeeId';
@@ -400,6 +460,57 @@
                     `;
         }
         selector.html('').append(html);
+    }
+
+    function getForms() {
+        let action = '/FormManagement/GetForms';
+        LoadingShow();
+        GetDataAjax(action, function (response) {
+            LoadingHide();
+            if (response.rs) {
+                let data = response.data;
+                setTimeout(() => {
+                    let html = `<div id="accordion">`;
+                    let depts = unique(data, ['DeptName']);
+                    for (var i = 0; i < depts.length; i++) {
+                        let dept = data[i];
+                        let forms = data.filter(x => x.DeptName == dept.DeptName);
+                        let subHtml = '';
+                        forms?.forEach((ele) => {
+                            subHtml += `
+                            <div class="dropdown-item w-100 pl-3">
+                                <div class='d-flex justify-content-between'>
+<span class='align-self-center'>${ele.FormName}</span>
+<a href='javascript:void(0)' onclick='downloadForm(${ele.FormID})' class='btn btn-light btn-sm btn-form'><i class='fa fa-download text-success'></i></a>
+                                </div>
+                            </div>
+                            `;
+                        })
+                        html += `
+                                <div class="card mb-1">
+                                  <div class="card-header p-3">
+                                    <h5 class="mb-0">
+                                      <a role="button" data-toggle="collapse" href="#collapse${i}" aria-expanded="false" aria-controls="collapse-1">
+                                        ${dept.DeptName}     
+                                      </a>
+                                    </h5>
+                                  </div>
+                                  <div id="collapse${i}" class="collapse" data-parent="#accordion" aria-labelledby="heading-1">
+                                    <div class="card-body p-1">
+                                        ${subHtml}
+                                    </div>
+                                  </div>
+                                </div>
+                              `;
+                    }
+                    html += `</div>`;
+                    $("#listForm").html('').html(html);
+                });
+            }
+            else {
+                toastr.error(response.msg, "Warning");
+            }
+        });
     }
 
     function uploadDocumentFile() {
@@ -518,6 +629,11 @@
         // validate document type
         let docType = $("#txtDocumentType");
         if (!CheckNullOrEmpty(docType, "Document Type can not be null or empty"))
+            return false;
+
+        // validate document due date
+        let duedate = $("#txtDocumentDueDate");
+        if (!CheckNullOrEmpty(duedate, "Document due date can not be null or empty"))
             return false;
 
         // validate file
@@ -947,6 +1063,7 @@
                 Issuer: currentUser.Email,
                 CreatedBy: currentUser.Username,
                 Status: status,
+                DueDate: $("#txtDocumentDueDate").val(),
                 DocumentSigns: listDocSign,
                 ///index = 0 when to cc
                 EmailCC: listEmail.filter(a => a.index == 0).map(u => u.value).join(';')
@@ -1098,6 +1215,49 @@
                 toastr.error(response.msg, "Warning");
             }
         });
+    }
+
+    function downloadForm(id) {
+        LoadingShow();
+        let action = '/FormManagement/DownloadForm';
+        var datasend = {
+            formId: id
+        };
+        PostDataAjax(action, datasend, function (response) {
+            LoadingHide();
+            if (response.rs) {
+                let data = response.data;
+                downloadBase64File(data.base64Data, data.fileName);
+            }
+            else {
+                LoadingHide();
+                toastr.error(response.msg, "Warning");
+            }
+        });
+    }
+
+    function downloadBase64File(base64Data, fileName) {
+        var byteCharacters = atob(base64Data);
+        var byteNumbers = new Uint8Array(byteCharacters.length);
+
+        for (var i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+
+        var blob = new Blob([byteNumbers], { type: 'application/octet-stream' });
+
+        var link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = fileName;
+
+        // Append the link to the document body
+        document.body.appendChild(link);
+
+        // Trigger a click event on the link to start the download
+        link.click();
+
+        // Remove the link from the document
+        document.body.removeChild(link);
     }
 
 </script>

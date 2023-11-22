@@ -30,6 +30,7 @@ create table Document(
 	CreatedDate datetime,
 	Active int default(1), -- 1: Active, 0: Inactive
 	[EmailCC] [nvarchar](600) NULL,
+	DueDate datetime,
 )
 
 go

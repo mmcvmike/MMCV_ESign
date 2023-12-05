@@ -22,234 +22,10 @@
     <link rel="stylesheet" href="../Content/assets/css/azzara.min.css">
     <link href="~/Scripts/libs/Datatables/fixed.column.min.css" rel="stylesheet" />
     <link href="~/Scripts/libs/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="../Content/assets/css/demo.css">
-    <style>
-        body {
-            color: black;
-        }
+    <link href="~/Scripts/libs/jquery-confirm/jquery-confirm.min.css" rel="stylesheet" />
 
-        table {
-            border-collapse: separate;
-            border-spacing: 0px;
-        }
-
-        /* width */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-
-        /* Track */
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-
-        /* Handle */
-        ::-webkit-scrollbar-thumb {
-            background: #c1bdbd;
-        }
-
-            /* Handle on hover */
-            ::-webkit-scrollbar-thumb:hover {
-                background: #555;
-            }
-
-        .main-header[data-background-color=purple] {
-            background: #35cd3a !important;
-        }
-
-            .main-header[data-background-color=purple] .navbar-header {
-                background: #35cd3a !important;
-            }
-
-        .sidebar .nav > .nav-item a[data-toggle=collapse][aria-expanded=true]:before, .sidebar .nav > .nav-item.active:hover > a:before, .sidebar .nav > .nav-item.active > a:before {
-            background: #33b837;
-        }
-
-        .sidebar .nav > .nav-item.active a i {
-            color: #33b837;
-        }
-
-        .sidebar .nav > .nav-item:hover {
-            color: #33b837;
-        }
-
-        .sidebar .sidebar-wrapper {
-            box-shadow: 1px 1px 1px #d6d6d6;
-        }
-
-        .sidebar {
-            transition: none !important;
-        }
-
-        @@media screen and (min-width: 991px) {
-            .sidebar {
-                transition: none !important;
-            }
-
-            .sidebar_minimize .sidebar .sidebar-wrapper {
-                width: 75px;
-                transition: none;
-            }
-        }
-
-        .card {
-            /*box-shadow: 0 0px 3px 0px #9d9ba9 !important;*/
-            margin-bottom: 15px;
-        }
-
-        .text-success {
-            color: #33b837 !important;
-        }
-
-        .btn-success {
-            background: #33b837 !important;
-        }
-
-        .dropdown-toggle::after {
-            display: none;
-        }
-
-        .dropdown-item {
-            width: 95%;
-            font-size: 13px;
-            margin: auto;
-            border: 1px dashed lightgrey;
-            border-radius: 2px;
-            margin-top: 2px;
-        }
-
-            .dropdown-item:hover {
-                border: 1px dashed lightgrey;
-                background: lightgrey;
-            }
-
-        /*.dataTable > thead > tr > th[class*="sort"]:before,
-        .dataTable > thead > tr > th[class*="sort"]:after {
-            content: "" !important;
-        }
-
-        .dataTable > thead > tr > th[class="sorting"]:before,
-        .dataTable > thead > tr > th[class="sorting"]:after {
-            line-height: 0px;
-        }*/
-
-        .modal-80 {
-            width: 75%;
-            margin: auto;
-            margin-top: 25px;
-        }
-
-        .modal-scrollable {
-            overflow-y: scroll;
-            max-height: 75vh
-        }
-
-        .full-overlay {
-            /*display: none;*/
-            position: fixed;
-            /* background: rgba(0, 0, 0, 1); */
-            opacity: 0;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: -1;
-            -webkit-transition: opacity .3s ease;
-            -moz-transition: opacity .3s ease;
-            -o-transition: opacity .3s ease;
-            transition: opacity .3s ease;
-        }
-
-        #mainLoadingSVG {
-            position: fixed;
-            top: calc(50% - 20px);
-            left: calc(50% - 20px);
-            width: 40px;
-            height: 40px;
-            z-index: 1000000;
-            background: #fff;
-            padding: 3px;
-            border-radius: 50%;
-            display: none;
-        }
-
-        .modal-header-icon {
-            margin-top: 5px;
-            font-size: 20px;
-            color: #33b837;
-        }
-
-        /*alert dialog*/
-        #modalContainer {
-            background-color: rgba(0, 0, 0, 0.3);
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0px;
-            left: 0px;
-            z-index: 10000;
-        }
-
-        #alertBox {
-            position: relative;
-            width: 400px;
-            min-height: 100px;
-            margin-top: 50px;
-            background-color: #fff;
-            -webkit-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
-            -moz-box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
-            box-shadow: 0px 0px 6px 0px rgba(0,0,0,0.75);
-        }
-
-        #modalContainer > #alertBox {
-            position: fixed;
-        }
-
-        #alertBox h1 {
-            margin: 0;
-            font: 16px verdana,arial;
-            background-color: #2CA01C;
-            color: #FFF;
-            text-shadow: none;
-            padding: 10px 10px;
-        }
-
-        #alertBox p {
-            font: 16px verdana,arial;
-            min-height: 50px;
-            padding: 5px 10px;
-            padding-top: 15px;
-        }
-
-        #alertBox #closeBtnAlert {
-            margin: 0 auto;
-            display: block;
-            width: 100px;
-            margin-bottom: 15px;
-        }
-
-        #cancelBtnAlert {
-            margin-right: 15px;
-        }
-
-        .folder {
-            padding-left: 30px;
-            cursor: pointer;
-            color: black;
-        }
-
-        .folder-active {
-            background: #35cd3a;
-            color: white;
-        }
-
-        .sortable-list {
-            height: 40px;
-        }
-
-        /*end alert*/
-    </style>
+    <link rel="stylesheet" href="../Content/Site.css">
+    @*<link rel="stylesheet" href="../Content/assets/css/demo.css">*@
 
     @RenderSection("styles", required: false)
 
@@ -277,10 +53,10 @@
     <script src="../Content/assets/js/plugin/bootstrap-toggle/bootstrap-toggle.min.js"></script>
     <script src="~/Scripts/libs/bootstrap-toastr/toastr.min.js"></script>
     <script src="../Content/assets/js/ready.min.js"></script>
-    <!-- Common -->
     <script src="~/Scripts/libs/Datatables/fixed.column.min.js"></script>
     <script src="~/Scripts/libs/Datatables/pagination.input.js"></script>
     <script src="~/Scripts/libs/jquery-confirm/jquery-confirm.min.js"></script>
+    <!-- Common -->
     <script src="~/Scripts/ESign/common.js"></script>
 
 </head>
@@ -462,8 +238,7 @@
 
         $(document).ready(function () {
             elapseMenu();
-            //checkSession();
-            /*setInterval(checkSession, 40 * 1000);*/
+            setInterval(checkSession, 20 * 1000);
         })
 
         function elapseMenu() {
@@ -503,8 +278,6 @@
             });
         }
 
-
-
         // heart beat design pattern to keep user session alive
         function checkSession() {
             let action = '/Base/CheckSession';
@@ -522,61 +295,6 @@
             });
         }
 
-    </script>
-
-    <script type="text/javascript">
-        //Có thể tác đoạn đầu này bỏ vào file .js sau đó load ra cũng được.
-        SessionUpdater = (function () {
-            var clientMovedSinceLastTimeout = false;
-            var keepSessionAliveUrl = null;
-            var timeout = 1 * 1000 * 60; // 1 phút xử lý load lại session 1 lần
-            function setupSessionUpdater(actionUrl) {
-                // store local value
-                keepSessionAliveUrl = actionUrl;
-                // setup handlers
-                listenForChanges();
-                // start timeout - it'll run after n minutes
-                checkToKeepSessionAlive();
-            }
-            function listenForChanges() {
-                $("body").one("mousemove keydown", function () {
-                    clientMovedSinceLastTimeout = true;
-                });
-            }
-            // fires every n minutes - if there's been movement ping server and restart timer
-            function checkToKeepSessionAlive() {
-                setTimeout(function () { keepSessionAlive(); }, timeout);
-            }
-            function keepSessionAlive() {
-                // if we've had any movement since last run, ping the server
-                if (clientMovedSinceLastTimeout && keepSessionAliveUrl != null) {
-                    $.ajax({
-                        type: "POST",
-                        url: keepSessionAliveUrl,
-                        success: function (data) {
-                            // reset movement flag
-                            clientMovedSinceLastTimeout = false;
-                            // start listening for changes again
-                            listenForChanges();
-                            // restart timeout to check again in n minutes
-                            checkToKeepSessionAlive();
-                        },
-                        error: function (data) {
-                            console.log("Error posting to " & keepSessionAliveUrl);
-                        }
-                    });
-                }
-            }
-            // export setup method
-            return {
-                Setup: setupSessionUpdater
-            };
-        })();
-    </script>
-
-    <script type="text/javascript">
-    // cài đặt update session KeepSessionAlive mỗi khi có người truy cập web, bạn thay controller Home bằng controller của bạn gắn mã.
-    SessionUpdater.Setup('@Url.Action("KeepSessionAlive","Base")');
     </script>
 
     @RenderSection("scripts", required: false)

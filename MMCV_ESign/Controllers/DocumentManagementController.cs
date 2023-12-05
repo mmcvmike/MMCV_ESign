@@ -121,20 +121,17 @@ namespace MMCV_ESign.Controllers
                     // Filter document which the previous signer has not signed yet
 
                     // Filter by tags
-                    var tagDocList = entity.TagDocs
-                        .Where(x => x.EmpID == currentUser.EmployeeID)
-                        .WhereIf(frmSearch.TagId != 0, x => x.TagID == frmSearch.TagId)
-                        .ToList();
-
                     var returnData = listDocs;
-                    //if (tagDocList.Count > 0)
-                    //{
-                    //    returnData = listDocs
-                    //    .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
-                    //}
-                    returnData = listDocs
-                        .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
+                    if (frmSearch.TagId != 0)
+                    {
+                        var tagDocList = entity.TagDocs
+                                         .Where(x => x.EmpID == currentUser.EmployeeID && x.TagID == frmSearch.TagId)
+                                         .ToList();
 
+                        returnData = listDocs
+                                     .Where(x => tagDocList.Any(y => y.DocID == x.DocumentID)).ToList();
+                    }
+                    
                     return Json(new { rs = true, msg = "Get me sign documents successfully", data = returnData }, JsonRequestBehavior.AllowGet);
                     //return Json(new { rs = true, msg = "Get me sign documents successfully", data = listDocs }, JsonRequestBehavior.AllowGet);
                 }

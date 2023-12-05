@@ -6,6 +6,7 @@
 }
 
 @section styles{
+    <link href="../" rel="stylesheet" />
     <style>
         .modal-header-icon {
             margin-top: 5px;
@@ -68,7 +69,7 @@
 </div>
 
 <div class="modal fade" id="addFormModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+    <div class="modal-dialog modal-full">
         <div class="modal-content">
             <div class="modal-header">
                 <i class="fa fa-plus modal-header-icon"></i>
@@ -210,8 +211,7 @@
                         data: null,
                         render: function (data, type, row) {
                             let html = `
-                                         <a href='javascript:void(0)' onclick='downloadForm(${row.FormID})' class='btn btn-light btn-sm'><i class='fa fa-file-excel text-success'></i>&nbsp;Download</a>
-
+                                         <a href='javascript:void(0)' onclick='downloadForm(${row.FormID})' class='btn btn-light btn-sm'><i class='fa fa-download text-success'></i>&nbsp;Download</a>
                                         `;
                             return html;
                         },

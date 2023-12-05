@@ -308,6 +308,8 @@ div img:hover {
   cursor: pointer;
 }
 
+
+
 /* Smaller screens */
 
 @media (max-width: 800px) {
